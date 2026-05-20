@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Signal Deck Futures — MES/ES Live</title>
+<meta name="description" content="Self-updating MES/ES paper-trading signal dashboard. Educational use only." />
+<style>
+  :root {
+    --bg: #0b0e14;
+    --panel: #11151d;
+    --panel-2: #161b25;
+    --border: #1f2733;
+    --text: #d6deeb;
+    --muted: #6b7a90;
+    --accent: #5ccfe6;
+    --green: #4ade80;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --blue: #60a5fa;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 13px; line-height: 1.5; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 16px; }
+
+  header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; background: var(--panel);
+    border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px;
+  }
+  header h1 { margin: 0; font-size: 16px; letter-spacing: 0.05em; }
+  header h1 .sub { color: var(--muted); font-weight: 400; margin-left: 8px; }
+  .status { display: flex; gap: 12px; align-items: center; font-size: 12px; color: var(--muted); }
+  .status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 2s infinite; }
+  .status .dot.stale { background: var(--yellow); }
+  .status .dot.error { background: var(--red); }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .grid { display: grid; gap: 16px; }
+  .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 900px) { .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px;
+  }
+  .panel h2 {
+    margin: 0 0 12px 0; font-size: 11px; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase;
+    border-bottom: 1px solid var(--border); padding-bottom: 8px;
+  }
+
+  /* Hero signal block */
+  .hero { display: grid; grid-template-columns: 2fr 3fr; gap: 16px; }
+  @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
+  .action-box { padding: 24px; text-align: center; border-radius: 8px; }
+  .action-box .label { font-size: 11px; letter-spacing: 0.2em; color: var(--muted); }
+  .action-box .action { font-size: 56px; font-weight: 700; letter-spacing: 0.05em; margin: 8px 0; }
+  .action-box .action.LONG { color: var(--green); }
+  .action-box .action.SHORT { color: var(--red); }
+  .action-box .action.WAIT { color: var(--yellow); }
+  .action-box .price { font-size: 28px; font-weight: 600; margin: 8px 0; }
+  .action-box .meta { font-size: 12px; color: var(--muted); }
+  .action-box .conf { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 11px; letter-spacing: 0.1em; margin-top: 8px; }
+  .conf.HIGH { background: rgba(74, 222, 128, 0.15); color: var(--green); }
+  .conf.MEDIUM { background: rgba(251, 191, 36, 0.15); color: var(--yellow); }
+  .conf.LOW { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+  .session-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; background: var(--panel-2); font-size: 11px; margin-left: 6px; }
+  .session-badge.warn { background: rgba(251, 191, 36, 0.15); color: var(--yellow); }
+  .session-badge.closed { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+
+  /* Entry plan */
+  .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--border); }
+  .row:last-child { border-bottom: 0; }
+  .row .k { color: var(--muted); }
+  .row .v { font-weight: 600; }
+  .row .v.green { color: var(--green); }
+  .row .v.red { color: var(--red); }
+  .row .v.muted { color: var(--muted); }
+
+  /* Scorecard */
+  .score-row { display: grid; grid-template-columns: 130px 80px 1fr; padding: 8px 0; border-bottom: 1px dashed var(--border); align-items: center; gap: 12px; }
+  .score-row:last-child { border-bottom: 0; }
+  .score-tag { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; letter-spacing: 0.1em; text-align: center; font-weight: 700; }
+  .score-tag.PASS, .score-tag.BULLISH { background: rgba(74, 222, 128, 0.15); color: var(--green); }
+  .score-tag.FAIL, .score-tag.BEARISH { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+  .score-tag.NEUTRAL { background: rgba(107, 122, 144, 0.2); color: var(--muted); }
+  .score-row .reason { color: var(--muted); font-size: 12px; }
+  .score-row .name { font-weight: 600; }
+
+  /* News list */
+  .news-item { padding: 10px 0; border-bottom: 1px dashed var(--border); }
+  .news-item:last-child { border-bottom: 0; }
+  .news-item .title { font-weight: 600; margin-bottom: 4px; }
+  .news-item .meta { color: var(--muted); font-size: 11px; }
+  .news-item .badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; margin-right: 6px; }
+  .news-item .badge.binary { background: rgba(248, 113, 113, 0.2); color: var(--red); }
+  .news-item .badge.macro { background: rgba(96, 165, 250, 0.2); color: var(--blue); }
+
+  /* Settings */
+  .settings { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .settings label { color: var(--muted); font-size: 11px; display: flex; align-items: center; gap: 6px; }
+  .settings input, .settings select {
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+    padding: 4px 8px; border-radius: 4px; font-family: var(--mono); font-size: 12px;
+  }
+  .settings input[type="number"] { width: 80px; }
+  .settings button {
+    background: var(--accent); color: var(--bg); border: 0; padding: 6px 14px;
+    border-radius: 4px; cursor: pointer; font-family: var(--mono); font-weight: 600; font-size: 12px;
+  }
+  .settings button:hover { opacity: 0.85; }
+  .settings button.ghost { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); }
+
+  .reasoning { color: var(--muted); font-size: 12px; line-height: 1.7; }
+  .reasoning strong { color: var(--text); }
+
+  ul.exits { margin: 0; padding-left: 18px; color: var(--muted); }
+  ul.exits li { padding: 3px 0; }
+  ul.exits li strong { color: var(--text); }
+
+  .disclaimer {
+    margin-top: 24px; padding: 16px; background: rgba(248, 113, 113, 0.05); border: 1px solid rgba(248, 113, 113, 0.3);
+    border-radius: 8px; color: var(--muted); font-size: 11px; line-height: 1.6;
+  }
+  .disclaimer strong { color: var(--red); }
+
+  .err {
+    background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.4);
+    color: var(--red); padding: 12px; border-radius: 6px; margin-bottom: 16px;
+  }
+
+  .sources { margin: 0; padding: 0; list-style: none; columns: 2; column-gap: 24px; font-size: 11px; }
+  @media (max-width: 700px) { .sources { columns: 1; } }
+  .sources li { padding: 2px 0; break-inside: avoid; }
+
+  .footer-meta { color: var(--muted); font-size: 11px; text-align: center; margin-top: 16px; }
+  .small { font-size: 11px; color: var(--muted); }
+
+  .spark { width: 100%; height: 48px; }
+  .spark path { fill: none; stroke-width: 1.5; }
+  .spark .line { stroke: var(--accent); }
+  .spark .vwap { stroke: var(--yellow); stroke-dasharray: 3,3; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>SIGNAL DECK FUTURES <span class="sub">— MES/ES Live · Paper Trading</span></h1>
+    <div class="status">
+      <span id="lastUpdate">— never updated —</span>
+      <span class="dot" id="statusDot" title="connection"></span>
+    </div>
+  </header>
+
+  <div id="errorBar"></div>
+
+  <!-- HERO -->
+  <div class="hero" style="margin-bottom: 16px;">
+    <div class="panel action-box" id="actionPanel">
+      <div class="label">ACTION</div>
+      <div class="action WAIT" id="action">—</div>
+      <div class="price" id="price">—</div>
+      <div class="meta">
+        <span id="symbolLabel">ES=F</span> ·
+        <span id="changeLabel">—</span> ·
+        <span class="session-badge" id="sessionBadge">—</span>
+      </div>
+      <div class="conf" id="conf">CONFIDENCE: —</div>
+    </div>
+
+    <div class="panel">
+      <h2>Entry Plan</h2>
+      <div id="entryPlan">
+        <div class="row"><span class="k">Entry</span><span class="v" id="ep_entry">—</span></div>
+        <div class="row"><span class="k">Stop</span><span class="v red" id="ep_stop">—</span></div>
+        <div class="row"><span class="k">Target 1</span><span class="v green" id="ep_t1">—</span></div>
+        <div class="row"><span class="k">Target 2</span><span class="v green" id="ep_t2">—</span></div>
+        <div class="row"><span class="k">Risk / Reward</span><span class="v" id="ep_rr">—</span></div>
+        <div class="row"><span class="k">MES Risk / Reward $</span><span class="v" id="ep_mes_dollars">—</span></div>
+        <div class="row"><span class="k">ES Risk / Reward $</span><span class="v muted" id="ep_es_dollars">—</span></div>
+      </div>
+      <svg class="spark" id="spark" viewBox="0 0 400 48" preserveAspectRatio="none" style="margin-top: 8px;"></svg>
+      <div class="small" style="text-align:right;">Last 60 5-min bars · VWAP dashed</div>
+    </div>
+  </div>
+
+  <!-- LEVELS + SCORECARD -->
+  <div class="grid cols-2" style="margin-bottom: 16px;">
+    <div class="panel">
+      <h2>Key Levels (Front-Month)</h2>
+      <div class="row"><span class="k">Overnight High</span><span class="v" id="lv_onh">—</span></div>
+      <div class="row"><span class="k">Overnight Low</span><span class="v" id="lv_onl">—</span></div>
+      <div class="row"><span class="k">Prior Day High</span><span class="v" id="lv_pdh">—</span></div>
+      <div class="row"><span class="k">Prior Day Low</span><span class="v" id="lv_pdl">—</span></div>
+      <div class="row"><span class="k">Prior Day Close</span><span class="v" id="lv_pdc">—</span></div>
+      <div class="row"><span class="k">Today's High / Low</span><span class="v" id="lv_thl">—</span></div>
+      <div class="row"><span class="k">VWAP (RTH)</span><span class="v" id="lv_vwap">—</span></div>
+      <div class="row"><span class="k">RSI(14) / 5m</span><span class="v" id="lv_rsi">—</span></div>
+      <div class="row"><span class="k">MACD Hist / 5m</span><span class="v" id="lv_macd">—</span></div>
+    </div>
+
+    <div class="panel">
+      <h2>Scorecard</h2>
+      <div class="score-row">
+        <span class="name">MACD Momentum</span>
+        <span class="score-tag NEUTRAL" id="sc_macd">—</span>
+        <span class="reason" id="sc_macd_r">—</span>
+      </div>
+      <div class="score-row">
+        <span class="name">RSI + VWAP</span>
+        <span class="score-tag NEUTRAL" id="sc_rsi">—</span>
+        <span class="reason" id="sc_rsi_r">—</span>
+      </div>
+      <div class="score-row">
+        <span class="name">Volume / Flow</span>
+        <span class="score-tag NEUTRAL" id="sc_cvd">—</span>
+        <span class="reason" id="sc_cvd_r">—</span>
+      </div>
+      <div class="score-row">
+        <span class="name">Trend / Pattern</span>
+        <span class="score-tag NEUTRAL" id="sc_hist">—</span>
+        <span class="reason" id="sc_hist_r">—</span>
+      </div>
+      <div class="score-row">
+        <span class="name">News / Macro</span>
+        <span class="score-tag NEUTRAL" id="sc_news">—</span>
+        <span class="reason" id="sc_news_r">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- REASONING + EXITS -->
+  <div class="grid cols-2" style="margin-bottom: 16px;">
+    <div class="panel">
+      <h2>Reasoning</h2>
+      <div class="reasoning" id="reasoning">—</div>
+    </div>
+    <div class="panel">
+      <h2>Exit Triggers</h2>
+      <ul class="exits" id="exits"><li>Generating plan…</li></ul>
+      <h2 style="margin-top: 16px;">Risk Management</h2>
+      <ul class="exits" id="risk"><li>—</li></ul>
+    </div>
+  </div>
+
+  <!-- NEWS -->
+  <div class="panel" style="margin-bottom: 16px;">
+    <h2>News &amp; Macro Catalysts <span class="small" id="newsMeta"></span></h2>
+    <div id="news">Loading headlines…</div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" style="margin-bottom: 16px;">
+    <h2>Settings</h2>
+    <div class="settings">
+      <label>Symbol
+        <select id="optSymbol">
+          <option value="ES=F">ES (E-mini S&amp;P 500)</option>
+          <option value="NQ=F">NQ (E-mini Nasdaq 100)</option>
+          <option value="YM=F">YM (E-mini Dow)</option>
+          <option value="RTY=F">RTY (E-mini Russell 2000)</option>
+        </select>
+      </label>
+      <label>Account ($)
+        <input type="number" id="optAccount" value="1000" min="100" step="100" />
+      </label>
+      <label>Risk % / trade
+        <input type="number" id="optRisk" value="2" min="0.1" step="0.1" />
+      </label>
+      <label>Refresh (sec)
+        <input type="number" id="optRefresh" value="30" min="10" step="5" />
+      </label>
+      <label>
+        <input type="checkbox" id="optSound" /> Audio alert on action change
+      </label>
+      <button id="btnRefresh">Refresh Now</button>
+      <button class="ghost" id="btnReset">Reset</button>
+    </div>
+    <div class="small" style="margin-top: 8px;">
+      Symbol uses Yahoo Finance continuous front-month. MES math is derived from ES (1 tick = 0.25 pt = $1.25 on MES, $12.50 on ES). Settings persist in localStorage.
+    </div>
+  </div>
+
+  <!-- SOURCES -->
+  <div class="panel" style="margin-bottom: 16px;">
+    <h2>Data Sources</h2>
+    <ul class="sources">
+      <li><a href="https://finance.yahoo.com/quote/ES=F/" target="_blank" rel="noopener">Yahoo Finance — ES=F front-month</a></li>
+      <li><a href="https://www.cmegroup.com/markets/equities/sp/sandp-futures.html" target="_blank" rel="noopener">CME Group — S&amp;P 500 Futures</a></li>
+      <li><a href="https://www.investing.com/indices/us-spx-500-futures" target="_blank" rel="noopener">Investing.com — S&amp;P 500 Futures</a></li>
+      <li><a href="https://www.tradingview.com/symbols/CME_MINI-ES1!/" target="_blank" rel="noopener">TradingView — ES1!</a></li>
+      <li><a href="https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm" target="_blank" rel="noopener">Federal Reserve — FOMC Calendar</a></li>
+      <li><a href="https://us.econoday.com/" target="_blank" rel="noopener">Econoday — Economic Calendar</a></li>
+    </ul>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    <strong>RISK DISCLAIMER:</strong> Educational tool for paper trading practice only. <strong>Not financial advice.</strong>
+    Futures are leveraged and you can lose more than your initial deposit. Past patterns do not guarantee future results.
+    Signals are generated from public delayed data (typically 15–20 minute delay on Yahoo Finance) using simple
+    technical heuristics — they are NOT trade recommendations. Never risk money you cannot afford to lose.
+    Verify every level on your broker before clicking. If a binary event (FOMC, CPI, NFP, major earnings) is within
+    30 minutes, the dashboard will force WAIT — but you are responsible for your own risk management.
+  </div>
+
+  <div class="footer-meta">
+    Signal Deck Futures · open-source educational artifact ·
+    <a href="https://github.com/NotJud/Kira-Claude-Builds" target="_blank" rel="noopener">source</a>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+ * SIGNAL DECK FUTURES — Self-Updating Dashboard
+ * Pulls live ES futures (Yahoo via CORS proxies), computes
+ * MACD/RSI/VWAP, classifies session, scrapes news headlines,
+ * and renders the full Signal Deck output every N seconds.
+ * ============================================================ */
+
+const CFG = {
+  defaults: {
+    symbol: 'ES=F',
+    account: 1000,
+    riskPct: 2,
+    refresh: 30,
+    sound: false,
+  },
+  // CORS proxies — tried in order. Public, free, may rate-limit.
+  proxies: [
+    (u) => 'https://corsproxy.io/?' + encodeURIComponent(u),
+    (u) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+    (u) => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+    (u) => 'https://thingproxy.freeboard.io/fetch/' + u,
+  ],
+  binaryKeywords: [
+    'fomc', 'fed decision', 'fed rate', 'rate decision', 'powell', 'warsh',
+    'cpi', 'ppi', 'pce', 'nfp', 'nonfarm', 'jobless claims',
+    'gdp', 'jackson hole', 'fed minutes', 'fomc minutes',
+    'earnings', 'guidance', 'unch', 'iran', 'tariff', 'sanctions'
+  ],
+};
+
+let state = { ...CFG.defaults, lastAction: null, lastError: null };
+let refreshTimer = null;
+
+/* ---------- persistence ---------- */
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem('signaldeck') || '{}');
+    Object.assign(state, s);
+  } catch (e) {}
+  document.getElementById('optSymbol').value = state.symbol;
+  document.getElementById('optAccount').value = state.account;
+  document.getElementById('optRisk').value = state.riskPct;
+  document.getElementById('optRefresh').value = state.refresh;
+  document.getElementById('optSound').checked = !!state.sound;
+}
+function saveSettings() {
+  state.symbol = document.getElementById('optSymbol').value;
+  state.account = +document.getElementById('optAccount').value || 1000;
+  state.riskPct = +document.getElementById('optRisk').value || 2;
+  state.refresh = Math.max(10, +document.getElementById('optRefresh').value || 30);
+  state.sound = document.getElementById('optSound').checked;
+  localStorage.setItem('signaldeck', JSON.stringify({
+    symbol: state.symbol, account: state.account, riskPct: state.riskPct,
+    refresh: state.refresh, sound: state.sound
+  }));
+}
+
+/* ---------- network ---------- */
+async function fetchWithProxies(url, asJson = true) {
+  let lastErr;
+  for (const p of CFG.proxies) {
+    try {
+      const r = await fetch(p(url), { cache: 'no-store' });
+      if (!r.ok) { lastErr = new Error('HTTP ' + r.status); continue; }
+      return asJson ? await r.json() : await r.text();
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr || new Error('All proxies failed');
+}
+
+async function fetchYahooChart(symbol, interval, range) {
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=${interval}&range=${range}&includePrePost=true`;
+  const data = await fetchWithProxies(url, true);
+  const result = data?.chart?.result?.[0];
+  if (!result) throw new Error('Yahoo returned no chart data');
+  const meta = result.meta || {};
+  const ts = result.timestamp || [];
+  const q = result.indicators?.quote?.[0] || {};
+  const bars = ts.map((t, i) => ({
+    time: t * 1000,
+    open: q.open?.[i],
+    high: q.high?.[i],
+    low: q.low?.[i],
+    close: q.close?.[i],
+    volume: q.volume?.[i] || 0,
+  })).filter(b => b.close != null && b.high != null && b.low != null);
+  return { meta, bars };
+}
+
+async function fetchYahooNews(symbol) {
+  // Yahoo Finance RSS for the symbol
+  const rss = `https://feeds.finance.yahoo.com/rss/2.0/headline?s=${encodeURIComponent(symbol)}&region=US&lang=en-US`;
+  const xml = await fetchWithProxies(rss, false);
+  const doc = new DOMParser().parseFromString(xml, 'text/xml');
+  const items = [...doc.querySelectorAll('item')].slice(0, 10).map(it => ({
+    title: it.querySelector('title')?.textContent || '',
+    link: it.querySelector('link')?.textContent || '',
+    pubDate: it.querySelector('pubDate')?.textContent || '',
+    description: it.querySelector('description')?.textContent || '',
+  }));
+  return items;
+}
+
+/* ---------- indicators ---------- */
+function ema(values, period) {
+  const k = 2 / (period + 1);
+  const out = new Array(values.length).fill(null);
+  let e = values[0]; out[0] = e;
+  for (let i = 1; i < values.length; i++) {
+    e = values[i] * k + e * (1 - k);
+    out[i] = e;
+  }
+  return out;
+}
+function macd(closes, fast = 12, slow = 26, sigP = 9) {
+  const f = ema(closes, fast), s = ema(closes, slow);
+  const line = closes.map((_, i) => f[i] - s[i]);
+  const sig = ema(line, sigP);
+  const hist = line.map((v, i) => v - sig[i]);
+  return { line, sig, hist };
+}
+function rsi(closes, period = 14) {
+  const out = new Array(closes.length).fill(null);
+  if (closes.length <= period) return out;
+  let gain = 0, loss = 0;
+  for (let i = 1; i <= period; i++) {
+    const d = closes[i] - closes[i - 1];
+    if (d > 0) gain += d; else loss -= d;
+  }
+  gain /= period; loss /= period;
+  out[period] = 100 - 100 / (1 + (loss === 0 ? 100 : gain / loss));
+  for (let i = period + 1; i < closes.length; i++) {
+    const d = closes[i] - closes[i - 1];
+    const g = d > 0 ? d : 0, l = d < 0 ? -d : 0;
+    gain = (gain * (period - 1) + g) / period;
+    loss = (loss * (period - 1) + l) / period;
+    out[i] = 100 - 100 / (1 + (loss === 0 ? 100 : gain / loss));
+  }
+  return out;
+}
+
+/* ---------- ET time helpers ---------- */
+function etParts(date) {
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, weekday: 'short'
+  });
+  const parts = Object.fromEntries(fmt.formatToParts(date).map(p => [p.type, p.value]));
+  return {
+    year: +parts.year, month: +parts.month, day: +parts.day,
+    hour: (+parts.hour) % 24, minute: +parts.minute, second: +parts.second,
+    weekday: parts.weekday,
+  };
+}
+function dayKey(et) { return `${et.year}-${String(et.month).padStart(2,'0')}-${String(et.day).padStart(2,'0')}`; }
+function dayKeyOf(date) { return dayKey(etParts(date)); }
+function minutesET(et) { return et.hour * 60 + et.minute; }
+
+/* The "futures session" runs 18:00 ET previous day -> 17:00 ET today.
+   We label each bar with the date of its RTH session (today if after 17:00 ET, today if before 17:00 ET). */
+function futuresSessionDate(date) {
+  const et = etParts(date);
+  if (et.hour >= 18) {
+    const d = new Date(Date.UTC(et.year, et.month - 1, et.day) + 24 * 3600 * 1000);
+    return dayKeyOf(d);
+  }
+  return dayKey(et);
+}
+
+function classifySession(date) {
+  const et = etParts(date);
+  const wd = et.weekday;
+  // Weekend closure: Sat all day, Sun before 18:00 ET, Fri after 17:00 ET
+  if (wd === 'Sat') return { session: 'CLOSED (weekend)', warn: true, closed: true };
+  if (wd === 'Sun' && minutesET(et) < 18 * 60) return { session: 'CLOSED (pre-Sun open)', warn: true, closed: true };
+  if (wd === 'Fri' && minutesET(et) >= 17 * 60) return { session: 'CLOSED (post-Fri close)', warn: true, closed: true };
+  const m = minutesET(et);
+  // Daily break 17:00-18:00
+  if (m >= 17 * 60 && m < 18 * 60) return { session: 'CLOSED (daily break)', warn: true, closed: true };
+  // RTH 09:30 - 16:00
+  if (m >= 9 * 60 + 30 && m < 16 * 60) return { session: 'RTH', warn: false, closed: false };
+  // Pre-Market 06:00 - 09:30
+  if (m >= 6 * 60 && m < 9 * 60 + 30) return { session: 'Pre-Market', warn: true, closed: false };
+  // Late session 16:00 - 17:00
+  if (m >= 16 * 60 && m < 17 * 60) return { session: 'ETH-Late', warn: true, closed: false };
+  // Else ETH Globex
+  return { session: 'ETH-Globex', warn: true, closed: false };
+}
+
+/* ---------- session-aware VWAP and levels ---------- */
+function rthVwap(bars) {
+  const out = [];
+  let pv = 0, vv = 0;
+  let lastSession = null;
+  for (const b of bars) {
+    const date = new Date(b.time);
+    const et = etParts(date);
+    const m = minutesET(et);
+    const inRTH = (m >= 9 * 60 + 30 && m < 16 * 60);
+    const session = dayKey(et);
+    if (inRTH) {
+      if (session !== lastSession) { pv = 0; vv = 0; lastSession = session; }
+      const tp = (b.high + b.low + b.close) / 3;
+      pv += tp * (b.volume || 0);
+      vv += (b.volume || 0);
+      out.push(vv > 0 ? pv / vv : null);
+    } else {
+      out.push(null);
+    }
+  }
+  return out;
+}
+
+function computeLevels(bars5m, todayET) {
+  // Group bars by futures session date; pick the previous and current day
+  const groups = new Map();
+  for (const b of bars5m) {
+    const k = futuresSessionDate(new Date(b.time));
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(b);
+  }
+  const keys = [...groups.keys()].sort();
+  const today = dayKey(todayET);
+  const todayBars = groups.get(today) || [];
+  // prior session = last key strictly before today
+  const priorKey = [...keys].reverse().find(k => k < today);
+  const priorBars = priorKey ? (groups.get(priorKey) || []) : [];
+
+  // RTH bars within a group
+  const rthOf = (arr) => arr.filter(b => {
+    const m = minutesET(etParts(new Date(b.time)));
+    return m >= 9 * 60 + 30 && m < 16 * 60;
+  });
+  // Overnight = bars in today's session BEFORE 09:30 ET (i.e. previous day 18:00 -> today 09:30)
+  const onOf = (arr) => arr.filter(b => {
+    const et = etParts(new Date(b.time));
+    const m = minutesET(et);
+    return (et.hour >= 18) || (m < 9 * 60 + 30);
+  });
+
+  function hl(arr) {
+    if (!arr.length) return { high: null, low: null, close: null };
+    let h = -Infinity, l = Infinity;
+    for (const b of arr) { if (b.high > h) h = b.high; if (b.low < l) l = b.low; }
+    return { high: h, low: l, close: arr[arr.length - 1].close };
+  }
+
+  const onBars = onOf(todayBars);
+  const priorRTH = rthOf(priorBars);
+  const todayRTH = rthOf(todayBars);
+
+  return {
+    on: hl(onBars),
+    priorDay: hl(priorRTH.length ? priorRTH : priorBars),
+    today: hl(todayRTH.length ? todayRTH : todayBars),
+  };
+}
+
+/* ---------- signal logic ---------- */
+function classifyNews(items) {
+  const flagged = [];
+  let bullishHints = 0, bearishHints = 0;
+  for (const it of items) {
+    const t = (it.title + ' ' + (it.description || '')).toLowerCase();
+    const binary = CFG.binaryKeywords.some(k => t.includes(k));
+    let tone = 'NEUTRAL';
+    if (/(beat|rally|record|gain|surge|upbeat|bullish|hike|cooler|easing|cool inflation)/.test(t)) { tone = 'BULLISH'; bullishHints++; }
+    if (/(miss|sink|slide|drop|tumble|sell-off|bearish|hot inflation|hawkish|crisis|tension|war|tariff|sanction)/.test(t)) { tone = 'BEARISH'; bearishHints++; }
+    flagged.push({ ...it, binary, tone });
+  }
+  let macroTone = 'NEUTRAL';
+  if (bullishHints >= bearishHints + 2) macroTone = 'BULLISH';
+  if (bearishHints >= bullishHints + 2) macroTone = 'BEARISH';
+  const hasBinary = flagged.some(f => f.binary);
+  return { items: flagged, macroTone, hasBinary };
+}
+
+function buildSignal(ctx) {
+  const { bars5m, barsDaily, levels, news, sessionInfo, symbol } = ctx;
+  const closes = bars5m.map(b => b.close);
+  const last = closes.length - 1;
+  const price = closes[last];
+  const m = macd(closes);
+  const r = rsi(closes);
+  const v = rthVwap(bars5m);
+
+  const macdHist = m.hist[last];
+  const macdHistPrev = m.hist[last - 1] ?? 0;
+  const macdLine = m.line[last];
+  const macdSig = m.sig[last];
+  const macdBull = macdLine > macdSig && macdHist >= macdHistPrev;
+  const macdBear = macdLine < macdSig && macdHist <= macdHistPrev;
+
+  const rsiNow = r[last];
+  // Find most recent VWAP value (it's null outside RTH)
+  let vwapNow = null;
+  for (let i = last; i >= Math.max(0, last - 80); i--) { if (v[i] != null) { vwapNow = v[i]; break; } }
+  const aboveVwap = vwapNow != null ? price > vwapNow : null;
+
+  // Volume / flow approximation: compare last 10-bar volume vs prior 10-bar avg, signed by close direction
+  const recent = bars5m.slice(-20);
+  const upVol = recent.filter(b => b.close >= b.open).reduce((s, b) => s + (b.volume || 0), 0);
+  const downVol = recent.filter(b => b.close < b.open).reduce((s, b) => s + (b.volume || 0), 0);
+  const totalVol = upVol + downVol || 1;
+  const flowBias = (upVol - downVol) / totalVol; // -1..1
+
+  // Trend regime from daily 20/50 EMA
+  const dCloses = barsDaily.map(b => b.close);
+  const e20 = ema(dCloses, 20), e50 = ema(dCloses, 50);
+  const dLast = dCloses.length - 1;
+  const trendBull = dCloses[dLast] > e20[dLast] && e20[dLast] > (e50[dLast] || -Infinity);
+  const trendBear = dCloses[dLast] < e20[dLast] && e20[dLast] < (e50[dLast] || Infinity);
+
+  // News
+  const newsClassified = classifyNews(news);
+
+  // ----- score each leg -----
+  function tag(bull, bear) { return bull ? 'PASS-BULL' : bear ? 'PASS-BEAR' : 'NEUTRAL'; }
+  const sc = {
+    macd: { tag: tag(macdBull, macdBear), reason:
+      `Line ${macdLine?.toFixed(2)} vs signal ${macdSig?.toFixed(2)}, hist ${macdHist?.toFixed(2)} ${macdHist >= macdHistPrev ? 'expanding' : 'contracting'}.` },
+    rsi: { tag: (() => {
+      if (rsiNow == null || vwapNow == null) return 'NEUTRAL';
+      if (rsiNow > 70 && !aboveVwap) return 'PASS-BEAR';      // overbought + below VWAP → mean reversion short
+      if (rsiNow < 30 && aboveVwap) return 'PASS-BULL';        // oversold + above VWAP → mean reversion long
+      if (aboveVwap && rsiNow > 50 && rsiNow < 70) return 'PASS-BULL';
+      if (!aboveVwap && rsiNow < 50 && rsiNow > 30) return 'PASS-BEAR';
+      return 'NEUTRAL';
+    })(), reason: rsiNow == null ? 'Insufficient data' :
+        `RSI ${rsiNow.toFixed(1)} · price ${aboveVwap == null ? '?' : aboveVwap ? 'above' : 'below'} VWAP ${vwapNow ? vwapNow.toFixed(2) : '—'}.` },
+    cvd: { tag: flowBias > 0.15 ? 'PASS-BULL' : flowBias < -0.15 ? 'PASS-BEAR' : 'NEUTRAL',
+           reason: `Up-bar volume share ${(((upVol)/totalVol)*100).toFixed(0)}% over last 20×5m bars (proxy CVD).` },
+    hist: { tag: trendBull ? 'PASS-BULL' : trendBear ? 'PASS-BEAR' : 'NEUTRAL',
+            reason: `Daily close ${dCloses[dLast]?.toFixed(2)} vs EMA20 ${e20[dLast]?.toFixed(2)} / EMA50 ${e50[dLast]?.toFixed(2)}.` },
+    news: { tag: newsClassified.macroTone === 'BULLISH' ? 'PASS-BULL'
+                : newsClassified.macroTone === 'BEARISH' ? 'PASS-BEAR' : 'NEUTRAL',
+            reason: `${newsClassified.items.length} headlines · skew ${newsClassified.macroTone}${newsClassified.hasBinary ? ' · BINARY EVENT in feed' : ''}.` },
+  };
+
+  // Aggregate
+  const bullCount = Object.values(sc).filter(x => x.tag === 'PASS-BULL').length;
+  const bearCount = Object.values(sc).filter(x => x.tag === 'PASS-BEAR').length;
+  let action = 'WAIT';
+  let confidence = 'LOW';
+  let waitReason = '';
+
+  if (sessionInfo.closed) {
+    waitReason = 'Market closed — no execution. Plan only.';
+  } else if (newsClassified.hasBinary) {
+    waitReason = 'Binary event detected in news feed — never hold through FOMC/CPI/NFP/major earnings prints.';
+  } else if (bullCount >= 3 && bearCount === 0) {
+    action = 'LONG';
+    confidence = bullCount >= 4 ? 'HIGH' : 'MEDIUM';
+  } else if (bearCount >= 3 && bullCount === 0) {
+    action = 'SHORT';
+    confidence = bearCount >= 4 ? 'HIGH' : 'MEDIUM';
+  } else {
+    waitReason = 'Insufficient confluence — need 3+ aligned signals with no opposition.';
+  }
+
+  // ----- entry plan -----
+  // Use ATR-equivalent: avg 5m range over last 20 bars
+  const last20 = bars5m.slice(-20);
+  const avgRange = last20.reduce((s, b) => s + (b.high - b.low), 0) / Math.max(1, last20.length);
+  // Stop: max(avgRange*2, 0.15% of price)
+  let stopDist = Math.max(avgRange * 2, price * 0.0015);
+  // Round to 0.25 tick
+  stopDist = Math.round(stopDist * 4) / 4;
+  if (stopDist < 2) stopDist = 2;       // min 2-pt stop on ES
+  if (stopDist > 15) stopDist = 15;     // cap risk
+
+  const entry = price;
+  const stop = action === 'LONG' ? entry - stopDist : action === 'SHORT' ? entry + stopDist : entry - stopDist;
+  const t1Dist = Math.round(stopDist * 1.5 * 4) / 4;
+  const t2Dist = Math.round(stopDist * 3 * 4) / 4;
+  const t1 = action === 'LONG' ? entry + t1Dist : action === 'SHORT' ? entry - t1Dist : entry + t1Dist;
+  const t2 = action === 'LONG' ? entry + t2Dist : action === 'SHORT' ? entry - t2Dist : entry + t2Dist;
+
+  // ----- risk management -----
+  const maxRiskDollars = state.account * (state.riskPct / 100);
+  const mesPerPoint = 5;
+  const esPerPoint = 50;
+  const stopMES = stopDist * mesPerPoint;
+  const stopES = stopDist * esPerPoint;
+  const t1MES = t1Dist * mesPerPoint;
+  const t2MES = t2Dist * mesPerPoint;
+
+  // Position size hint
+  let mesContractsAllowed = Math.floor(maxRiskDollars / stopMES);
+  if (mesContractsAllowed < 1) mesContractsAllowed = 0;
+
+  // ----- reasoning -----
+  const reasoning = (() => {
+    const bias = action === 'LONG' ? 'long' : action === 'SHORT' ? 'short' : 'no-trade';
+    const macdTxt = sc.macd.tag === 'PASS-BULL' ? 'momentum is bullish'
+                  : sc.macd.tag === 'PASS-BEAR' ? 'momentum is bearish'
+                  : 'momentum is flat';
+    const rsiTxt = sc.rsi.tag === 'PASS-BULL' ? 'RSI/VWAP supports longs'
+                 : sc.rsi.tag === 'PASS-BEAR' ? 'RSI/VWAP supports shorts'
+                 : 'RSI/VWAP is neutral';
+    const trendTxt = sc.hist.tag === 'PASS-BULL' ? 'daily trend is up'
+                   : sc.hist.tag === 'PASS-BEAR' ? 'daily trend is down'
+                   : 'daily trend is mixed';
+    if (action === 'WAIT') {
+      return `<strong>WAIT.</strong> ${waitReason} Current read: ${macdTxt}, ${rsiTxt}, ${trendTxt}. Re-check after the next refresh; the dashboard will switch to LONG/SHORT automatically when 3+ signals align.`;
+    }
+    return `<strong>${action} bias.</strong> ${macdTxt[0].toUpperCase() + macdTxt.slice(1)}, ${rsiTxt}, and ${trendTxt}. Confluence score: ${bullCount} bull / ${bearCount} bear out of 5. Trade is sized off the 20-bar 5-min range (≈${avgRange.toFixed(2)} pts) with a ${stopDist}-pt stop targeting 1.5R / 3R.`;
+  })();
+
+  // ----- exits -----
+  const exits = action === 'WAIT' ? [
+    'No position to manage. Hold cash.',
+    'Re-evaluate at next auto-refresh; if scorecard flips to 3+ aligned PASS, plan a fresh entry on a 5-min retest of the trigger level.',
+    sessionInfo.closed ? 'Market closed — verify levels at next open.' : 'If inside a binary event window, sit out until 5 min after release.'
+  ] : [
+    `Take 50% off at <strong>T1 ${t1.toFixed(2)}</strong> (${t1Dist} pts = MES +$${t1MES.toFixed(0)}); move stop to breakeven.`,
+    `Trail remainder with 5-min swing ${action === 'LONG' ? 'low' : 'high'} toward <strong>T2 ${t2.toFixed(2)}</strong> (${t2Dist} pts = MES +$${t2MES.toFixed(0)}).`,
+    `Hard stop-out: 5-min close beyond <strong>${stop.toFixed(2)}</strong> (= MES –$${stopMES.toFixed(0)} / ES –$${stopES.toFixed(0)}).`,
+    `Time stop: flat by 15:50 ET — never carry intraday positions through the 16:00 cash close on event days.`
+  ];
+
+  const risk = [
+    `Max risk this trade: <strong>$${maxRiskDollars.toFixed(0)}</strong> (${state.riskPct}% of $${state.account}).`,
+    `Suggested size: <strong>${mesContractsAllowed} MES contract${mesContractsAllowed === 1 ? '' : 's'}</strong> at ${stopDist}-pt stop = $${stopMES.toFixed(0)} per contract.`,
+    `Cap day at 3 trades. Two consecutive losses → stop trading for the session.`,
+    `Never increase size until 20+ profitable sessions are logged.`,
+  ];
+
+  return {
+    action, confidence, price, entry, stop, t1, t2, stopDist, t1Dist, t2Dist,
+    stopMES, stopES, t1MES, t2MES, mesContractsAllowed,
+    rsiNow, vwapNow, macdHist, macdLine, macdSig,
+    sc, reasoning, exits, risk, news: newsClassified, levels, sessionInfo, symbol,
+  };
+}
+
+/* ---------- rendering ---------- */
+function tagDisplay(t) {
+  if (t === 'PASS-BULL' || t === 'PASS-BEAR') return 'PASS';
+  return t || 'NEUTRAL';
+}
+function tagClass(t) {
+  if (t === 'PASS-BULL' || t === 'PASS-BEAR') return 'PASS';
+  return t || 'NEUTRAL';
+}
+
+function fmt(n, d = 2) {
+  if (n == null || !isFinite(n)) return '—';
+  return Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+}
+
+function render(sig, change) {
+  document.getElementById('action').textContent = sig.action;
+  document.getElementById('action').className = 'action ' + sig.action;
+  document.getElementById('price').textContent = fmt(sig.price, 2);
+  document.getElementById('symbolLabel').textContent = sig.symbol;
+  const chTxt = change == null ? '—' : `${change.pct >= 0 ? '+' : ''}${change.pct.toFixed(2)}% (${change.abs >= 0 ? '+' : ''}${change.abs.toFixed(2)})`;
+  const chEl = document.getElementById('changeLabel');
+  chEl.textContent = chTxt;
+  chEl.style.color = change == null ? 'var(--muted)' : (change.abs >= 0 ? 'var(--green)' : 'var(--red)');
+
+  const sb = document.getElementById('sessionBadge');
+  sb.textContent = sig.sessionInfo.session;
+  sb.className = 'session-badge' + (sig.sessionInfo.closed ? ' closed' : sig.sessionInfo.warn ? ' warn' : '');
+  document.getElementById('conf').textContent = 'CONFIDENCE: ' + sig.confidence;
+  document.getElementById('conf').className = 'conf ' + sig.confidence;
+
+  // Entry plan
+  document.getElementById('ep_entry').textContent = fmt(sig.entry, 2);
+  document.getElementById('ep_stop').textContent = `${fmt(sig.stop, 2)}  (${sig.stopDist} pts)`;
+  document.getElementById('ep_t1').textContent = `${fmt(sig.t1, 2)}  (+${sig.t1Dist} pts)`;
+  document.getElementById('ep_t2').textContent = `${fmt(sig.t2, 2)}  (+${sig.t2Dist} pts)`;
+  document.getElementById('ep_rr').textContent = sig.action === 'WAIT' ? '—' : `1:1.5 to T1 · 1:3 to T2`;
+  document.getElementById('ep_mes_dollars').textContent = sig.action === 'WAIT' ? '—'
+    : `Risk –$${sig.stopMES.toFixed(0)} · T1 +$${sig.t1MES.toFixed(0)} · T2 +$${sig.t2MES.toFixed(0)}`;
+  document.getElementById('ep_es_dollars').textContent = sig.action === 'WAIT' ? '—'
+    : `Risk –$${sig.stopES.toFixed(0)} · T1 +$${(sig.t1Dist * 50).toFixed(0)} · T2 +$${(sig.t2Dist * 50).toFixed(0)}`;
+
+  // Levels
+  document.getElementById('lv_onh').textContent = fmt(sig.levels.on.high, 2);
+  document.getElementById('lv_onl').textContent = fmt(sig.levels.on.low, 2);
+  document.getElementById('lv_pdh').textContent = fmt(sig.levels.priorDay.high, 2);
+  document.getElementById('lv_pdl').textContent = fmt(sig.levels.priorDay.low, 2);
+  document.getElementById('lv_pdc').textContent = fmt(sig.levels.priorDay.close, 2);
+  document.getElementById('lv_thl').textContent = `${fmt(sig.levels.today.high, 2)} / ${fmt(sig.levels.today.low, 2)}`;
+  document.getElementById('lv_vwap').textContent = fmt(sig.vwapNow, 2);
+  document.getElementById('lv_rsi').textContent = sig.rsiNow != null ? fmt(sig.rsiNow, 1) : '—';
+  document.getElementById('lv_macd').textContent = sig.macdHist != null
+    ? `${fmt(sig.macdHist, 3)}  (line ${fmt(sig.macdLine, 2)} / sig ${fmt(sig.macdSig, 2)})` : '—';
+
+  // Scorecard
+  const setSC = (id, t, r) => {
+    const el = document.getElementById(id);
+    el.textContent = tagDisplay(t);
+    el.className = 'score-tag ' + tagClass(t);
+    document.getElementById(id + '_r').textContent = r;
+  };
+  setSC('sc_macd', sig.sc.macd.tag, sig.sc.macd.reason);
+  setSC('sc_rsi', sig.sc.rsi.tag, sig.sc.rsi.reason);
+  setSC('sc_cvd', sig.sc.cvd.tag, sig.sc.cvd.reason);
+  setSC('sc_hist', sig.sc.hist.tag, sig.sc.hist.reason);
+  // News pill is special — show BULLISH/BEARISH/NEUTRAL directly
+  const newsTag = sig.news.macroTone;
+  const newsEl = document.getElementById('sc_news');
+  newsEl.textContent = newsTag;
+  newsEl.className = 'score-tag ' + newsTag;
+  document.getElementById('sc_news_r').textContent = sig.sc.news.reason;
+
+  // Reasoning
+  document.getElementById('reasoning').innerHTML = sig.reasoning;
+
+  // Exits / risk
+  document.getElementById('exits').innerHTML = sig.exits.map(x => `<li>${x}</li>`).join('');
+  document.getElementById('risk').innerHTML = sig.risk.map(x => `<li>${x}</li>`).join('');
+
+  // News list
+  document.getElementById('newsMeta').textContent = `· ${sig.news.items.length} headlines`;
+  const newsHtml = sig.news.items.length === 0
+    ? '<div class="small">No headlines available.</div>'
+    : sig.news.items.map(n => {
+        const badges = [];
+        if (n.binary) badges.push('<span class="badge binary">BINARY EVENT</span>');
+        else if (n.tone !== 'NEUTRAL') badges.push(`<span class="badge macro">${n.tone}</span>`);
+        return `<div class="news-item">
+          <div class="title">${badges.join('')}<a href="${n.link}" target="_blank" rel="noopener">${n.title}</a></div>
+          <div class="meta">${n.pubDate || ''}</div>
+        </div>`;
+      }).join('');
+  document.getElementById('news').innerHTML = newsHtml;
+
+  // Status dot + last update
+  document.getElementById('lastUpdate').textContent = 'Last update: ' + new Date().toLocaleTimeString();
+  document.getElementById('statusDot').className = 'dot';
+
+  // Audio alert on action change
+  if (state.sound && state.lastAction && state.lastAction !== sig.action) {
+    try { new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=').play().catch(()=>{}); } catch(e) {}
+  }
+  state.lastAction = sig.action;
+}
+
+function renderSpark(bars) {
+  const svg = document.getElementById('spark');
+  const last = bars.slice(-60);
+  if (last.length < 2) { svg.innerHTML = ''; return; }
+  const closes = last.map(b => b.close);
+  const v = rthVwap(last);
+  const min = Math.min(...closes);
+  const max = Math.max(...closes);
+  const span = Math.max(0.1, max - min);
+  const w = 400, h = 48;
+  const pts = closes.map((c, i) => `${(i / (last.length - 1) * w).toFixed(2)},${(h - ((c - min) / span) * h).toFixed(2)}`).join(' ');
+  let vwapPath = '';
+  const vClean = v.map((vv, i) => vv == null ? null : `${(i / (last.length - 1) * w).toFixed(2)},${(h - ((vv - min) / span) * h).toFixed(2)}`);
+  let started = false;
+  for (const p of vClean) {
+    if (p == null) { started = false; continue; }
+    vwapPath += (started ? ' L' : ' M') + p; started = true;
+  }
+  svg.innerHTML = `<polyline class="line" points="${pts}" /><path class="vwap" d="${vwapPath || ''}" />`;
+}
+
+/* ---------- main update loop ---------- */
+function showError(msg) {
+  document.getElementById('errorBar').innerHTML = msg ? `<div class="err">${msg}</div>` : '';
+  document.getElementById('statusDot').className = msg ? 'dot error' : 'dot';
+}
+
+async function updateOnce() {
+  saveSettings();
+  document.getElementById('statusDot').className = 'dot stale';
+  try {
+    const symbol = state.symbol;
+    // Fetch in parallel
+    const [intra, daily, newsResult] = await Promise.allSettled([
+      fetchYahooChart(symbol, '5m', '5d'),
+      fetchYahooChart(symbol, '1d', '6mo'),
+      fetchYahooNews(symbol),
+    ]);
+
+    if (intra.status !== 'fulfilled') throw new Error('Intraday fetch failed: ' + (intra.reason?.message || 'unknown'));
+    if (daily.status !== 'fulfilled') throw new Error('Daily fetch failed: ' + (daily.reason?.message || 'unknown'));
+    const news = newsResult.status === 'fulfilled' ? newsResult.value : [];
+
+    const bars5m = intra.value.bars;
+    const barsDaily = daily.value.bars;
+    if (bars5m.length < 30) throw new Error('Not enough intraday bars (' + bars5m.length + ')');
+    if (barsDaily.length < 30) throw new Error('Not enough daily bars');
+
+    const now = new Date();
+    const todayET = etParts(now);
+    const sessionInfo = classifySession(now);
+    const levels = computeLevels(bars5m, todayET);
+
+    // Build change vs prior daily close
+    const lastClose = bars5m[bars5m.length - 1].close;
+    const pdc = barsDaily[barsDaily.length - 2]?.close;
+    const change = pdc ? { abs: lastClose - pdc, pct: (lastClose - pdc) / pdc * 100 } : null;
+
+    const sig = buildSignal({
+      bars5m, barsDaily, levels, news, sessionInfo, symbol
+    });
+
+    render(sig, change);
+    renderSpark(bars5m);
+    showError('');
+    state.lastError = null;
+  } catch (e) {
+    console.error(e);
+    state.lastError = e.message || String(e);
+    showError('Data fetch failed: ' + state.lastError + '. Retrying in ' + state.refresh + 's. (Some networks/ad-blockers block public CORS proxies; try refreshing manually or switching networks.)');
+  }
+}
+
+function startTimer() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(updateOnce, state.refresh * 1000);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadSettings();
+  document.getElementById('btnRefresh').addEventListener('click', updateOnce);
+  document.getElementById('btnReset').addEventListener('click', () => {
+    localStorage.removeItem('signaldeck');
+    location.reload();
+  });
+  ['optSymbol', 'optAccount', 'optRisk', 'optRefresh', 'optSound'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => { saveSettings(); startTimer(); updateOnce(); });
+  });
+  updateOnce();
+  startTimer();
+});
+</script>
+</body>
+</html>
