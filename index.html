@@ -31,19 +31,41 @@
     display: flex; justify-content: space-between; align-items: center;
     padding: 12px 16px; background: var(--panel);
     border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px;
+    gap: 12px; flex-wrap: wrap;
   }
   header h1 { margin: 0; font-size: 16px; letter-spacing: 0.05em; }
   header h1 .sub { color: var(--muted); font-weight: 400; margin-left: 8px; }
-  .status { display: flex; gap: 12px; align-items: center; font-size: 12px; color: var(--muted); }
+  .header-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+  .status { display: flex; gap: 12px; align-items: center; font-size: 12px; color: var(--muted); flex-wrap: wrap; justify-content: flex-end; }
   .status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; animation: pulse 2s infinite; }
   .status .dot.stale { background: var(--yellow); }
   .status .dot.error { background: var(--red); }
+  .status .src { color: var(--muted); font-size: 11px; }
+  .status .src .ok { color: var(--green); }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .binary-warn {
+    display: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.1em; background: rgba(248, 113, 113, 0.18); color: var(--red);
+    border: 1px solid rgba(248, 113, 113, 0.4);
+  }
+  .binary-warn.show { display: inline-block; }
+  .binary-warn.soon { background: rgba(251, 191, 36, 0.18); color: var(--yellow); border-color: rgba(251, 191, 36, 0.4); }
+
+  .mode-pill {
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
+    background: var(--panel-2); border: 1px solid var(--border); cursor: pointer; font-size: 11px;
+    color: var(--muted); user-select: none;
+  }
+  .mode-pill input { accent-color: var(--accent); }
+  .mode-pill.on { color: var(--accent); border-color: var(--accent); }
 
   .grid { display: grid; gap: 16px; }
   .grid.cols-2 { grid-template-columns: 1fr 1fr; }
   .grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-  @media (max-width: 900px) { .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; } }
+  .grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 900px) { .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; } }
 
   .panel {
     background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px;
@@ -51,7 +73,9 @@
   .panel h2 {
     margin: 0 0 12px 0; font-size: 11px; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase;
     border-bottom: 1px solid var(--border); padding-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
   }
+  .panel h2 .h2-actions { display: flex; gap: 6px; }
 
   /* Hero signal block */
   .hero { display: grid; grid-template-columns: 2fr 3fr; gap: 16px; }
@@ -82,14 +106,16 @@
   .row .v.muted { color: var(--muted); }
 
   /* Scorecard */
-  .score-row { display: grid; grid-template-columns: 130px 80px 1fr; padding: 8px 0; border-bottom: 1px dashed var(--border); align-items: center; gap: 12px; }
+  .score-row { display: grid; grid-template-columns: 130px 90px 1fr; padding: 8px 0; border-bottom: 1px dashed var(--border); align-items: center; gap: 12px; }
   .score-row:last-child { border-bottom: 0; }
   .score-tag { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; letter-spacing: 0.1em; text-align: center; font-weight: 700; }
-  .score-tag.PASS, .score-tag.BULLISH { background: rgba(74, 222, 128, 0.15); color: var(--green); }
-  .score-tag.FAIL, .score-tag.BEARISH { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+  .score-tag.PASS, .score-tag.PASS-BULL, .score-tag.PASS-BEAR, .score-tag.BULLISH { background: rgba(74, 222, 128, 0.15); color: var(--green); }
+  .score-tag.PASS-BEAR, .score-tag.BEARISH { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+  .score-tag.FAIL { background: rgba(248, 113, 113, 0.15); color: var(--red); }
   .score-tag.NEUTRAL { background: rgba(107, 122, 144, 0.2); color: var(--muted); }
   .score-row .reason { color: var(--muted); font-size: 12px; }
   .score-row .name { font-weight: 600; }
+  .score-row .name[title] { cursor: help; border-bottom: 1px dotted var(--muted); }
 
   /* News list */
   .news-item { padding: 10px 0; border-bottom: 1px dashed var(--border); }
@@ -114,6 +140,20 @@
   }
   .settings button:hover { opacity: 0.85; }
   .settings button.ghost { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); }
+
+  /* Toggle switch */
+  .switch { position: relative; display: inline-block; width: 36px; height: 20px; vertical-align: middle; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch .slider {
+    position: absolute; cursor: pointer; inset: 0;
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 20px; transition: .2s;
+  }
+  .switch .slider:before {
+    position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px;
+    background: var(--muted); border-radius: 50%; transition: .2s;
+  }
+  .switch input:checked + .slider { background: rgba(92, 207, 230, 0.3); border-color: var(--accent); }
+  .switch input:checked + .slider:before { transform: translateX(16px); background: var(--accent); }
 
   .reasoning { color: var(--muted); font-size: 12px; line-height: 1.7; }
   .reasoning strong { color: var(--text); }
@@ -140,121 +180,322 @@
   .footer-meta { color: var(--muted); font-size: 11px; text-align: center; margin-top: 16px; }
   .small { font-size: 11px; color: var(--muted); }
 
-  .spark { width: 100%; height: 48px; }
-  .spark path { fill: none; stroke-width: 1.5; }
-  .spark .line { stroke: var(--accent); }
-  .spark .vwap { stroke: var(--yellow); stroke-dasharray: 3,3; }
+  /* Spark chart (mini candlestick + levels + VWAP) */
+  .spark-wrap { width: 100%; margin-top: 8px; position: relative; }
+  .spark { width: 100%; height: 140px; display: block; }
+  .spark .grid-line { stroke: var(--border); stroke-width: 0.5; }
+  .spark .candle-wick { stroke-width: 1; }
+  .spark .candle-body { stroke-width: 0.5; }
+  .spark .lvl { stroke-width: 1; stroke-dasharray: 4,3; fill: none; }
+  .spark .lvl-entry { stroke: var(--accent); }
+  .spark .lvl-stop  { stroke: var(--red); }
+  .spark .lvl-t1    { stroke: var(--green); stroke-dasharray: 2,3; }
+  .spark .lvl-t2    { stroke: var(--green); }
+  .spark .vwap-line { stroke: var(--yellow); stroke-dasharray: 3,3; fill: none; stroke-width: 1; }
+  .spark .price-tag rect { fill: var(--accent); }
+  .spark .price-tag text { fill: var(--bg); font-size: 10px; font-weight: 700; font-family: var(--mono); }
+  .spark .lvl-tag text { font-size: 9px; font-family: var(--mono); }
+
+  /* Session log table */
+  .log-table-wrap { max-height: 320px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
+  table.log { width: 100%; border-collapse: collapse; font-size: 11px; }
+  table.log th, table.log td { padding: 6px 8px; border-bottom: 1px dashed var(--border); text-align: left; white-space: nowrap; }
+  table.log th { background: var(--panel-2); color: var(--muted); position: sticky; top: 0; z-index: 1; font-weight: 600; letter-spacing: 0.05em; }
+  table.log tr:hover td { background: rgba(92, 207, 230, 0.04); }
+  table.log td.long  { color: var(--green); font-weight: 700; }
+  table.log td.short { color: var(--red); font-weight: 700; }
+  table.log td.wait  { color: var(--yellow); font-weight: 700; }
+  table.log td.pnl-pos { color: var(--green); }
+  table.log td.pnl-neg { color: var(--red); }
+  table.log button.mini {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    padding: 2px 6px; border-radius: 3px; font-size: 10px; cursor: pointer; margin-right: 2px; font-family: var(--mono);
+  }
+  table.log button.mini:hover { border-color: var(--accent); color: var(--accent); }
+  .log-empty { padding: 12px; color: var(--muted); text-align: center; font-size: 11px; }
+
+  details.collapsible > summary {
+    list-style: none; cursor: pointer; padding: 0; margin: 0;
+    font-size: 11px; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px;
+  }
+  details.collapsible > summary::-webkit-details-marker { display: none; }
+  details.collapsible > summary::after { content: "▸"; transition: transform .2s; color: var(--muted); }
+  details.collapsible[open] > summary::after { transform: rotate(90deg); }
+
+  /* ========== SIMPLE / BEGINNER MODE ========== */
+  .simple-action {
+    padding: 28px 24px; text-align: center; border-radius: 12px;
+    background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+    border: 1px solid var(--border);
+  }
+  .simple-action .qmark { font-size: 13px; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 4px; }
+  .simple-action h3 { margin: 0 0 12px 0; font-size: 24px; letter-spacing: 0.02em; color: var(--text); font-weight: 600; }
+  .simple-action .verdict { font-size: 64px; font-weight: 800; letter-spacing: 0.04em; margin: 8px 0; line-height: 1; }
+  .simple-action .verdict.LONG  { color: var(--green); }
+  .simple-action .verdict.SHORT { color: var(--red); }
+  .simple-action .verdict.WAIT  { color: var(--yellow); }
+  .simple-action .why { font-size: 16px; color: var(--text); max-width: 620px; margin: 12px auto 0; line-height: 1.6; }
+  .simple-action .why .accent { color: var(--accent); font-weight: 600; }
+
+  .simple-card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 18px; text-align: center;
+  }
+  .simple-card .lbl { font-size: 11px; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; }
+  .simple-card .val { font-size: 22px; font-weight: 700; margin: 6px 0 4px; }
+  .simple-card .val.green { color: var(--green); }
+  .simple-card .val.red   { color: var(--red); }
+  .simple-card .val.muted { color: var(--muted); }
+  .simple-card .impact { font-size: 13px; color: var(--muted); }
+  .simple-card .impact.pos { color: var(--green); }
+  .simple-card .impact.neg { color: var(--red); }
+
+  .simple-list { margin: 0; padding: 0; list-style: none; }
+  .simple-list li { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--border); align-items: flex-start; font-size: 13px; }
+  .simple-list li:last-child { border-bottom: 0; }
+  .simple-list .icon {
+    flex: 0 0 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+  }
+  .simple-list .icon.ok   { background: rgba(74, 222, 128, 0.15); color: var(--green); }
+  .simple-list .icon.bad  { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+  .simple-list .icon.meh  { background: rgba(107, 122, 144, 0.18); color: var(--muted); }
+  .simple-list .text { flex: 1; line-height: 1.5; }
+
+  ol.steps { margin: 0; padding-left: 22px; color: var(--text); font-size: 13px; }
+  ol.steps li { padding: 6px 0; line-height: 1.55; }
+  ol.steps li strong { color: var(--accent); }
+
+  .simple-risk {
+    background: rgba(251, 191, 36, 0.06); border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: 10px; padding: 16px;
+  }
+  .simple-risk h3 { margin: 0 0 8px 0; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--yellow); }
+  .simple-risk ul { margin: 0; padding-left: 18px; }
+  .simple-risk ul li { padding: 4px 0; font-size: 13px; }
+
+  /* ========== MOBILE (<600px) ========== */
+  @media (max-width: 600px) {
+    .wrap { padding: 10px; }
+    header h1 { font-size: 14px; }
+    header h1 .sub { display: block; margin-left: 0; font-size: 11px; }
+    .action-box { padding: 18px; }
+    .action-box .action { font-size: 36px; }
+    .action-box .meta { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .action-box .meta .session-badge { margin-left: 0; }
+    .action-box .conf { display: block; margin: 10px auto 0; width: max-content; }
+    .score-row { grid-template-columns: 1fr 80px; grid-template-areas: "name tag" "reason reason"; gap: 6px; }
+    .score-row .name { grid-area: name; }
+    .score-row .score-tag { grid-area: tag; }
+    .score-row .reason { grid-area: reason; }
+    .simple-action .verdict { font-size: 44px; }
+    .simple-action h3 { font-size: 18px; }
+    .simple-action .why { font-size: 14px; }
+    table.log { font-size: 10px; }
+    table.log th, table.log td { padding: 4px 5px; }
+  }
 </style>
+
 </head>
 <body>
 <div class="wrap">
 
   <header>
     <h1>SIGNAL DECK FUTURES <span class="sub">— MES/ES Live · Paper Trading</span></h1>
-    <div class="status">
-      <span id="lastUpdate">— never updated —</span>
-      <span class="dot" id="statusDot" title="connection"></span>
+    <div class="header-right">
+      <span class="binary-warn" id="binaryWarn"></span>
+      <label class="mode-pill" id="modePill" title="Toggle beginner-friendly view">
+        <input type="checkbox" id="hdrSimpleMode" />
+        <span>Beginner mode</span>
+      </label>
+      <div class="status">
+        <span class="src" id="srcLabel">via —</span>
+        <span id="lastUpdate">— never updated —</span>
+        <span class="dot" id="statusDot" title="connection"></span>
+      </div>
     </div>
   </header>
 
   <div id="errorBar"></div>
 
-  <!-- HERO -->
-  <div class="hero" style="margin-bottom: 16px;">
-    <div class="panel action-box" id="actionPanel">
-      <div class="label">ACTION</div>
-      <div class="action WAIT" id="action">—</div>
-      <div class="price" id="price">—</div>
-      <div class="meta">
-        <span id="symbolLabel">ES=F</span> ·
-        <span id="changeLabel">—</span> ·
-        <span class="session-badge" id="sessionBadge">—</span>
+  <!-- ============ EXPERT VIEW ============ -->
+  <div id="expertView">
+
+    <!-- HERO -->
+    <div class="hero" style="margin-bottom: 16px;">
+      <div class="panel action-box" id="actionPanel">
+        <div class="label">ACTION</div>
+        <div class="action WAIT" id="action">—</div>
+        <div class="price" id="price">—</div>
+        <div class="meta">
+          <span id="symbolLabel">ES=F</span> ·
+          <span id="changeLabel">—</span> ·
+          <span class="session-badge" id="sessionBadge">—</span>
+        </div>
+        <div class="conf" id="conf">CONFIDENCE: —</div>
       </div>
-      <div class="conf" id="conf">CONFIDENCE: —</div>
+
+      <div class="panel">
+        <h2>Entry Plan</h2>
+        <div id="entryPlan">
+          <div class="row"><span class="k">Entry</span><span class="v" id="ep_entry">—</span></div>
+          <div class="row"><span class="k">Stop</span><span class="v red" id="ep_stop">—</span></div>
+          <div class="row"><span class="k">Target 1</span><span class="v green" id="ep_t1">—</span></div>
+          <div class="row"><span class="k">Target 2</span><span class="v green" id="ep_t2">—</span></div>
+          <div class="row"><span class="k">Risk / Reward</span><span class="v" id="ep_rr">—</span></div>
+          <div class="row"><span class="k">MES Risk / Reward $</span><span class="v" id="ep_mes_dollars">—</span></div>
+          <div class="row"><span class="k">ES Risk / Reward $</span><span class="v muted" id="ep_es_dollars">—</span></div>
+        </div>
+        <div class="spark-wrap">
+          <svg class="spark" id="spark" viewBox="0 0 600 140" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="small" style="text-align:right;">Last 60 5-min candles · VWAP yellow dashed · Entry/Stop/T1/T2 levels overlaid</div>
+      </div>
     </div>
 
-    <div class="panel">
-      <h2>Entry Plan</h2>
-      <div id="entryPlan">
-        <div class="row"><span class="k">Entry</span><span class="v" id="ep_entry">—</span></div>
-        <div class="row"><span class="k">Stop</span><span class="v red" id="ep_stop">—</span></div>
-        <div class="row"><span class="k">Target 1</span><span class="v green" id="ep_t1">—</span></div>
-        <div class="row"><span class="k">Target 2</span><span class="v green" id="ep_t2">—</span></div>
-        <div class="row"><span class="k">Risk / Reward</span><span class="v" id="ep_rr">—</span></div>
-        <div class="row"><span class="k">MES Risk / Reward $</span><span class="v" id="ep_mes_dollars">—</span></div>
-        <div class="row"><span class="k">ES Risk / Reward $</span><span class="v muted" id="ep_es_dollars">—</span></div>
+    <!-- LEVELS + SCORECARD -->
+    <div class="grid cols-2" style="margin-bottom: 16px;">
+      <div class="panel">
+        <h2>Key Levels (Front-Month)</h2>
+        <div class="row"><span class="k">Overnight High</span><span class="v" id="lv_onh">—</span></div>
+        <div class="row"><span class="k">Overnight Low</span><span class="v" id="lv_onl">—</span></div>
+        <div class="row"><span class="k">Prior Day High</span><span class="v" id="lv_pdh">—</span></div>
+        <div class="row"><span class="k">Prior Day Low</span><span class="v" id="lv_pdl">—</span></div>
+        <div class="row"><span class="k">Prior Day Close</span><span class="v" id="lv_pdc">—</span></div>
+        <div class="row"><span class="k">Today's High / Low</span><span class="v" id="lv_thl">—</span></div>
+        <div class="row"><span class="k">VWAP (RTH)</span><span class="v" id="lv_vwap">—</span></div>
+        <div class="row"><span class="k">RSI(14) / 5m</span><span class="v" id="lv_rsi">—</span></div>
+        <div class="row"><span class="k">MACD Hist / 5m</span><span class="v" id="lv_macd">—</span></div>
       </div>
-      <svg class="spark" id="spark" viewBox="0 0 400 48" preserveAspectRatio="none" style="margin-top: 8px;"></svg>
-      <div class="small" style="text-align:right;">Last 60 5-min bars · VWAP dashed</div>
-    </div>
-  </div>
 
-  <!-- LEVELS + SCORECARD -->
-  <div class="grid cols-2" style="margin-bottom: 16px;">
-    <div class="panel">
-      <h2>Key Levels (Front-Month)</h2>
-      <div class="row"><span class="k">Overnight High</span><span class="v" id="lv_onh">—</span></div>
-      <div class="row"><span class="k">Overnight Low</span><span class="v" id="lv_onl">—</span></div>
-      <div class="row"><span class="k">Prior Day High</span><span class="v" id="lv_pdh">—</span></div>
-      <div class="row"><span class="k">Prior Day Low</span><span class="v" id="lv_pdl">—</span></div>
-      <div class="row"><span class="k">Prior Day Close</span><span class="v" id="lv_pdc">—</span></div>
-      <div class="row"><span class="k">Today's High / Low</span><span class="v" id="lv_thl">—</span></div>
-      <div class="row"><span class="k">VWAP (RTH)</span><span class="v" id="lv_vwap">—</span></div>
-      <div class="row"><span class="k">RSI(14) / 5m</span><span class="v" id="lv_rsi">—</span></div>
-      <div class="row"><span class="k">MACD Hist / 5m</span><span class="v" id="lv_macd">—</span></div>
-    </div>
-
-    <div class="panel">
-      <h2>Scorecard</h2>
-      <div class="score-row">
-        <span class="name">MACD Momentum</span>
-        <span class="score-tag NEUTRAL" id="sc_macd">—</span>
-        <span class="reason" id="sc_macd_r">—</span>
-      </div>
-      <div class="score-row">
-        <span class="name">RSI + VWAP</span>
-        <span class="score-tag NEUTRAL" id="sc_rsi">—</span>
-        <span class="reason" id="sc_rsi_r">—</span>
-      </div>
-      <div class="score-row">
-        <span class="name">Volume / Flow</span>
-        <span class="score-tag NEUTRAL" id="sc_cvd">—</span>
-        <span class="reason" id="sc_cvd_r">—</span>
-      </div>
-      <div class="score-row">
-        <span class="name">Trend / Pattern</span>
-        <span class="score-tag NEUTRAL" id="sc_hist">—</span>
-        <span class="reason" id="sc_hist_r">—</span>
-      </div>
-      <div class="score-row">
-        <span class="name">News / Macro</span>
-        <span class="score-tag NEUTRAL" id="sc_news">—</span>
-        <span class="reason" id="sc_news_r">—</span>
+      <div class="panel">
+        <h2>Scorecard</h2>
+        <div class="score-row">
+          <span class="name">MACD Momentum</span>
+          <span class="score-tag NEUTRAL" id="sc_macd">—</span>
+          <span class="reason" id="sc_macd_r">—</span>
+        </div>
+        <div class="score-row">
+          <span class="name">RSI + VWAP</span>
+          <span class="score-tag NEUTRAL" id="sc_rsi">—</span>
+          <span class="reason" id="sc_rsi_r">—</span>
+        </div>
+        <div class="score-row">
+          <span class="name" title="Up-bar vs down-bar volume proxy (not true CVD).">Volume Bias</span>
+          <span class="score-tag NEUTRAL" id="sc_cvd">—</span>
+          <span class="reason" id="sc_cvd_r">—</span>
+        </div>
+        <div class="score-row">
+          <span class="name">Trend / Pattern</span>
+          <span class="score-tag NEUTRAL" id="sc_hist">—</span>
+          <span class="reason" id="sc_hist_r">—</span>
+        </div>
+        <div class="score-row">
+          <span class="name">News / Macro</span>
+          <span class="score-tag NEUTRAL" id="sc_news">—</span>
+          <span class="reason" id="sc_news_r">—</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- REASONING + EXITS -->
-  <div class="grid cols-2" style="margin-bottom: 16px;">
-    <div class="panel">
-      <h2>Reasoning</h2>
-      <div class="reasoning" id="reasoning">—</div>
+    <!-- REASONING + EXITS -->
+    <div class="grid cols-2" style="margin-bottom: 16px;">
+      <div class="panel">
+        <h2>Reasoning</h2>
+        <div class="reasoning" id="reasoning">—</div>
+      </div>
+      <div class="panel">
+        <h2>Exit Triggers</h2>
+        <ul class="exits" id="exits"><li>Generating plan…</li></ul>
+        <h2 style="margin-top: 16px;">Risk Management</h2>
+        <ul class="exits" id="risk"><li>—</li></ul>
+      </div>
     </div>
-    <div class="panel">
-      <h2>Exit Triggers</h2>
-      <ul class="exits" id="exits"><li>Generating plan…</li></ul>
-      <h2 style="margin-top: 16px;">Risk Management</h2>
-      <ul class="exits" id="risk"><li>—</li></ul>
+
+    <!-- NEWS -->
+    <div class="panel" style="margin-bottom: 16px;">
+      <h2>News &amp; Macro Catalysts <span class="small" id="newsMeta"></span></h2>
+      <div id="news">Loading headlines…</div>
     </div>
-  </div>
 
-  <!-- NEWS -->
-  <div class="panel" style="margin-bottom: 16px;">
-    <h2>News &amp; Macro Catalysts <span class="small" id="newsMeta"></span></h2>
-    <div id="news">Loading headlines…</div>
-  </div>
+    <!-- SESSION LOG -->
+    <div class="panel" style="margin-bottom: 16px;">
+      <details class="collapsible" id="logDetails" open>
+        <summary>
+          <span>Session Log <span class="small" id="logMeta" style="text-transform: none; letter-spacing: normal;"></span></span>
+        </summary>
+        <div style="display:flex; gap:8px; margin-bottom: 10px; flex-wrap:wrap; justify-content: flex-end;">
+          <button class="ghost" id="btnExportLog" style="background: var(--panel-2); color: var(--text); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; font-family: var(--mono); font-size: 11px; cursor: pointer;">Export CSV</button>
+          <button class="ghost" id="btnClearLog" style="background: var(--panel-2); color: var(--red); border: 1px solid rgba(248,113,113,0.4); padding: 4px 10px; border-radius: 4px; font-family: var(--mono); font-size: 11px; cursor: pointer;">Clear Log</button>
+        </div>
+        <div class="log-table-wrap" id="logTableWrap">
+          <div class="log-empty">No entries yet. Logs are auto-recorded each time the action changes.</div>
+        </div>
+      </details>
+    </div>
+  </div><!-- /expertView -->
 
-  <!-- SETTINGS -->
+  <!-- ============ SIMPLE / BEGINNER VIEW ============ -->
+  <div id="simpleView" style="display:none;">
+
+    <div class="simple-action" id="simpleActionBox" style="margin-bottom: 16px;">
+      <div class="qmark">WHAT SHOULD I DO?</div>
+      <h3 id="simpleHeadline">—</h3>
+      <div class="verdict WAIT" id="simpleVerdict">—</div>
+      <div class="why" id="simpleWhy">Loading…</div>
+      <div style="margin-top: 14px; font-size: 12px; color: var(--muted);">
+        <span id="simpleSymbol">ES=F</span> ·
+        <span id="simplePrice">—</span> ·
+        <span id="simpleChange">—</span> ·
+        <span class="session-badge" id="simpleSession">—</span>
+      </div>
+    </div>
+
+    <div class="grid cols-4" style="margin-bottom: 16px;">
+      <div class="simple-card">
+        <div class="lbl">Entry</div>
+        <div class="val" id="sc_entry_v">—</div>
+        <div class="impact" id="sc_entry_i">where you'd buy or sell</div>
+      </div>
+      <div class="simple-card">
+        <div class="lbl">Stop Loss</div>
+        <div class="val red" id="sc_stop_v">—</div>
+        <div class="impact neg" id="sc_stop_i">—</div>
+      </div>
+      <div class="simple-card">
+        <div class="lbl">Target 1</div>
+        <div class="val green" id="sc_t1_v">—</div>
+        <div class="impact pos" id="sc_t1_i">—</div>
+      </div>
+      <div class="simple-card">
+        <div class="lbl">Target 2</div>
+        <div class="val green" id="sc_t2_v">—</div>
+        <div class="impact pos" id="sc_t2_i">—</div>
+      </div>
+    </div>
+
+    <div class="grid cols-2" style="margin-bottom: 16px;">
+      <div class="panel">
+        <h2>Plain-English Checklist</h2>
+        <ul class="simple-list" id="simpleChecklist">
+          <li><span class="icon meh">–</span><span class="text">Loading signals…</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>Step-by-Step Guide</h2>
+        <ol class="steps" id="simpleSteps"><li>Loading…</li></ol>
+      </div>
+    </div>
+
+    <div class="simple-risk" style="margin-bottom: 16px;">
+      <h3>⚠ Risk Rules — Read Every Time</h3>
+      <ul id="simpleRiskList"><li>—</li></ul>
+    </div>
+
+  </div><!-- /simpleView -->
+
+  <!-- SETTINGS (always visible, shared by both modes) -->
   <div class="panel" style="margin-bottom: 16px;">
     <h2>Settings</h2>
     <div class="settings">
@@ -277,6 +518,10 @@
       </label>
       <label>
         <input type="checkbox" id="optSound" /> Audio alert on action change
+      </label>
+      <label style="gap: 8px;">
+        Beginner mode
+        <span class="switch"><input type="checkbox" id="optSimple" /><span class="slider"></span></span>
       </label>
       <button id="btnRefresh">Refresh Now</button>
       <button class="ghost" id="btnReset">Reset</button>
@@ -319,9 +564,6 @@
 <script>
 /* ============================================================
  * SIGNAL DECK FUTURES — Self-Updating Dashboard
- * Pulls live ES futures (Yahoo via CORS proxies), computes
- * MACD/RSI/VWAP, classifies session, scrapes news headlines,
- * and renders the full Signal Deck output every N seconds.
  * ============================================================ */
 
 const CFG = {
@@ -331,13 +573,13 @@ const CFG = {
     riskPct: 2,
     refresh: 30,
     sound: false,
+    simpleMode: false,
   },
-  // CORS proxies — tried in order. Public, free, may rate-limit.
   proxies: [
-    (u) => 'https://corsproxy.io/?' + encodeURIComponent(u),
-    (u) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
-    (u) => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
-    (u) => 'https://thingproxy.freeboard.io/fetch/' + u,
+    { name: 'corsproxy.io',     fn: (u) => 'https://corsproxy.io/?' + encodeURIComponent(u) },
+    { name: 'allorigins.win',   fn: (u) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u) },
+    { name: 'codetabs.com',     fn: (u) => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u) },
+    { name: 'thingproxy',       fn: (u) => 'https://thingproxy.freeboard.io/fetch/' + u },
   ],
   binaryKeywords: [
     'fomc', 'fed decision', 'fed rate', 'rate decision', 'powell', 'warsh',
@@ -347,8 +589,11 @@ const CFG = {
   ],
 };
 
-let state = { ...CFG.defaults, lastAction: null, lastError: null };
+let state = { ...CFG.defaults, lastAction: null, lastError: null, lastProxy: null, lastFetchTime: null };
 let refreshTimer = null;
+let lastSignal = null;
+let lastBars5m = null;
+let audioCtx = null;
 
 /* ---------- persistence ---------- */
 function loadSettings() {
@@ -356,22 +601,32 @@ function loadSettings() {
     const s = JSON.parse(localStorage.getItem('signaldeck') || '{}');
     Object.assign(state, s);
   } catch (e) {}
-  document.getElementById('optSymbol').value = state.symbol;
-  document.getElementById('optAccount').value = state.account;
-  document.getElementById('optRisk').value = state.riskPct;
-  document.getElementById('optRefresh').value = state.refresh;
-  document.getElementById('optSound').checked = !!state.sound;
+  document.getElementById('optSymbol').value   = state.symbol;
+  document.getElementById('optAccount').value  = state.account;
+  document.getElementById('optRisk').value     = state.riskPct;
+  document.getElementById('optRefresh').value  = state.refresh;
+  document.getElementById('optSound').checked  = !!state.sound;
+  document.getElementById('optSimple').checked = !!state.simpleMode;
+  document.getElementById('hdrSimpleMode').checked = !!state.simpleMode;
+  applyMode();
 }
 function saveSettings() {
-  state.symbol = document.getElementById('optSymbol').value;
-  state.account = +document.getElementById('optAccount').value || 1000;
-  state.riskPct = +document.getElementById('optRisk').value || 2;
-  state.refresh = Math.max(10, +document.getElementById('optRefresh').value || 30);
-  state.sound = document.getElementById('optSound').checked;
+  state.symbol     = document.getElementById('optSymbol').value;
+  state.account    = +document.getElementById('optAccount').value || 1000;
+  state.riskPct    = +document.getElementById('optRisk').value || 2;
+  state.refresh    = Math.max(10, +document.getElementById('optRefresh').value || 30);
+  state.sound      = document.getElementById('optSound').checked;
+  state.simpleMode = document.getElementById('optSimple').checked;
   localStorage.setItem('signaldeck', JSON.stringify({
     symbol: state.symbol, account: state.account, riskPct: state.riskPct,
-    refresh: state.refresh, sound: state.sound
+    refresh: state.refresh, sound: state.sound, simpleMode: state.simpleMode
   }));
+}
+function applyMode() {
+  const simple = !!state.simpleMode;
+  document.getElementById('expertView').style.display = simple ? 'none' : '';
+  document.getElementById('simpleView').style.display = simple ? '' : 'none';
+  document.getElementById('modePill').classList.toggle('on', simple);
 }
 
 /* ---------- network ---------- */
@@ -379,9 +634,11 @@ async function fetchWithProxies(url, asJson = true) {
   let lastErr;
   for (const p of CFG.proxies) {
     try {
-      const r = await fetch(p(url), { cache: 'no-store' });
+      const r = await fetch(p.fn(url), { cache: 'no-store' });
       if (!r.ok) { lastErr = new Error('HTTP ' + r.status); continue; }
-      return asJson ? await r.json() : await r.text();
+      const data = asJson ? await r.json() : await r.text();
+      state.lastProxy = p.name;
+      return data;
     } catch (e) { lastErr = e; }
   }
   throw lastErr || new Error('All proxies failed');
@@ -402,12 +659,11 @@ async function fetchYahooChart(symbol, interval, range) {
     low: q.low?.[i],
     close: q.close?.[i],
     volume: q.volume?.[i] || 0,
-  })).filter(b => b.close != null && b.high != null && b.low != null);
+  })).filter(b => b.close != null && b.high != null && b.low != null && b.open != null);
   return { meta, bars };
 }
 
 async function fetchYahooNews(symbol) {
-  // Yahoo Finance RSS for the symbol
   const rss = `https://feeds.finance.yahoo.com/rss/2.0/headline?s=${encodeURIComponent(symbol)}&region=US&lang=en-US`;
   const xml = await fetchWithProxies(rss, false);
   const doc = new DOMParser().parseFromString(xml, 'text/xml');
@@ -474,9 +730,11 @@ function etParts(date) {
 function dayKey(et) { return `${et.year}-${String(et.month).padStart(2,'0')}-${String(et.day).padStart(2,'0')}`; }
 function dayKeyOf(date) { return dayKey(etParts(date)); }
 function minutesET(et) { return et.hour * 60 + et.minute; }
+function etTimestampString(date) {
+  const et = etParts(date);
+  return `${dayKey(et)} ${String(et.hour).padStart(2,'0')}:${String(et.minute).padStart(2,'0')}:${String(et.second).padStart(2,'0')} ET`;
+}
 
-/* The "futures session" runs 18:00 ET previous day -> 17:00 ET today.
-   We label each bar with the date of its RTH session (today if after 17:00 ET, today if before 17:00 ET). */
 function futuresSessionDate(date) {
   const et = etParts(date);
   if (et.hour >= 18) {
@@ -489,21 +747,61 @@ function futuresSessionDate(date) {
 function classifySession(date) {
   const et = etParts(date);
   const wd = et.weekday;
-  // Weekend closure: Sat all day, Sun before 18:00 ET, Fri after 17:00 ET
   if (wd === 'Sat') return { session: 'CLOSED (weekend)', warn: true, closed: true };
   if (wd === 'Sun' && minutesET(et) < 18 * 60) return { session: 'CLOSED (pre-Sun open)', warn: true, closed: true };
   if (wd === 'Fri' && minutesET(et) >= 17 * 60) return { session: 'CLOSED (post-Fri close)', warn: true, closed: true };
   const m = minutesET(et);
-  // Daily break 17:00-18:00
   if (m >= 17 * 60 && m < 18 * 60) return { session: 'CLOSED (daily break)', warn: true, closed: true };
-  // RTH 09:30 - 16:00
   if (m >= 9 * 60 + 30 && m < 16 * 60) return { session: 'RTH', warn: false, closed: false };
-  // Pre-Market 06:00 - 09:30
   if (m >= 6 * 60 && m < 9 * 60 + 30) return { session: 'Pre-Market', warn: true, closed: false };
-  // Late session 16:00 - 17:00
   if (m >= 16 * 60 && m < 17 * 60) return { session: 'ETH-Late', warn: true, closed: false };
-  // Else ETH Globex
   return { session: 'ETH-Globex', warn: true, closed: false };
+}
+
+/* ---------- Economic Calendar (hardcoded — major US releases) ---------- */
+/* Times in ET. Updated for the rolling 30-day window from late May 2026. */
+const ECON_CALENDAR = [
+  { date: '2026-05-26', time: '10:00', label: 'Consumer Confidence',          kind: 'macro' },
+  { date: '2026-05-28', time: '08:30', label: 'GDP Q1 (2nd estimate)',         kind: 'binary' },
+  { date: '2026-05-29', time: '08:30', label: 'Core PCE (April)',              kind: 'binary' },
+  { date: '2026-06-03', time: '10:00', label: 'ISM Services PMI',              kind: 'macro' },
+  { date: '2026-06-05', time: '08:30', label: 'NFP (May Nonfarm Payrolls)',    kind: 'binary' },
+  { date: '2026-06-11', time: '08:30', label: 'CPI (May)',                     kind: 'binary' },
+  { date: '2026-06-12', time: '08:30', label: 'PPI (May)',                     kind: 'binary' },
+  { date: '2026-06-17', time: '14:00', label: 'FOMC Rate Decision',            kind: 'binary' },
+  { date: '2026-06-17', time: '14:30', label: 'FOMC Powell Press Conference',  kind: 'binary' },
+  { date: '2026-06-19', time: '08:30', label: 'Retail Sales',                  kind: 'macro' },
+  { date: '2026-06-25', time: '08:30', label: 'GDP Q1 (final)',                kind: 'binary' },
+  { date: '2026-06-26', time: '08:30', label: 'Core PCE (May)',                kind: 'binary' },
+];
+
+/** Returns earliest binary event within `windowMinutes`, or null. */
+function nextBinaryEvent(now, windowMinutes = 240) {
+  const nowET = etParts(now);
+  // Build a comparable timestamp per ET event: convert event ET wall-clock to UTC ms via offset trick
+  let best = null;
+  for (const ev of ECON_CALENDAR) {
+    if (ev.kind !== 'binary') continue;
+    const evMs = etWallToUTCms(ev.date, ev.time);
+    const deltaMin = (evMs - now.getTime()) / 60000;
+    if (deltaMin < -5) continue;          // skip already-passed
+    if (deltaMin > windowMinutes) continue;
+    if (!best || deltaMin < best.deltaMin) best = { ...ev, deltaMin };
+  }
+  return best;
+}
+
+/* Convert an ET wall-clock (date YYYY-MM-DD, time HH:MM) into a UTC epoch ms.
+   Handles DST automatically by using Intl to get the offset for that wall time. */
+function etWallToUTCms(dateStr, timeStr) {
+  const [y, mo, d] = dateStr.split('-').map(Number);
+  const [hh, mm] = timeStr.split(':').map(Number);
+  // Make a guess UTC ms from the wall components, then correct using the TZ offset of NY at that instant.
+  const guess = Date.UTC(y, mo - 1, d, hh, mm, 0);
+  const guessET = etParts(new Date(guess));
+  // Offset the difference between what we wanted and what we got in ET.
+  const wantedMin = (((y - guessET.year) * 525600) + ((mo - guessET.month) * 43800) + ((d - guessET.day) * 1440) + ((hh - guessET.hour) * 60) + (mm - guessET.minute));
+  return guess + wantedMin * 60 * 1000;
 }
 
 /* ---------- session-aware VWAP and levels ---------- */
@@ -531,7 +829,6 @@ function rthVwap(bars) {
 }
 
 function computeLevels(bars5m, todayET) {
-  // Group bars by futures session date; pick the previous and current day
   const groups = new Map();
   for (const b of bars5m) {
     const k = futuresSessionDate(new Date(b.time));
@@ -541,22 +838,18 @@ function computeLevels(bars5m, todayET) {
   const keys = [...groups.keys()].sort();
   const today = dayKey(todayET);
   const todayBars = groups.get(today) || [];
-  // prior session = last key strictly before today
   const priorKey = [...keys].reverse().find(k => k < today);
   const priorBars = priorKey ? (groups.get(priorKey) || []) : [];
 
-  // RTH bars within a group
   const rthOf = (arr) => arr.filter(b => {
     const m = minutesET(etParts(new Date(b.time)));
     return m >= 9 * 60 + 30 && m < 16 * 60;
   });
-  // Overnight = bars in today's session BEFORE 09:30 ET (i.e. previous day 18:00 -> today 09:30)
   const onOf = (arr) => arr.filter(b => {
     const et = etParts(new Date(b.time));
     const m = minutesET(et);
     return (et.hour >= 18) || (m < 9 * 60 + 30);
   });
-
   function hl(arr) {
     if (!arr.length) return { high: null, low: null, close: null };
     let h = -Infinity, l = Infinity;
@@ -595,7 +888,7 @@ function classifyNews(items) {
 }
 
 function buildSignal(ctx) {
-  const { bars5m, barsDaily, levels, news, sessionInfo, symbol } = ctx;
+  const { bars5m, barsDaily, levels, news, sessionInfo, symbol, econEvent } = ctx;
   const closes = bars5m.map(b => b.close);
   const last = closes.length - 1;
   const price = closes[last];
@@ -611,44 +904,39 @@ function buildSignal(ctx) {
   const macdBear = macdLine < macdSig && macdHist <= macdHistPrev;
 
   const rsiNow = r[last];
-  // Find most recent VWAP value (it's null outside RTH)
   let vwapNow = null;
   for (let i = last; i >= Math.max(0, last - 80); i--) { if (v[i] != null) { vwapNow = v[i]; break; } }
   const aboveVwap = vwapNow != null ? price > vwapNow : null;
 
-  // Volume / flow approximation: compare last 10-bar volume vs prior 10-bar avg, signed by close direction
   const recent = bars5m.slice(-20);
   const upVol = recent.filter(b => b.close >= b.open).reduce((s, b) => s + (b.volume || 0), 0);
   const downVol = recent.filter(b => b.close < b.open).reduce((s, b) => s + (b.volume || 0), 0);
   const totalVol = upVol + downVol || 1;
-  const flowBias = (upVol - downVol) / totalVol; // -1..1
+  const flowBias = (upVol - downVol) / totalVol;
 
-  // Trend regime from daily 20/50 EMA
   const dCloses = barsDaily.map(b => b.close);
   const e20 = ema(dCloses, 20), e50 = ema(dCloses, 50);
   const dLast = dCloses.length - 1;
   const trendBull = dCloses[dLast] > e20[dLast] && e20[dLast] > (e50[dLast] || -Infinity);
   const trendBear = dCloses[dLast] < e20[dLast] && e20[dLast] < (e50[dLast] || Infinity);
 
-  // News
   const newsClassified = classifyNews(news);
 
-  // ----- score each leg -----
   function tag(bull, bear) { return bull ? 'PASS-BULL' : bear ? 'PASS-BEAR' : 'NEUTRAL'; }
   const sc = {
     macd: { tag: tag(macdBull, macdBear), reason:
       `Line ${macdLine?.toFixed(2)} vs signal ${macdSig?.toFixed(2)}, hist ${macdHist?.toFixed(2)} ${macdHist >= macdHistPrev ? 'expanding' : 'contracting'}.` },
     rsi: { tag: (() => {
       if (rsiNow == null || vwapNow == null) return 'NEUTRAL';
-      if (rsiNow > 70 && !aboveVwap) return 'PASS-BEAR';      // overbought + below VWAP → mean reversion short
-      if (rsiNow < 30 && aboveVwap) return 'PASS-BULL';        // oversold + above VWAP → mean reversion long
+      if (rsiNow > 70 && !aboveVwap) return 'PASS-BEAR';
+      if (rsiNow < 30 && aboveVwap) return 'PASS-BULL';
       if (aboveVwap && rsiNow > 50 && rsiNow < 70) return 'PASS-BULL';
       if (!aboveVwap && rsiNow < 50 && rsiNow > 30) return 'PASS-BEAR';
       return 'NEUTRAL';
     })(), reason: rsiNow == null ? 'Insufficient data' :
         `RSI ${rsiNow.toFixed(1)} · price ${aboveVwap == null ? '?' : aboveVwap ? 'above' : 'below'} VWAP ${vwapNow ? vwapNow.toFixed(2) : '—'}.` },
     cvd: { tag: flowBias > 0.15 ? 'PASS-BULL' : flowBias < -0.15 ? 'PASS-BEAR' : 'NEUTRAL',
-           reason: `Up-bar volume share ${(((upVol)/totalVol)*100).toFixed(0)}% over last 20×5m bars (proxy CVD).` },
+           reason: `Up-bar vs down-bar volume proxy (not true CVD). Up-bar share ${(((upVol)/totalVol)*100).toFixed(0)}% over last 20×5m bars.` },
     hist: { tag: trendBull ? 'PASS-BULL' : trendBear ? 'PASS-BEAR' : 'NEUTRAL',
             reason: `Daily close ${dCloses[dLast]?.toFixed(2)} vs EMA20 ${e20[dLast]?.toFixed(2)} / EMA50 ${e50[dLast]?.toFixed(2)}.` },
     news: { tag: newsClassified.macroTone === 'BULLISH' ? 'PASS-BULL'
@@ -656,37 +944,51 @@ function buildSignal(ctx) {
             reason: `${newsClassified.items.length} headlines · skew ${newsClassified.macroTone}${newsClassified.hasBinary ? ' · BINARY EVENT in feed' : ''}.` },
   };
 
-  // Aggregate
+  // ----- aggregate -----
   const bullCount = Object.values(sc).filter(x => x.tag === 'PASS-BULL').length;
   const bearCount = Object.values(sc).filter(x => x.tag === 'PASS-BEAR').length;
   let action = 'WAIT';
   let confidence = 'LOW';
   let waitReason = '';
 
+  // Highest priority overrides:
   if (sessionInfo.closed) {
     waitReason = 'Market closed — no execution. Plan only.';
+  } else if (econEvent && econEvent.deltaMin <= 30) {
+    waitReason = `Binary economic event "${econEvent.label}" in ${Math.max(0, Math.round(econEvent.deltaMin))} min — forced WAIT.`;
   } else if (newsClassified.hasBinary) {
     waitReason = 'Binary event detected in news feed — never hold through FOMC/CPI/NFP/major earnings prints.';
-  } else if (bullCount >= 3 && bearCount === 0) {
-    action = 'LONG';
-    confidence = bullCount >= 4 ? 'HIGH' : 'MEDIUM';
-  } else if (bearCount >= 3 && bullCount === 0) {
-    action = 'SHORT';
-    confidence = bearCount >= 4 ? 'HIGH' : 'MEDIUM';
   } else {
-    waitReason = 'Insufficient confluence — need 3+ aligned signals with no opposition.';
+    // CONFLUENCE WEIGHTING:
+    // - 3 aligned + 0 opposed = MEDIUM
+    // - 4 aligned + 0 opposed = HIGH
+    // - 4 aligned + 1 opposed = MEDIUM (still fires)
+    // - 5 aligned = HIGH regardless
+    // - any opposition >= 2 = WAIT
+    const decide = (alignedSide, opposedSide, sign) => {
+      if (opposedSide >= 2) { waitReason = `Conflicting signals — ${alignedSide} for, ${opposedSide} against. Need clean confluence.`; return false; }
+      if (alignedSide >= 5) { action = sign; confidence = 'HIGH';   return true; }
+      if (alignedSide >= 4 && opposedSide === 0) { action = sign; confidence = 'HIGH';   return true; }
+      if (alignedSide >= 4 && opposedSide === 1) { action = sign; confidence = 'MEDIUM'; return true; }
+      if (alignedSide >= 3 && opposedSide === 0) { action = sign; confidence = 'MEDIUM'; return true; }
+      return false;
+    };
+    if (bullCount >= bearCount && bullCount >= 3) {
+      if (!decide(bullCount, bearCount, 'LONG')) waitReason = waitReason || 'Insufficient confluence — need 3+ aligned with no opposition.';
+    } else if (bearCount > bullCount && bearCount >= 3) {
+      if (!decide(bearCount, bullCount, 'SHORT')) waitReason = waitReason || 'Insufficient confluence — need 3+ aligned with no opposition.';
+    } else {
+      waitReason = 'Insufficient confluence — need 3+ aligned signals.';
+    }
   }
 
   // ----- entry plan -----
-  // Use ATR-equivalent: avg 5m range over last 20 bars
   const last20 = bars5m.slice(-20);
   const avgRange = last20.reduce((s, b) => s + (b.high - b.low), 0) / Math.max(1, last20.length);
-  // Stop: max(avgRange*2, 0.15% of price)
   let stopDist = Math.max(avgRange * 2, price * 0.0015);
-  // Round to 0.25 tick
   stopDist = Math.round(stopDist * 4) / 4;
-  if (stopDist < 2) stopDist = 2;       // min 2-pt stop on ES
-  if (stopDist > 15) stopDist = 15;     // cap risk
+  if (stopDist < 2) stopDist = 2;
+  if (stopDist > 15) stopDist = 15;
 
   const entry = price;
   const stop = action === 'LONG' ? entry - stopDist : action === 'SHORT' ? entry + stopDist : entry - stopDist;
@@ -695,7 +997,6 @@ function buildSignal(ctx) {
   const t1 = action === 'LONG' ? entry + t1Dist : action === 'SHORT' ? entry - t1Dist : entry + t1Dist;
   const t2 = action === 'LONG' ? entry + t2Dist : action === 'SHORT' ? entry - t2Dist : entry + t2Dist;
 
-  // ----- risk management -----
   const maxRiskDollars = state.account * (state.riskPct / 100);
   const mesPerPoint = 5;
   const esPerPoint = 50;
@@ -704,13 +1005,10 @@ function buildSignal(ctx) {
   const t1MES = t1Dist * mesPerPoint;
   const t2MES = t2Dist * mesPerPoint;
 
-  // Position size hint
   let mesContractsAllowed = Math.floor(maxRiskDollars / stopMES);
   if (mesContractsAllowed < 1) mesContractsAllowed = 0;
 
-  // ----- reasoning -----
   const reasoning = (() => {
-    const bias = action === 'LONG' ? 'long' : action === 'SHORT' ? 'short' : 'no-trade';
     const macdTxt = sc.macd.tag === 'PASS-BULL' ? 'momentum is bullish'
                   : sc.macd.tag === 'PASS-BEAR' ? 'momentum is bearish'
                   : 'momentum is flat';
@@ -723,14 +1021,14 @@ function buildSignal(ctx) {
     if (action === 'WAIT') {
       return `<strong>WAIT.</strong> ${waitReason} Current read: ${macdTxt}, ${rsiTxt}, ${trendTxt}. Re-check after the next refresh; the dashboard will switch to LONG/SHORT automatically when 3+ signals align.`;
     }
-    return `<strong>${action} bias.</strong> ${macdTxt[0].toUpperCase() + macdTxt.slice(1)}, ${rsiTxt}, and ${trendTxt}. Confluence score: ${bullCount} bull / ${bearCount} bear out of 5. Trade is sized off the 20-bar 5-min range (≈${avgRange.toFixed(2)} pts) with a ${stopDist}-pt stop targeting 1.5R / 3R.`;
+    return `<strong>${action} bias.</strong> ${macdTxt[0].toUpperCase() + macdTxt.slice(1)}, ${rsiTxt}, and ${trendTxt}. Confluence score: ${bullCount} bull / ${bearCount} bear out of 5 → ${confidence} confidence. Trade is sized off the 20-bar 5-min range (≈${avgRange.toFixed(2)} pts) with a ${stopDist}-pt stop targeting 1.5R / 3R.`;
   })();
 
-  // ----- exits -----
   const exits = action === 'WAIT' ? [
     'No position to manage. Hold cash.',
     'Re-evaluate at next auto-refresh; if scorecard flips to 3+ aligned PASS, plan a fresh entry on a 5-min retest of the trigger level.',
-    sessionInfo.closed ? 'Market closed — verify levels at next open.' : 'If inside a binary event window, sit out until 5 min after release.'
+    sessionInfo.closed ? 'Market closed — verify levels at next open.'
+      : (econEvent ? `Binary event "${econEvent.label}" within window — sit out until 5 min after release.` : 'If a binary event window opens, sit out until 5 min after release.')
   ] : [
     `Take 50% off at <strong>T1 ${t1.toFixed(2)}</strong> (${t1Dist} pts = MES +$${t1MES.toFixed(0)}); move stop to breakeven.`,
     `Trail remainder with 5-min swing ${action === 'LONG' ? 'low' : 'high'} toward <strong>T2 ${t2.toFixed(2)}</strong> (${t2Dist} pts = MES +$${t2MES.toFixed(0)}).`,
@@ -750,25 +1048,252 @@ function buildSignal(ctx) {
     stopMES, stopES, t1MES, t2MES, mesContractsAllowed,
     rsiNow, vwapNow, macdHist, macdLine, macdSig,
     sc, reasoning, exits, risk, news: newsClassified, levels, sessionInfo, symbol,
+    bullCount, bearCount, waitReason, econEvent, maxRiskDollars,
   };
 }
 
-/* ---------- rendering ---------- */
+/* ---------- rendering helpers ---------- */
 function tagDisplay(t) {
-  if (t === 'PASS-BULL' || t === 'PASS-BEAR') return 'PASS';
+  if (t === 'PASS-BULL') return 'PASS ↑';
+  if (t === 'PASS-BEAR') return 'PASS ↓';
   return t || 'NEUTRAL';
 }
 function tagClass(t) {
-  if (t === 'PASS-BULL' || t === 'PASS-BEAR') return 'PASS';
+  if (t === 'PASS-BULL') return 'PASS-BULL';
+  if (t === 'PASS-BEAR') return 'PASS-BEAR';
   return t || 'NEUTRAL';
 }
-
 function fmt(n, d = 2) {
   if (n == null || !isFinite(n)) return '—';
   return Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 }
 
-function render(sig, change) {
+/* ---------- audio (Web Audio API two-tone beep) ---------- */
+function ensureAudioCtx() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch (e) { audioCtx = null; }
+  }
+  return audioCtx;
+}
+function playBeep() {
+  const ctx = ensureAudioCtx();
+  if (!ctx) return;
+  if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+  const t0 = ctx.currentTime;
+  const tone = (start) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 440;
+    gain.gain.setValueAtTime(0, start);
+    gain.gain.linearRampToValueAtTime(0.18, start + 0.005);
+    gain.gain.linearRampToValueAtTime(0, start + 0.05);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + 0.06);
+  };
+  tone(t0);
+  tone(t0 + 0.09);
+}
+
+/* ---------- spark chart (mini candlestick + levels + VWAP) ---------- */
+function renderSpark(bars, sig) {
+  const svg = document.getElementById('spark');
+  const last = bars.slice(-60);
+  if (last.length < 2) { svg.innerHTML = ''; return; }
+  const W = 600, H = 140;
+  const padR = 56, padL = 4, padT = 6, padB = 6;
+  const plotW = W - padR - padL;
+  const plotH = H - padT - padB;
+
+  const v = rthVwap(last);
+
+  // Y-range: include candle hi/lo, VWAP, and any displayed levels for the active action
+  let yMin = Infinity, yMax = -Infinity;
+  for (const b of last) { if (b.high > yMax) yMax = b.high; if (b.low < yMin) yMin = b.low; }
+  for (const vv of v) { if (vv != null) { if (vv > yMax) yMax = vv; if (vv < yMin) yMin = vv; } }
+  if (sig && sig.action !== 'WAIT') {
+    [sig.entry, sig.stop, sig.t1, sig.t2].forEach(p => {
+      if (p != null && isFinite(p)) { if (p > yMax) yMax = p; if (p < yMin) yMin = p; }
+    });
+  }
+  const span = Math.max(0.5, yMax - yMin);
+  const pad = span * 0.05;
+  yMin -= pad; yMax += pad;
+  const ySpan = yMax - yMin;
+
+  const x = (i) => padL + (i / (last.length - 1)) * plotW;
+  const y = (p) => padT + (1 - (p - yMin) / ySpan) * plotH;
+
+  // Build candles
+  const candleW = Math.max(2, plotW / last.length * 0.7);
+  const parts = [];
+
+  // Grid
+  parts.push(`<line class="grid-line" x1="${padL}" x2="${W - padR}" y1="${padT}" y2="${padT}" />`);
+  parts.push(`<line class="grid-line" x1="${padL}" x2="${W - padR}" y1="${padT + plotH}" y2="${padT + plotH}" />`);
+
+  // Candles
+  for (let i = 0; i < last.length; i++) {
+    const b = last[i];
+    const cx = x(i);
+    const yo = y(b.open), yc = y(b.close), yh = y(b.high), yl = y(b.low);
+    const up = b.close >= b.open;
+    const color = up ? 'var(--green)' : 'var(--red)';
+    parts.push(`<line class="candle-wick" x1="${cx.toFixed(2)}" x2="${cx.toFixed(2)}" y1="${yh.toFixed(2)}" y2="${yl.toFixed(2)}" stroke="${color}" />`);
+    const top = Math.min(yo, yc), h = Math.max(0.6, Math.abs(yc - yo));
+    parts.push(`<rect class="candle-body" x="${(cx - candleW / 2).toFixed(2)}" y="${top.toFixed(2)}" width="${candleW.toFixed(2)}" height="${h.toFixed(2)}" fill="${color}" stroke="${color}" />`);
+  }
+
+  // VWAP polyline (skip nulls)
+  let vwapPath = '';
+  let started = false;
+  for (let i = 0; i < v.length; i++) {
+    if (v[i] == null) { started = false; continue; }
+    const px = x(i).toFixed(2), py = y(v[i]).toFixed(2);
+    vwapPath += (started ? ' L' : ' M') + px + ',' + py;
+    started = true;
+  }
+  if (vwapPath) parts.push(`<path class="vwap-line" d="${vwapPath}" />`);
+
+  // Levels (only when actionable)
+  function levelLine(price, cls, label, color) {
+    if (price == null || !isFinite(price)) return '';
+    const py = y(price).toFixed(2);
+    const out = [];
+    out.push(`<line class="lvl ${cls}" x1="${padL}" x2="${W - padR}" y1="${py}" y2="${py}" />`);
+    out.push(`<g class="lvl-tag"><rect x="${(W - padR + 2).toFixed(2)}" y="${(+py - 6).toFixed(2)}" width="${padR - 4}" height="12" fill="${color}" rx="2" /><text x="${(W - padR + 4).toFixed(2)}" y="${(+py + 3).toFixed(2)}" fill="var(--bg)">${label} ${fmt(price, 2)}</text></g>`);
+    return out.join('');
+  }
+  if (sig && sig.action !== 'WAIT') {
+    parts.push(levelLine(sig.entry, 'lvl-entry', 'E',  'var(--accent)'));
+    parts.push(levelLine(sig.stop,  'lvl-stop',  'SL', 'var(--red)'));
+    parts.push(levelLine(sig.t1,    'lvl-t1',    'T1', 'var(--green)'));
+    parts.push(levelLine(sig.t2,    'lvl-t2',    'T2', 'var(--green)'));
+  }
+
+  // Current price tag
+  const lastClose = last[last.length - 1].close;
+  const py = y(lastClose);
+  parts.push(`<line class="grid-line" x1="${(W - padR).toFixed(2)}" x2="${(W - padR).toFixed(2)}" y1="${padT}" y2="${(padT + plotH).toFixed(2)}" stroke="var(--border)" />`);
+  parts.push(`<g class="price-tag"><rect x="${(W - padR + 2).toFixed(2)}" y="${(py - 7).toFixed(2)}" width="${padR - 4}" height="14" rx="2" /><text x="${(W - padR + 4).toFixed(2)}" y="${(py + 4).toFixed(2)}">${fmt(lastClose, 2)}</text></g>`);
+
+  svg.innerHTML = parts.join('');
+}
+
+/* ---------- session log (localStorage trade journal) ---------- */
+const LOG_KEY = 'signaldeck_log';
+function loadLog() {
+  try { return JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function saveLog(log) { localStorage.setItem(LOG_KEY, JSON.stringify(log)); }
+
+function appendLogIfActionChanged(sig) {
+  if (state.lastAction === sig.action) return;
+  // Skip the initial null -> X transition on first load (don't spam log on every page open)
+  if (state.lastAction === null) { state.lastAction = sig.action; return; }
+  const log = loadLog();
+  const entry = {
+    id: 'L' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+    ts: etTimestampString(new Date()),
+    tsMs: Date.now(),
+    action: sig.action,
+    price: sig.price,
+    entry: sig.action === 'WAIT' ? null : sig.entry,
+    stop:  sig.action === 'WAIT' ? null : sig.stop,
+    t1:    sig.action === 'WAIT' ? null : sig.t1,
+    t2:    sig.action === 'WAIT' ? null : sig.t2,
+    confidence: sig.confidence,
+    stopDist: sig.stopDist,
+    t1Dist: sig.t1Dist,
+    t2Dist: sig.t2Dist,
+    outcome: null,    // 'T1' | 'T2' | 'STOP' | null
+    pnlMES: null,
+  };
+  log.push(entry);
+  // Cap at 500 entries to keep storage reasonable
+  while (log.length > 500) log.shift();
+  saveLog(log);
+  state.lastAction = sig.action;
+}
+
+function markOutcome(id, outcome) {
+  const log = loadLog();
+  const e = log.find(x => x.id === id);
+  if (!e) return;
+  e.outcome = outcome;
+  // P&L in MES dollars (5x per ES point)
+  if (e.action === 'WAIT' || e.entry == null) { e.pnlMES = 0; }
+  else if (outcome === 'STOP') { e.pnlMES = -(e.stopDist * 5); }
+  else if (outcome === 'T1')   { e.pnlMES = +(e.t1Dist * 5); }
+  else if (outcome === 'T2')   { e.pnlMES = +(e.t2Dist * 5); }
+  saveLog(log);
+  renderLog();
+}
+
+function renderLog() {
+  const wrap = document.getElementById('logTableWrap');
+  const log = loadLog();
+  document.getElementById('logMeta').textContent = log.length ? `· ${log.length} entries` : '';
+  if (!log.length) {
+    wrap.innerHTML = '<div class="log-empty">No entries yet. Logs are auto-recorded each time the action changes.</div>';
+    return;
+  }
+  const rows = log.slice().reverse().map(e => {
+    const cls = e.action === 'LONG' ? 'long' : e.action === 'SHORT' ? 'short' : 'wait';
+    const fmtN = (n) => n == null ? '—' : fmt(n, 2);
+    const pnl = e.pnlMES == null
+      ? `<button class="mini" data-id="${e.id}" data-out="T1">T1</button><button class="mini" data-id="${e.id}" data-out="T2">T2</button><button class="mini" data-id="${e.id}" data-out="STOP">SL</button>`
+      : `<span class="${e.pnlMES >= 0 ? 'pnl-pos' : 'pnl-neg'}">${e.pnlMES >= 0 ? '+' : ''}$${e.pnlMES.toFixed(0)}</span> <span class="small">(${e.outcome})</span>`;
+    const pnlCls = e.pnlMES == null ? '' : (e.pnlMES >= 0 ? 'pnl-pos' : 'pnl-neg');
+    const ts = e.ts.replace(' ET', '');
+    return `<tr>
+      <td title="${e.ts}">${ts}</td>
+      <td class="${cls}">${e.action}</td>
+      <td>${fmtN(e.price)}</td>
+      <td>${fmtN(e.entry)}</td>
+      <td>${fmtN(e.stop)}</td>
+      <td>${fmtN(e.t1)}</td>
+      <td>${fmtN(e.t2)}</td>
+      <td>${e.confidence}</td>
+      <td class="${pnlCls}">${pnl}</td>
+    </tr>`;
+  }).join('');
+  wrap.innerHTML = `<table class="log">
+    <thead><tr>
+      <th>Time</th><th>Action</th><th>Price</th><th>Entry</th><th>Stop</th><th>T1</th><th>T2</th><th>Conf</th><th>P&amp;L (MES)</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+  // Wire up outcome buttons
+  wrap.querySelectorAll('button.mini').forEach(btn => {
+    btn.addEventListener('click', () => markOutcome(btn.getAttribute('data-id'), btn.getAttribute('data-out')));
+  });
+}
+
+function exportLogCSV() {
+  const log = loadLog();
+  if (!log.length) return;
+  const header = ['time_et','action','price','entry','stop','t1','t2','confidence','outcome','pnl_mes_usd'];
+  const lines = [header.join(',')];
+  for (const e of log) {
+    lines.push([
+      `"${e.ts}"`, e.action, e.price ?? '', e.entry ?? '', e.stop ?? '', e.t1 ?? '', e.t2 ?? '',
+      e.confidence, e.outcome ?? '', e.pnlMES ?? ''
+    ].join(','));
+  }
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'signaldeck_log.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ---------- expert view rendering ---------- */
+function renderExpert(sig, change) {
   document.getElementById('action').textContent = sig.action;
   document.getElementById('action').className = 'action ' + sig.action;
   document.getElementById('price').textContent = fmt(sig.price, 2);
@@ -784,18 +1309,16 @@ function render(sig, change) {
   document.getElementById('conf').textContent = 'CONFIDENCE: ' + sig.confidence;
   document.getElementById('conf').className = 'conf ' + sig.confidence;
 
-  // Entry plan
   document.getElementById('ep_entry').textContent = fmt(sig.entry, 2);
-  document.getElementById('ep_stop').textContent = `${fmt(sig.stop, 2)}  (${sig.stopDist} pts)`;
-  document.getElementById('ep_t1').textContent = `${fmt(sig.t1, 2)}  (+${sig.t1Dist} pts)`;
-  document.getElementById('ep_t2').textContent = `${fmt(sig.t2, 2)}  (+${sig.t2Dist} pts)`;
-  document.getElementById('ep_rr').textContent = sig.action === 'WAIT' ? '—' : `1:1.5 to T1 · 1:3 to T2`;
+  document.getElementById('ep_stop').textContent  = `${fmt(sig.stop, 2)}  (${sig.stopDist} pts)`;
+  document.getElementById('ep_t1').textContent    = `${fmt(sig.t1, 2)}  (+${sig.t1Dist} pts)`;
+  document.getElementById('ep_t2').textContent    = `${fmt(sig.t2, 2)}  (+${sig.t2Dist} pts)`;
+  document.getElementById('ep_rr').textContent    = sig.action === 'WAIT' ? '—' : `1:1.5 to T1 · 1:3 to T2`;
   document.getElementById('ep_mes_dollars').textContent = sig.action === 'WAIT' ? '—'
     : `Risk –$${sig.stopMES.toFixed(0)} · T1 +$${sig.t1MES.toFixed(0)} · T2 +$${sig.t2MES.toFixed(0)}`;
   document.getElementById('ep_es_dollars').textContent = sig.action === 'WAIT' ? '—'
     : `Risk –$${sig.stopES.toFixed(0)} · T1 +$${(sig.t1Dist * 50).toFixed(0)} · T2 +$${(sig.t2Dist * 50).toFixed(0)}`;
 
-  // Levels
   document.getElementById('lv_onh').textContent = fmt(sig.levels.on.high, 2);
   document.getElementById('lv_onl').textContent = fmt(sig.levels.on.low, 2);
   document.getElementById('lv_pdh').textContent = fmt(sig.levels.priorDay.high, 2);
@@ -807,7 +1330,6 @@ function render(sig, change) {
   document.getElementById('lv_macd').textContent = sig.macdHist != null
     ? `${fmt(sig.macdHist, 3)}  (line ${fmt(sig.macdLine, 2)} / sig ${fmt(sig.macdSig, 2)})` : '—';
 
-  // Scorecard
   const setSC = (id, t, r) => {
     const el = document.getElementById(id);
     el.textContent = tagDisplay(t);
@@ -815,24 +1337,20 @@ function render(sig, change) {
     document.getElementById(id + '_r').textContent = r;
   };
   setSC('sc_macd', sig.sc.macd.tag, sig.sc.macd.reason);
-  setSC('sc_rsi', sig.sc.rsi.tag, sig.sc.rsi.reason);
-  setSC('sc_cvd', sig.sc.cvd.tag, sig.sc.cvd.reason);
+  setSC('sc_rsi',  sig.sc.rsi.tag,  sig.sc.rsi.reason);
+  setSC('sc_cvd',  sig.sc.cvd.tag,  sig.sc.cvd.reason);
   setSC('sc_hist', sig.sc.hist.tag, sig.sc.hist.reason);
-  // News pill is special — show BULLISH/BEARISH/NEUTRAL directly
+
   const newsTag = sig.news.macroTone;
   const newsEl = document.getElementById('sc_news');
-  newsEl.textContent = newsTag;
-  newsEl.className = 'score-tag ' + newsTag;
+  newsEl.textContent = newsTag === 'BULLISH' ? 'BULLISH ↑' : newsTag === 'BEARISH' ? 'BEARISH ↓' : 'NEUTRAL';
+  newsEl.className = 'score-tag ' + (newsTag === 'BULLISH' ? 'PASS-BULL' : newsTag === 'BEARISH' ? 'PASS-BEAR' : 'NEUTRAL');
   document.getElementById('sc_news_r').textContent = sig.sc.news.reason;
 
-  // Reasoning
   document.getElementById('reasoning').innerHTML = sig.reasoning;
-
-  // Exits / risk
   document.getElementById('exits').innerHTML = sig.exits.map(x => `<li>${x}</li>`).join('');
-  document.getElementById('risk').innerHTML = sig.risk.map(x => `<li>${x}</li>`).join('');
+  document.getElementById('risk').innerHTML  = sig.risk.map(x => `<li>${x}</li>`).join('');
 
-  // News list
   document.getElementById('newsMeta').textContent = `· ${sig.news.items.length} headlines`;
   const newsHtml = sig.news.items.length === 0
     ? '<div class="small">No headlines available.</div>'
@@ -846,37 +1364,158 @@ function render(sig, change) {
         </div>`;
       }).join('');
   document.getElementById('news').innerHTML = newsHtml;
-
-  // Status dot + last update
-  document.getElementById('lastUpdate').textContent = 'Last update: ' + new Date().toLocaleTimeString();
-  document.getElementById('statusDot').className = 'dot';
-
-  // Audio alert on action change
-  if (state.sound && state.lastAction && state.lastAction !== sig.action) {
-    try { new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=').play().catch(()=>{}); } catch(e) {}
-  }
-  state.lastAction = sig.action;
 }
 
-function renderSpark(bars) {
-  const svg = document.getElementById('spark');
-  const last = bars.slice(-60);
-  if (last.length < 2) { svg.innerHTML = ''; return; }
-  const closes = last.map(b => b.close);
-  const v = rthVwap(last);
-  const min = Math.min(...closes);
-  const max = Math.max(...closes);
-  const span = Math.max(0.1, max - min);
-  const w = 400, h = 48;
-  const pts = closes.map((c, i) => `${(i / (last.length - 1) * w).toFixed(2)},${(h - ((c - min) / span) * h).toFixed(2)}`).join(' ');
-  let vwapPath = '';
-  const vClean = v.map((vv, i) => vv == null ? null : `${(i / (last.length - 1) * w).toFixed(2)},${(h - ((vv - min) / span) * h).toFixed(2)}`);
-  let started = false;
-  for (const p of vClean) {
-    if (p == null) { started = false; continue; }
-    vwapPath += (started ? ' L' : ' M') + p; started = true;
+/* ---------- simple/beginner view rendering ---------- */
+function plainEnglishWhy(sig) {
+  if (sig.sessionInfo.closed) {
+    return 'The market is currently closed. Use this time to study the levels and prepare a plan; do not place orders.';
   }
-  svg.innerHTML = `<polyline class="line" points="${pts}" /><path class="vwap" d="${vwapPath || ''}" />`;
+  if (sig.econEvent && sig.econEvent.deltaMin <= 30) {
+    return `A major economic release ("${sig.econEvent.label}") prints in about ${Math.max(0, Math.round(sig.econEvent.deltaMin))} minutes. Sit out — these moves are unpredictable.`;
+  }
+  if (sig.action === 'WAIT') {
+    if (sig.bullCount === 0 && sig.bearCount === 0) return 'Nothing is pulling the market either way right now. Sit on your hands and wait for a clear setup.';
+    if (sig.bullCount >= 2 && sig.bearCount >= 2) return 'Signals are split — bulls and bears both have a case. Mixed conditions are how account drawdowns happen. Wait.';
+    return 'Signals are mixed and not enough are aligned to take a trade. Patience pays here — the next clean setup is usually only a few bars away.';
+  }
+  if (sig.action === 'LONG') {
+    if (sig.confidence === 'HIGH') return 'Buy the dip — trend, momentum, and volume all agree. This is the kind of setup you wait for.';
+    return 'Lean long — most signals point up, but stay disciplined: take partial profits early and respect the stop.';
+  }
+  if (sig.action === 'SHORT') {
+    if (sig.confidence === 'HIGH') return 'Lean short — the trend is down and the tape agrees. Take partial profit at T1 and let the rest run.';
+    return 'Lean short — most signals point down, but volatility can flip fast. Stick to the stop loss.';
+  }
+  return '';
+}
+function plainEnglishHeadline(sig) {
+  if (sig.sessionInfo.closed) return 'Market is closed';
+  if (sig.action === 'WAIT')  return 'Sit on your hands';
+  if (sig.action === 'LONG')  return sig.confidence === 'HIGH' ? 'Strong buy signal' : 'Lean long';
+  if (sig.action === 'SHORT') return sig.confidence === 'HIGH' ? 'Strong sell signal' : 'Lean short';
+  return '—';
+}
+
+function plainChecklist(sig) {
+  const labels = {
+    macd: { up: 'Momentum is pushing prices higher', down: 'Momentum is fading and turning lower', flat: 'Momentum is flat — no clear push' },
+    rsi:  { up: 'Price is in a healthy uptrend (above its average buy/sell line)', down: 'Price is below its average buy/sell line — sellers in control', flat: 'Price is hovering — no edge from the buy/sell line' },
+    cvd:  { up: 'More buyers than sellers in recent bars', down: 'More sellers than buyers in recent bars', flat: 'Buyers and sellers roughly balanced' },
+    hist: { up: 'The bigger-picture trend (daily chart) is up', down: 'The bigger-picture trend (daily chart) is down', flat: 'The bigger-picture trend is sideways' },
+    news: { up: 'Today\'s headlines lean positive', down: 'Today\'s headlines lean negative', flat: 'No strong news bias right now' },
+  };
+  const order = ['hist','macd','rsi','cvd','news'];
+  return order.map(k => {
+    const t = sig.sc[k].tag;
+    if (t === 'PASS-BULL') return { icon: 'ok',  glyph: '✓', text: labels[k].up };
+    if (t === 'PASS-BEAR') return { icon: 'bad', glyph: '✗', text: labels[k].down };
+    return                 { icon: 'meh', glyph: '–', text: labels[k].flat };
+  });
+}
+
+function plainSteps(sig) {
+  if (sig.sessionInfo.closed) {
+    return [
+      `Markets are <strong>closed</strong>. No trading right now.`,
+      `Note today's prior-day high (<strong>${fmt(sig.levels.priorDay.high,2)}</strong>) and low (<strong>${fmt(sig.levels.priorDay.low,2)}</strong>) — these will matter at the next open.`,
+      `Come back when the session badge says RTH.`,
+    ];
+  }
+  if (sig.action === 'WAIT') {
+    return [
+      `Do <strong>nothing</strong>. Don't place a trade.`,
+      `Watch the dashboard for the next refresh — when the action flips to LONG or SHORT, the plan below will populate automatically.`,
+      `If a binary event is approaching, wait until 5 minutes after the release before re-evaluating.`,
+    ];
+  }
+  const dir = sig.action === 'LONG' ? 'buy' : 'sell-short';
+  const opp = sig.action === 'LONG' ? 'falls' : 'rises';
+  return [
+    `Place a <strong>${dir}</strong> order at <strong>${fmt(sig.entry,2)}</strong> on a 5-minute close in your direction.`,
+    `Set a <strong>hard stop loss</strong> at <strong>${fmt(sig.stop,2)}</strong> (max loss ≈ <strong>$${sig.stopMES.toFixed(0)} per MES contract</strong>).`,
+    `When price hits <strong>Target 1 (${fmt(sig.t1,2)})</strong>, sell <strong>50% of your position</strong> and move your stop to break-even.`,
+    `Trail the rest toward <strong>Target 2 (${fmt(sig.t2,2)})</strong> — exit if price ${opp} back through your trailing stop.`,
+    `If still in the trade by <strong>15:50 ET</strong>, close it. Don't carry through the 16:00 cash close.`,
+  ];
+}
+
+function renderSimple(sig, change) {
+  document.getElementById('simpleVerdict').textContent = sig.action;
+  document.getElementById('simpleVerdict').className = 'verdict ' + sig.action;
+  document.getElementById('simpleHeadline').textContent = plainEnglishHeadline(sig);
+  document.getElementById('simpleWhy').textContent = plainEnglishWhy(sig);
+
+  document.getElementById('simpleSymbol').textContent = sig.symbol;
+  document.getElementById('simplePrice').textContent  = fmt(sig.price, 2);
+  const chTxt = change == null ? '—' : `${change.pct >= 0 ? '+' : ''}${change.pct.toFixed(2)}%`;
+  const sCh = document.getElementById('simpleChange');
+  sCh.textContent = chTxt;
+  sCh.style.color = change == null ? 'var(--muted)' : (change.abs >= 0 ? 'var(--green)' : 'var(--red)');
+  const sb = document.getElementById('simpleSession');
+  sb.textContent = sig.sessionInfo.session;
+  sb.className = 'session-badge' + (sig.sessionInfo.closed ? ' closed' : sig.sessionInfo.warn ? ' warn' : '');
+
+  // Cards
+  const ev = document.getElementById('sc_entry_v'); ev.textContent = fmt(sig.entry, 2);
+  const eIm = document.getElementById('sc_entry_i');
+  eIm.textContent = sig.action === 'WAIT' ? 'no trade — wait for a setup' : (sig.action === 'LONG' ? 'where you would buy' : 'where you would sell short');
+
+  document.getElementById('sc_stop_v').textContent = sig.action === 'WAIT' ? '—' : fmt(sig.stop, 2);
+  document.getElementById('sc_stop_i').textContent = sig.action === 'WAIT' ? '—' : `max loss –$${sig.stopMES.toFixed(0)} per MES`;
+
+  document.getElementById('sc_t1_v').textContent = sig.action === 'WAIT' ? '—' : fmt(sig.t1, 2);
+  document.getElementById('sc_t1_i').textContent = sig.action === 'WAIT' ? '—' : `take 50% off · +$${sig.t1MES.toFixed(0)} per MES`;
+
+  document.getElementById('sc_t2_v').textContent = sig.action === 'WAIT' ? '—' : fmt(sig.t2, 2);
+  document.getElementById('sc_t2_i').textContent = sig.action === 'WAIT' ? '—' : `runner target · +$${sig.t2MES.toFixed(0)} per MES`;
+
+  // Checklist
+  const items = plainChecklist(sig);
+  document.getElementById('simpleChecklist').innerHTML = items.map(it =>
+    `<li><span class="icon ${it.icon}">${it.glyph}</span><span class="text">${it.text}</span></li>`).join('');
+
+  // Steps
+  const steps = plainSteps(sig);
+  document.getElementById('simpleSteps').innerHTML = steps.map(s => `<li>${s}</li>`).join('');
+
+  // Risk rules
+  const risks = [
+    `Never risk more than <strong>${state.riskPct}%</strong> of your account on one trade — that's <strong>$${(state.account * state.riskPct / 100).toFixed(0)}</strong> max.`,
+    `<strong>Two losses in a row?</strong> Stop trading for the day. Walk away.`,
+    `Cap yourself at <strong>3 trades per day</strong>, win or lose.`,
+    `Never hold a position through a binary event (FOMC, CPI, NFP).`,
+    `Paper trade for <strong>20 profitable sessions</strong> before going live.`,
+  ];
+  document.getElementById('simpleRiskList').innerHTML = risks.map(r => `<li>${r}</li>`).join('');
+}
+
+/* ---------- header status ---------- */
+function renderHeaderStatus() {
+  const src = document.getElementById('srcLabel');
+  if (state.lastProxy) {
+    src.innerHTML = `via <span class="ok">${state.lastProxy}</span>`;
+    src.title = `Last successful proxy: ${state.lastProxy}`;
+  } else {
+    src.textContent = 'via —';
+  }
+  const lu = document.getElementById('lastUpdate');
+  if (state.lastFetchTime) {
+    lu.textContent = 'Last fetch: ' + etTimestampString(new Date(state.lastFetchTime));
+  } else {
+    lu.textContent = '— never updated —';
+  }
+}
+
+function renderBinaryWarn(econEvent) {
+  const el = document.getElementById('binaryWarn');
+  if (!econEvent) { el.classList.remove('show', 'soon'); el.textContent = ''; return; }
+  const min = Math.max(0, Math.round(econEvent.deltaMin));
+  const h = Math.floor(min / 60), mm = min % 60;
+  const within = econEvent.deltaMin <= 30;
+  el.textContent = `⚠ BINARY EVENT IN ${h}h ${mm}m — ${econEvent.label}`;
+  el.classList.add('show');
+  el.classList.toggle('soon', !within);
 }
 
 /* ---------- main update loop ---------- */
@@ -887,10 +1526,10 @@ function showError(msg) {
 
 async function updateOnce() {
   saveSettings();
+  applyMode();
   document.getElementById('statusDot').className = 'dot stale';
   try {
     const symbol = state.symbol;
-    // Fetch in parallel
     const [intra, daily, newsResult] = await Promise.allSettled([
       fetchYahooChart(symbol, '5m', '5d'),
       fetchYahooChart(symbol, '1d', '6mo'),
@@ -910,24 +1549,41 @@ async function updateOnce() {
     const todayET = etParts(now);
     const sessionInfo = classifySession(now);
     const levels = computeLevels(bars5m, todayET);
+    const econEvent = nextBinaryEvent(now, 240);
 
-    // Build change vs prior daily close
     const lastClose = bars5m[bars5m.length - 1].close;
     const pdc = barsDaily[barsDaily.length - 2]?.close;
     const change = pdc ? { abs: lastClose - pdc, pct: (lastClose - pdc) / pdc * 100 } : null;
 
     const sig = buildSignal({
-      bars5m, barsDaily, levels, news, sessionInfo, symbol
+      bars5m, barsDaily, levels, news, sessionInfo, symbol, econEvent
     });
 
-    render(sig, change);
-    renderSpark(bars5m);
+    state.lastFetchTime = Date.now();
+    lastSignal = sig;
+    lastBars5m = bars5m;
+
+    // Render both views — only the visible one is shown
+    renderExpert(sig, change);
+    renderSimple(sig, change);
+    renderSpark(bars5m, sig);
+    renderHeaderStatus();
+    renderBinaryWarn(econEvent);
+
+    // Audio + log on action change
+    const isActionChange = state.lastAction !== null && state.lastAction !== sig.action;
+    if (state.sound && isActionChange) playBeep();
+    appendLogIfActionChanged(sig);
+    renderLog();
+
     showError('');
     state.lastError = null;
+    document.getElementById('statusDot').className = 'dot';
   } catch (e) {
     console.error(e);
     state.lastError = e.message || String(e);
     showError('Data fetch failed: ' + state.lastError + '. Retrying in ' + state.refresh + 's. (Some networks/ad-blockers block public CORS proxies; try refreshing manually or switching networks.)');
+    renderHeaderStatus();
   }
 }
 
@@ -938,16 +1594,48 @@ function startTimer() {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadSettings();
+  renderLog();
   document.getElementById('btnRefresh').addEventListener('click', updateOnce);
   document.getElementById('btnReset').addEventListener('click', () => {
+    if (!confirm('Reset all settings (keeps session log)?')) return;
     localStorage.removeItem('signaldeck');
     location.reload();
   });
+  document.getElementById('btnClearLog').addEventListener('click', () => {
+    if (!confirm('Clear the entire session log? This cannot be undone.')) return;
+    saveLog([]);
+    renderLog();
+  });
+  document.getElementById('btnExportLog').addEventListener('click', exportLogCSV);
+
+  // Mode toggles (settings panel + header pill stay in sync)
+  const optSimple = document.getElementById('optSimple');
+  const hdrSimple = document.getElementById('hdrSimpleMode');
+  const syncMode = (src) => {
+    const v = src.checked;
+    optSimple.checked = v;
+    hdrSimple.checked = v;
+    state.simpleMode = v;
+    saveSettings();
+    applyMode();
+  };
+  optSimple.addEventListener('change', () => syncMode(optSimple));
+  hdrSimple.addEventListener('change', () => syncMode(hdrSimple));
+
+  // Re-render the spark on resize so candles re-fit
+  window.addEventListener('resize', () => { if (lastSignal && lastBars5m) renderSpark(lastBars5m, lastSignal); });
+
+  // Settings that should restart the timer
   ['optSymbol', 'optAccount', 'optRisk', 'optRefresh', 'optSound'].forEach(id => {
     document.getElementById(id).addEventListener('change', () => { saveSettings(); startTimer(); updateOnce(); });
   });
+
+  // First render
   updateOnce();
   startTimer();
+
+  // Lazy-init audio context on first user gesture so beeps work after page load
+  document.addEventListener('click', () => ensureAudioCtx(), { once: true });
 });
 </script>
 </body>
