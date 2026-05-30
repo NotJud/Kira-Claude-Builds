@@ -306,6 +306,193 @@
 
   /* generic fade hint for ticker */
   .ticker-row { animation: slideInLeft .25s ease; }
+
+  /* ============================================================
+     MISTAKEMON — PACK RIPPING & 3D CARD SLABS
+  ============================================================ */
+  @property --holo-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
+  .pack-stage { perspective: 1400px; perspective-origin: 50% 35%; }
+
+  .booster-pack {
+    width: 200px; height: 280px; border-radius: 14px; position: relative;
+    cursor: pointer; overflow: hidden;
+    background: linear-gradient(135deg, var(--pc1, #dc2626), var(--pc2, #fbbf24));
+    box-shadow: 0 18px 30px rgba(0,0,0,.55), inset 0 0 30px rgba(255,255,255,.1);
+    transition: transform .2s ease, box-shadow .2s ease;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    color: white; text-align: center;
+    user-select: none;
+  }
+  .booster-pack:hover { transform: translateY(-5px) rotate(-1deg) scale(1.02); }
+  .booster-pack::before {
+    content: ''; position: absolute; inset: 8px; border-radius: 10px;
+    border: 2px solid rgba(255,255,255,.4); pointer-events: none;
+  }
+  .booster-pack::after {
+    content: ''; position: absolute; top: -50%; left: -20%; width: 140%; height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,.4), transparent);
+    transform: rotate(35deg); pointer-events: none;
+    animation: shimmer 3s infinite;
+  }
+  .booster-pack-title { font-weight: 900; font-size: 22px; text-shadow: 0 2px 6px rgba(0,0,0,.6); letter-spacing: 1px; }
+  .booster-pack-tier { font-weight: 700; font-size: 11px; opacity: .9; margin-top: 4px; }
+  .booster-pack-price { margin-top: 16px; background: rgba(0,0,0,.35); padding: 4px 12px; border-radius: 999px; font-weight: 800; font-size: 14px; }
+
+  .booster-pack.tearing { animation: tearPack .9s cubic-bezier(.5,.1,.7,1) forwards; pointer-events: none; }
+  @keyframes tearPack {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.08) rotate(-4deg); filter: brightness(1.2); }
+    55% { transform: scale(1.18) rotate(5deg); filter: brightness(1.6) saturate(1.4); }
+    80% { transform: scale(.5) rotate(-30deg); opacity: .4; filter: blur(4px); }
+    100% { transform: scale(0); opacity: 0; }
+  }
+
+  .slab-stage { perspective: 1100px; perspective-origin: 50% 35%; display: inline-block; }
+  .slab {
+    width: 200px; height: 280px; position: relative;
+    transform-style: preserve-3d;
+    transform: rotateY(-15deg) rotateX(2deg);
+    cursor: grab;
+    will-change: transform;
+  }
+  .slab:active { cursor: grabbing; }
+
+  .slab-face {
+    position: absolute; inset: 0; backface-visibility: hidden;
+    border-radius: 14px; overflow: hidden;
+    background: linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.03));
+    border: 1px solid rgba(255,255,255,.25);
+    box-shadow:
+      inset 0 0 30px rgba(255,255,255,.06),
+      0 18px 35px rgba(0,0,0,.55);
+  }
+  .slab-face.back {
+    transform: rotateY(180deg);
+    background:
+      linear-gradient(135deg, rgba(255,255,255,.1), rgba(255,255,255,.02)),
+      repeating-linear-gradient(45deg, #1e3a8a 0 12px, #2563eb 12px 24px);
+  }
+  .slab-face.back::after {
+    content: 'M'; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 92px; font-weight: 900;
+    color: rgba(255,255,255,.85);
+    text-shadow: 0 0 20px rgba(0,0,0,.5);
+    border: 3px solid rgba(255,255,255,.35);
+    border-radius: 10px; margin: 16px;
+  }
+
+  .slab-grade {
+    position: absolute; top: 6px; left: 6px; right: 6px; height: 22px;
+    background: linear-gradient(90deg, #111827, #1f2937);
+    color: #fff; font-weight: 900; font-size: 9px; letter-spacing: 1.5px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 8px; border-radius: 4px;
+    border: 1px solid rgba(255,255,255,.18);
+  }
+  .slab-grade .grade-num {
+    background: var(--neon); color: #003500; padding: 1px 6px; border-radius: 3px;
+    font-size: 10px; font-weight: 900;
+  }
+
+  .slab-card {
+    position: absolute; top: 32px; left: 8px; right: 8px; bottom: 8px;
+    border-radius: 8px; overflow: hidden; color: #fff;
+    display: flex; flex-direction: column;
+    border: 2px solid rgba(0,0,0,.2);
+  }
+  .slab-card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 8px; background: rgba(0,0,0,.25); font-weight: 800; font-size: 11px;
+  }
+  .slab-card-art {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    font-size: 76px; line-height: 1; background: rgba(255,255,255,.18);
+    margin: 6px; border-radius: 6px; border: 1px solid rgba(0,0,0,.15);
+    text-shadow: 0 4px 8px rgba(0,0,0,.4);
+  }
+  .slab-card-footer {
+    padding: 4px 8px; background: rgba(0,0,0,.25); font-weight: 700;
+    font-size: 10px;
+  }
+  .slab-card-flavor { font-size: 8px; font-weight: 600; opacity: .8; margin-top: 2px; font-style: italic; }
+
+  /* Holo overlay */
+  .slab-holo {
+    position: absolute; top: 32px; left: 8px; right: 8px; bottom: 8px;
+    border-radius: 8px; pointer-events: none; opacity: 0;
+    background: conic-gradient(
+      from var(--holo-angle, 0deg),
+      rgba(255,0,170,.6), rgba(255,255,0,.6),
+      rgba(0,255,255,.6), rgba(170,0,255,.6),
+      rgba(255,0,170,.6)
+    );
+    mix-blend-mode: color-dodge;
+  }
+  .slab.holo .slab-holo  { opacity: .55; animation: holoSpin 5s linear infinite; }
+  .slab.ultra .slab-holo { opacity: .75; animation: holoSpin 3.5s linear infinite; }
+  .slab.secret .slab-holo{ opacity: .9;  animation: holoSpin 2.5s linear infinite; }
+  @keyframes holoSpin { to { --holo-angle: 360deg; } }
+
+  /* Type themes */
+  .type-fire .slab-card     { background: linear-gradient(180deg, #fbbf24, #b91c1c); }
+  .type-water .slab-card    { background: linear-gradient(180deg, #60a5fa, #1d4ed8); }
+  .type-grass .slab-card    { background: linear-gradient(180deg, #86efac, #166534); }
+  .type-electric .slab-card { background: linear-gradient(180deg, #fde047, #a16207); color: #1f2937; }
+  .type-psychic .slab-card  { background: linear-gradient(180deg, #d8b4fe, #6b21a8); }
+  .type-fighting .slab-card { background: linear-gradient(180deg, #fb923c, #9a3412); }
+  .type-ice .slab-card      { background: linear-gradient(180deg, #67e8f9, #155e75); }
+  .type-poison .slab-card   { background: linear-gradient(180deg, #d8b4fe, #581c87); }
+  .type-flying .slab-card   { background: linear-gradient(180deg, #93c5fd, #1e40af); }
+  .type-dragon .slab-card   { background: linear-gradient(180deg, #fcd34d, #92400e); }
+  .type-dark .slab-card     { background: linear-gradient(180deg, #6b7280, #111827); }
+  .type-fairy .slab-card    { background: linear-gradient(180deg, #f9a8d4, #be185d); }
+  .type-steel .slab-card    { background: linear-gradient(180deg, #cbd5e1, #334155); }
+  .type-normal .slab-card   { background: linear-gradient(180deg, #e5e7eb, #4b5563); }
+
+  /* Rarity treatments */
+  .slab.common .slab-face.front   { border-color: rgba(156,163,175,.55); }
+  .slab.uncommon .slab-face.front { border-color: rgba(34,197,94,.7); box-shadow: inset 0 0 25px rgba(34,197,94,.18), 0 18px 35px rgba(0,0,0,.55); }
+  .slab.rare .slab-face.front     { border-color: rgba(234,179,8,.85); box-shadow: inset 0 0 30px rgba(234,179,8,.25), 0 18px 35px rgba(0,0,0,.55), 0 0 18px rgba(234,179,8,.2); }
+  .slab.holo .slab-face.front     { border-color: rgba(168,85,247,.85); box-shadow: inset 0 0 30px rgba(168,85,247,.3), 0 18px 35px rgba(0,0,0,.55), 0 0 24px rgba(168,85,247,.35); }
+  .slab.ultra .slab-face.front    { border-color: rgba(255,215,0,.95); box-shadow: inset 0 0 35px rgba(255,215,0,.4), 0 18px 35px rgba(0,0,0,.55), 0 0 36px rgba(255,215,0,.55); }
+  .slab.secret .slab-face.front {
+    border: 2px solid transparent;
+    background: linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.03)) padding-box,
+                conic-gradient(from var(--holo-angle, 0), #ff00ff, #00ffff, #ffff00, #ff00ff) border-box;
+    box-shadow: inset 0 0 35px rgba(255,255,255,.25), 0 0 40px rgba(255,0,255,.5);
+  }
+
+  .rarity-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    font-size: 10px; font-weight: 900; letter-spacing: 1px;
+  }
+  .rarity-tag.common   { background: #4b5563; color: #fff; }
+  .rarity-tag.uncommon { background: #166534; color: #fff; }
+  .rarity-tag.rare     { background: #a16207; color: #fff; }
+  .rarity-tag.holo     { background: linear-gradient(90deg, #a855f7, #ec4899); color: #fff; }
+  .rarity-tag.ultra    { background: linear-gradient(90deg, #fbbf24, #f97316); color: #111; }
+  .rarity-tag.secret   { background: conic-gradient(from var(--holo-angle, 0), #ff00ff, #00ffff, #ffff00, #ff00ff); color: #fff; animation: holoSpin 3s linear infinite; }
+
+  @keyframes slabReveal {
+    0%   { transform: translateY(80px) rotateY(180deg) scale(.7); opacity: 0; }
+    60%  { transform: translateY(-10px) rotateY(-30deg) scale(1.05); opacity: 1; }
+    100% { transform: translateY(0) rotateY(-15deg) scale(1); opacity: 1; }
+  }
+  .slab.revealing { animation: slabReveal .9s cubic-bezier(.3,1.3,.4,1) backwards; }
+
+  .collection-card {
+    background: var(--bg-elev); border-radius: 8px; padding: 8px;
+    display: flex; align-items: center; gap: 8px;
+    border: 1px solid #2f4553; cursor: pointer;
+    transition: transform .12s ease, border-color .12s ease;
+  }
+  .collection-card:hover { transform: translateY(-2px); border-color: var(--neon); }
+  .collection-mini-art {
+    width: 38px; height: 50px; border-radius: 4px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+  }
 </style>
 </head>
 <body class="bg-deep min-h-screen">
@@ -377,6 +564,9 @@
       <button class="nav-btn" data-route="flip"><i data-lucide="rotate-cw" class="w-4 h-4"></i> Flip</button>
       <button class="nav-btn" data-route="pump"><i data-lucide="circle" class="w-4 h-4"></i> Pump</button>
       <button class="nav-btn" data-route="snakes"><i data-lucide="grid-2x2" class="w-4 h-4"></i> Snakes</button>
+
+      <div class="mt-4 mb-1 px-3 text-[11px] text-dim font-black tracking-wider">TRADING CARDS</div>
+      <button class="nav-btn" data-route="packs"><i data-lucide="package" class="w-4 h-4"></i> Mistakémon Packs</button>
     </div>
 
     <!-- LIVE TICKER -->
@@ -599,6 +789,7 @@ const LOBBY_GAMES = [
   { route:'flip', name:'Flip', desc:'Heads or tails. That\'s it.', icon:'rotate-cw', cat:'Specialty' },
   { route:'pump', name:'Pump', desc:'Inflate. Don\'t pop.', icon:'circle', cat:'Specialty' },
   { route:'snakes', name:'Snakes', desc:'Roll dice. Climb ladders.', icon:'grid-2x2', cat:'Specialty' },
+  { route:'packs', name:'Mistakémon Packs', desc:'Rip parody booster packs. Spin 3D card slabs.', icon:'package', cat:'Cards' },
 ];
 
 ROUTES['lobby'] = {
@@ -3101,6 +3292,382 @@ setBalance(10000);
 toast('🪙 Welcome, Simulation_King. Starter $10,000 of imaginary money loaded.');
 navigate('lobby');
 if (window.lucide) lucide.createIcons();
+/* =====================================================================
+   MISTAKÉMON — pack ripping & 3D card slabs
+   (parody-only; all creatures are fictional)
+===================================================================== */
+const CREATURES = [
+  // Commons (12)
+  { id: 1,  name: 'Sparkrat',     type: 'electric', emoji: '⚡', tier: 'common', hp: 40, move: 'Static Zap',     dmg: 20, flavor: 'Tiny but shocks you for tipping below 20%.' },
+  { id: 2,  name: 'Pyropup',      type: 'fire',     emoji: '🔥', tier: 'common', hp: 50, move: 'Ember',          dmg: 20, flavor: 'Wags tail, sets carpet on fire.' },
+  { id: 3,  name: 'Aquakit',      type: 'water',    emoji: '💧', tier: 'common', hp: 45, move: 'Bubble',         dmg: 15, flavor: 'Sells you bottled water at a markup.' },
+  { id: 4,  name: 'Leafling',     type: 'grass',    emoji: '🌿', tier: 'common', hp: 50, move: 'Vine Slap',      dmg: 20, flavor: 'Photosynthesizes only when watched.' },
+  { id: 5,  name: 'Pebbleshell',  type: 'fighting', emoji: '🪨', tier: 'common', hp: 60, move: 'Tackle',         dmg: 15, flavor: 'A rock with strong opinions.' },
+  { id: 6,  name: 'Glaciopup',    type: 'ice',      emoji: '❄️', tier: 'common', hp: 50, move: 'Frost Bite',     dmg: 20, flavor: 'Wants belly rubs, gives frostbite.' },
+  { id: 7,  name: 'Mistwing',     type: 'flying',   emoji: '🌫️', tier: 'common', hp: 40, move: 'Gust',           dmg: 20, flavor: 'Definitely not just fog with eyes.' },
+  { id: 8,  name: 'Toxisnail',    type: 'poison',   emoji: '🐌', tier: 'common', hp: 55, move: 'Poison Sting',   dmg: 15, flavor: 'Slow. Lethal. Polite.' },
+  { id: 9,  name: 'Wispghost',    type: 'psychic',  emoji: '👻', tier: 'common', hp: 35, move: 'Hex',            dmg: 25, flavor: 'Haunts only your group chats.' },
+  { id: 10, name: 'Mudbug',       type: 'normal',   emoji: '🪲', tier: 'common', hp: 45, move: 'Bug Bite',       dmg: 20, flavor: 'Crunchy. Allegedly nutritious.' },
+  { id: 11, name: 'Cogling',      type: 'steel',    emoji: '🔩', tier: 'common', hp: 60, move: 'Iron Tail',      dmg: 20, flavor: 'Unionizing the factory.' },
+  { id: 12, name: 'Pixiebloom',   type: 'fairy',    emoji: '🌸', tier: 'common', hp: 40, move: 'Pixie Dust',     dmg: 20, flavor: 'Will judge your aura silently.' },
+  // Uncommons (10)
+  { id: 13, name: 'Voltcat',      type: 'electric', emoji: '😼', tier: 'uncommon', hp: 70, move: 'Thunder Fang', dmg: 40, flavor: 'Knocks your charger off the desk.' },
+  { id: 14, name: 'Pyrofox',      type: 'fire',     emoji: '🦊', tier: 'uncommon', hp: 75, move: 'Flamethrower', dmg: 45, flavor: 'Nine tails, six insurance claims.' },
+  { id: 15, name: 'Tidalcrab',    type: 'water',    emoji: '🦀', tier: 'uncommon', hp: 80, move: 'Crush Claw',   dmg: 40, flavor: 'Side-walks into your apology.' },
+  { id: 16, name: 'Vinetiger',    type: 'grass',    emoji: '🐅', tier: 'uncommon', hp: 75, move: 'Razor Leaf',   dmg: 45, flavor: 'Solar-powered apex predator.' },
+  { id: 17, name: 'Boulderfist',  type: 'fighting', emoji: '👊', tier: 'uncommon', hp: 90, move: 'Boulder Smash',dmg: 50, flavor: 'Skips leg day. Still wins.' },
+  { id: 18, name: 'Frostmane',    type: 'ice',      emoji: '🦁', tier: 'uncommon', hp: 80, move: 'Avalanche',    dmg: 45, flavor: 'Roars in three different snow languages.' },
+  { id: 19, name: 'Skyhawk',      type: 'flying',   emoji: '🦅', tier: 'uncommon', hp: 70, move: 'Sky Attack',   dmg: 50, flavor: 'Files its own taxes at altitude.' },
+  { id: 20, name: 'Venomstrike',  type: 'poison',   emoji: '🐍', tier: 'uncommon', hp: 75, move: 'Venom Fang',   dmg: 45, flavor: 'Hisses at parking attendants.' },
+  { id: 21, name: 'Mindbender',   type: 'psychic',  emoji: '🧠', tier: 'uncommon', hp: 65, move: 'Confusion',    dmg: 50, flavor: 'Will not stop quoting Jung.' },
+  { id: 22, name: 'Beardrum',     type: 'normal',   emoji: '🐻', tier: 'uncommon', hp: 90, move: 'Body Slam',    dmg: 40, flavor: 'Plays the bongos. Badly.' },
+  // Rares (5)
+  { id: 23, name: 'Thundermane',  type: 'electric', emoji: '🦄', tier: 'rare', hp: 110, move: 'Lightning Bolt', dmg: 70, flavor: 'A unicorn with a 480-volt grudge.' },
+  { id: 24, name: 'Infernoblaze', type: 'fire',     emoji: '🐲', tier: 'rare', hp: 120, move: 'Flame Pillar',   dmg: 75, flavor: 'Pre-heats the oven by walking past it.' },
+  { id: 25, name: 'Tsunaleviath', type: 'water',    emoji: '🐳', tier: 'rare', hp: 130, move: 'Hydro Pulse',    dmg: 70, flavor: 'Owns the entire Pacific. Don\'t test it.' },
+  { id: 26, name: 'Earthwarden',  type: 'fighting', emoji: '🗿', tier: 'rare', hp: 140, move: 'Crag Slam',      dmg: 80, flavor: 'Older than capitalism.' },
+  { id: 27, name: 'Voidstalker',  type: 'dark',     emoji: '🦇', tier: 'rare', hp: 100, move: 'Shadow Strike',  dmg: 80, flavor: 'Already behind you.' },
+  // Holos (3 legendaries)
+  { id: 28, name: 'Drakaeus',     type: 'dragon',   emoji: '🐉', tier: 'holo', hp: 150, move: 'Dragon Storm',   dmg: 100, flavor: 'Last seen demanding tribute from a Best Buy.' },
+  { id: 29, name: 'Phoenyxis',    type: 'fire',     emoji: '🔆', tier: 'holo', hp: 140, move: 'Solar Flare',    dmg: 110, flavor: 'Reborn each Tuesday. It\'s a whole thing.' },
+  { id: 30, name: 'Aetherwyrm',   type: 'psychic',  emoji: '🌌', tier: 'holo', hp: 130, move: 'Astral Beam',    dmg: 120, flavor: 'Telepathically reviews your Spotify Wrapped.' },
+];
+
+const PACK_TIERS = [
+  { id: 'booster', name: 'Booster Pack', tier: 'STANDARD', price: 5,
+    pc1: '#dc2626', pc2: '#fbbf24',
+    slots: ['common','common','common','uncommon','rareTier'],
+    rareSplit: [['rare', 80], ['holo', 18], ['ultra', 2]] },
+  { id: 'elite', name: 'Elite Pack', tier: 'PRO LEAGUE', price: 25,
+    pc1: '#7c3aed', pc2: '#06b6d4',
+    slots: ['common','common','uncommon','uncommon','rareTier'],
+    rareSplit: [['rare', 50], ['holo', 35], ['ultra', 13], ['secret', 2]] },
+  { id: 'vault', name: 'Vault Pack', tier: 'CHAMPIONSHIP', price: 100,
+    pc1: '#fbbf24', pc2: '#f97316',
+    slots: ['common','uncommon','uncommon','rareTier','rareTier'],
+    rareSplit: [['holo', 50], ['ultra', 35], ['secret', 15]] },
+];
+
+const RARITY_VALUE = { common: 2, uncommon: 8, rare: 25, holo: 75, ultra: 250, secret: 1000 };
+
+// persistent collection across navigation
+const Collection = { cards: [] };
+
+function rollRarity(slot, rareSplit) {
+  if (slot !== 'rareTier') return slot; // 'common' or 'uncommon'
+  const total = rareSplit.reduce((a, b) => a + b[1], 0);
+  let r = Math.random() * total, acc = 0;
+  for (const [k, w] of rareSplit) { acc += w; if (r < acc) return k; }
+  return rareSplit[0][0];
+}
+
+function pickCreatureForRarity(rarity) {
+  // common/uncommon pull from their own pools; rare+ pulls from rare+holo pools, ultra/secret prefer holos
+  let pool;
+  if (rarity === 'common')   pool = CREATURES.filter(c => c.tier === 'common');
+  else if (rarity === 'uncommon') pool = CREATURES.filter(c => c.tier === 'uncommon');
+  else if (rarity === 'rare')     pool = CREATURES.filter(c => c.tier === 'rare');
+  else                            pool = CREATURES.filter(c => c.tier === 'holo'); // holo/ultra/secret all pick from legendaries
+  return pick(pool);
+}
+
+function gradeLabel(g) {
+  const labels = { 10: 'GEM MT 10', 9: 'MINT 9', 8: 'NM-MT 8', 7: 'NM 7', 6: 'EX-MT 6', 5: 'EX 5', 4: 'VG-EX 4', 3: 'VG 3', 2: 'GOOD 2', 1: 'POOR 1' };
+  return labels[g] || ('GRADE ' + g);
+}
+
+function rollGrade(rarity) {
+  // higher rarity ⇒ better expected grade
+  const bias = rarity === 'secret' ? 9.5 : rarity === 'ultra' ? 9 : rarity === 'holo' ? 8.5 : rarity === 'rare' ? 7.5 : rarity === 'uncommon' ? 7 : 6.5;
+  let g = Math.round(bias + (Math.random() - .5) * 4);
+  return clamp(g, 1, 10);
+}
+
+function buildSlabHTML(card) {
+  const { creature, rarity, grade } = card;
+  const id = String(creature.id).padStart(3, '0');
+  return `
+    <div class="slab ${rarity} type-${creature.type}" data-rarity="${rarity}">
+      <div class="slab-face front">
+        <div class="slab-grade">
+          <span>PMG</span>
+          <span class="grade-num">${gradeLabel(grade)}</span>
+          <span>#${id}</span>
+        </div>
+        <div class="slab-card">
+          <div class="slab-card-header">
+            <span>${creature.name.toUpperCase()}</span>
+            <span>HP ${creature.hp}</span>
+          </div>
+          <div class="slab-card-art">${creature.emoji}</div>
+          <div class="slab-card-footer">
+            <div>${creature.move} · ${creature.dmg}</div>
+            <div class="slab-card-flavor">${creature.flavor}</div>
+          </div>
+        </div>
+        <div class="slab-holo"></div>
+      </div>
+      <div class="slab-face back"></div>
+    </div>`;
+}
+
+/* Drag-rotation interaction (with idle wobble) */
+const _slabInteractions = [];
+function makeSlabInteractive(slabEl) {
+  let dragging = false, sx = 0, sy = 0;
+  let rotX = 2, rotY = -15;
+  let lastInteract = performance.now();
+  let raf = null;
+
+  function apply() { slabEl.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`; }
+
+  function loop() {
+    if (!dragging) {
+      const idleFor = performance.now() - lastInteract;
+      if (idleFor > 1800) {
+        rotY += 0.25;
+        rotX = 2 + Math.sin(performance.now() / 1400) * 3;
+        apply();
+      }
+    }
+    raf = requestAnimationFrame(loop);
+  }
+
+  function getPoint(e) {
+    if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+  function onDown(e) {
+    dragging = true;
+    lastInteract = performance.now();
+    const p = getPoint(e); sx = p.x; sy = p.y;
+    e.preventDefault();
+  }
+  function onMove(e) {
+    lastInteract = performance.now();
+    if (!dragging) return;
+    const p = getPoint(e);
+    const dx = p.x - sx, dy = p.y - sy;
+    rotY += dx * 0.6;
+    rotX = clamp(rotX - dy * 0.4, -55, 55);
+    sx = p.x; sy = p.y;
+    apply();
+    if (e.cancelable) e.preventDefault();
+  }
+  function onUp() { dragging = false; }
+
+  slabEl.addEventListener('mousedown', onDown);
+  slabEl.addEventListener('touchstart', onDown, { passive: false });
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, { passive: false });
+  window.addEventListener('mouseup', onUp);
+  window.addEventListener('touchend', onUp);
+
+  apply();
+  raf = requestAnimationFrame(loop);
+
+  const cleanup = () => {
+    if (raf) cancelAnimationFrame(raf);
+    window.removeEventListener('mousemove', onMove);
+    window.removeEventListener('touchmove', onMove);
+    window.removeEventListener('mouseup', onUp);
+    window.removeEventListener('touchend', onUp);
+  };
+  _slabInteractions.push(cleanup);
+  return cleanup;
+}
+
+function cleanupAllSlabs() {
+  while (_slabInteractions.length) {
+    const fn = _slabInteractions.pop();
+    try { fn(); } catch (e) {}
+  }
+}
+
+ROUTES['packs'] = {
+  render(main) {
+    main.innerHTML = gameShell('Mistakémon Packs',
+      'Parody trading cards. Buy a pack, rip it, drag the 3D slabs to spin them.',
+      `
+      <div id="pp-shop">
+        <div class="text-dim text-sm mb-3">Pick a pack tier. Drag any revealed slab with mouse/finger to rotate in 3D.</div>
+        <div class="flex gap-5 flex-wrap justify-center" id="pp-pack-list"></div>
+      </div>
+
+      <div id="pp-rip" class="hidden">
+        <div class="flex justify-between items-center mb-4">
+          <button id="pp-back" class="ghost-btn rounded-md px-3 py-2 text-sm">← Back to shop</button>
+          <div id="pp-summary" class="text-sm text-dim"></div>
+          <button id="pp-keep" class="neon-btn rounded-md px-4 py-2 text-sm">Add to collection</button>
+        </div>
+        <div id="pp-slabs" class="flex gap-5 flex-wrap justify-center min-h-[320px] py-6 pack-stage"></div>
+      </div>
+
+      <div class="mt-8">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <div class="text-xs text-dim font-bold tracking-wider">YOUR COLLECTION</div>
+            <div class="text-2xl font-black"><span id="pp-coll-count">0</span> cards · est. value <span id="pp-coll-value" class="text-neon">$0</span></div>
+          </div>
+          <button id="pp-sell-dupes" class="ghost-btn rounded-md px-3 py-2 text-sm">Sell duplicates</button>
+        </div>
+        <div id="pp-coll" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"></div>
+      </div>
+      `);
+
+    function renderShop() {
+      const list = document.getElementById('pp-pack-list');
+      list.innerHTML = '';
+      PACK_TIERS.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'flex flex-col items-center gap-2';
+        el.innerHTML = `
+          <div class="booster-pack" data-pack="${p.id}" style="--pc1:${p.pc1}; --pc2:${p.pc2}">
+            <div class="booster-pack-title">MISTAKÉMON</div>
+            <div class="booster-pack-tier">${p.tier}</div>
+            <div class="booster-pack-price">RIP — $${p.price}</div>
+          </div>
+          <div class="text-center text-xs text-dim max-w-[200px] leading-snug">
+            5 cards · ${p.slots.filter(s => s === 'rareTier').length || 1} guaranteed hit slot${p.slots.filter(s => s === 'rareTier').length === 1 ? '' : 's'}
+          </div>
+        `;
+        list.appendChild(el);
+        el.querySelector('.booster-pack').addEventListener('click', () => ripPack(p));
+      });
+    }
+
+    let lastPulled = [];
+    function ripPack(pack) {
+      if (State.balance < pack.price) { toast('Need more fake balance.', 'bad'); return; }
+      setBalance(State.balance - pack.price);
+      const packEl = document.querySelector(`.booster-pack[data-pack="${pack.id}"]`);
+      if (packEl) packEl.classList.add('tearing');
+
+      // generate cards
+      lastPulled = pack.slots.map(slot => {
+        const rarity = rollRarity(slot, pack.rareSplit);
+        const creature = pickCreatureForRarity(rarity);
+        const grade = rollGrade(rarity);
+        return { creature, rarity, grade, value: RARITY_VALUE[rarity] * (1 + (grade - 5) * 0.15) };
+      });
+
+      // small surprise screen flash for legendaries
+      const bestRarity = lastPulled.reduce((b, c) => (RARITY_VALUE[c.rarity] > RARITY_VALUE[b] ? c.rarity : b), 'common');
+      if (bestRarity === 'secret') confetti(120);
+      else if (bestRarity === 'ultra') confetti(70);
+      else if (bestRarity === 'holo') confetti(35);
+
+      setTimeout(() => {
+        document.getElementById('pp-shop').classList.add('hidden');
+        document.getElementById('pp-rip').classList.remove('hidden');
+        revealCards(lastPulled, bestRarity);
+      }, 700);
+    }
+
+    function revealCards(cards, bestRarity) {
+      cleanupAllSlabs();
+      const wrap = document.getElementById('pp-slabs');
+      wrap.innerHTML = '';
+      cards.forEach((card, i) => {
+        const stage = document.createElement('div');
+        stage.className = 'slab-stage';
+        stage.innerHTML = buildSlabHTML(card);
+        wrap.appendChild(stage);
+        const slab = stage.querySelector('.slab');
+        slab.classList.add('revealing');
+        slab.style.animationDelay = (0.25 + i * 0.4) + 's';
+        // Activate drag rotation after the reveal animation has finished
+        setTimeout(() => makeSlabInteractive(slab), 250 + i * 400 + 900);
+      });
+      const totalValue = cards.reduce((s, c) => s + c.value, 0);
+      const counts = cards.reduce((a, c) => (a[c.rarity] = (a[c.rarity] || 0) + 1, a), {});
+      const summary = Object.entries(counts).map(([k, v]) => `<span class="rarity-tag ${k}">${k.toUpperCase()} × ${v}</span>`).join(' ');
+      document.getElementById('pp-summary').innerHTML = `${summary} · est. <span class="text-neon font-black">$${totalValue.toFixed(0)}</span>`;
+      const bestMsg = bestRarity === 'secret' ? '🌈 SECRET RARE!! Frame this. Or don\'t — it\'s pretend.' :
+                      bestRarity === 'ultra'  ? '✨ ULTRA RARE pull. Sim-Pokémart called, they want their pity back.' :
+                      bestRarity === 'holo'   ? '💜 Holo Rare. Decent rip.' :
+                      bestRarity === 'rare'   ? 'Rare hit. Could be worse.' :
+                      'Bulk. The collector cries softly.';
+      toast(bestMsg, bestRarity === 'secret' || bestRarity === 'ultra' ? 'warn' : 'info');
+    }
+
+    function renderCollection() {
+      const wrap = document.getElementById('pp-coll');
+      wrap.innerHTML = '';
+      const counts = new Map(); // creatureId|rarity -> { card, count }
+      Collection.cards.forEach(c => {
+        const k = c.creature.id + '|' + c.rarity;
+        if (!counts.has(k)) counts.set(k, { card: c, count: 0 });
+        counts.get(k).count++;
+      });
+      const sorted = [...counts.values()].sort((a, b) => RARITY_VALUE[b.card.rarity] - RARITY_VALUE[a.card.rarity]);
+      sorted.forEach(({ card, count }) => {
+        const el = document.createElement('div');
+        el.className = 'collection-card';
+        el.innerHTML = `
+          <div class="collection-mini-art type-${card.creature.type} slab-card" style="margin:0; border-radius:4px">${card.creature.emoji}</div>
+          <div class="flex-1 min-w-0">
+            <div class="font-bold truncate text-sm">${card.creature.name}</div>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="rarity-tag ${card.rarity}">${card.rarity.toUpperCase()}</span>
+              ${count > 1 ? `<span class="text-xs text-dim">×${count}</span>` : ''}
+            </div>
+          </div>
+        `;
+        wrap.appendChild(el);
+      });
+      document.getElementById('pp-coll-count').textContent = Collection.cards.length;
+      const v = Collection.cards.reduce((s, c) => s + c.value, 0);
+      document.getElementById('pp-coll-value').textContent = '$' + v.toFixed(0);
+      if (Collection.cards.length === 0) {
+        wrap.innerHTML = '<div class="col-span-full text-dim text-sm text-center py-6">No cards yet. Rip a pack to start your binder.</div>';
+      }
+    }
+
+    document.getElementById('pp-back').addEventListener('click', () => {
+      cleanupAllSlabs();
+      document.getElementById('pp-rip').classList.add('hidden');
+      document.getElementById('pp-shop').classList.remove('hidden');
+      lastPulled = [];
+      renderShop();
+    });
+
+    document.getElementById('pp-keep').addEventListener('click', () => {
+      if (lastPulled.length === 0) return;
+      Collection.cards.push(...lastPulled);
+      toast(`Added ${lastPulled.length} cards to your collection.`);
+      cleanupAllSlabs();
+      lastPulled = [];
+      document.getElementById('pp-rip').classList.add('hidden');
+      document.getElementById('pp-shop').classList.remove('hidden');
+      renderShop();
+      renderCollection();
+    });
+
+    document.getElementById('pp-sell-dupes').addEventListener('click', () => {
+      // sell duplicate copies (keep one of each unique creature+rarity)
+      const seen = new Set();
+      const kept = [];
+      let sold = 0, sum = 0;
+      for (const c of Collection.cards) {
+        const k = c.creature.id + '|' + c.rarity;
+        if (!seen.has(k)) { seen.add(k); kept.push(c); }
+        else { sold++; sum += c.value; }
+      }
+      Collection.cards = kept;
+      if (sold === 0) { toast('No duplicates to sell.', 'warn'); return; }
+      adjustBalance(sum);
+      toast(`Sold ${sold} duplicates for $${sum.toFixed(0)} of fake money.`);
+      renderCollection();
+    });
+
+    renderShop();
+    renderCollection();
+
+    // route cleanup
+    return () => { cleanupAllSlabs(); };
+  }
+};
 /* GAME_INJECTION_POINT */
 </script>
 </body>
