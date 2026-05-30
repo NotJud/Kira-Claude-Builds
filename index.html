@@ -147,6 +147,165 @@
     aspect-ratio: 1/1; border: 1px solid #2f4553; display: flex; align-items: center; justify-content: center;
     font-size: 11px; font-weight: 700; position: relative; background: var(--bg-elev);
   }
+
+  /* ============================================================
+     ANIMATION LIBRARY
+  ============================================================ */
+  @keyframes flipIn {
+    0% { transform: rotateY(180deg) scale(.85); opacity: 0; }
+    60% { transform: rotateY(-8deg) scale(1.04); opacity: 1; }
+    100% { transform: rotateY(0) scale(1); opacity: 1; }
+  }
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-7px) rotate(-1deg); }
+    40% { transform: translateX(6px) rotate(1deg); }
+    60% { transform: translateX(-4px) rotate(-.5deg); }
+    80% { transform: translateX(4px) rotate(.5deg); }
+  }
+  @keyframes pulseRing {
+    0% { box-shadow: 0 0 0 0 rgba(0,231,1,.7); }
+    70% { box-shadow: 0 0 0 14px rgba(0,231,1,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,231,1,0); }
+  }
+  @keyframes pulseRingRed {
+    0% { box-shadow: 0 0 0 0 rgba(255,77,77,.7); }
+    70% { box-shadow: 0 0 0 14px rgba(255,77,77,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,77,77,0); }
+  }
+  @keyframes glowPulse {
+    0%,100% { filter: drop-shadow(0 0 4px currentColor); }
+    50% { filter: drop-shadow(0 0 14px currentColor); }
+  }
+  @keyframes wiggle {
+    0%,100% { transform: rotate(0); }
+    25% { transform: rotate(-4deg); }
+    75% { transform: rotate(4deg); }
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-30px) rotate(0); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+  @keyframes coinSpin {
+    0% { transform: rotateY(0) scale(1); }
+    50% { transform: rotateY(900deg) scale(1.15); }
+    100% { transform: rotateY(1800deg) scale(1); }
+  }
+  @keyframes explosionRing {
+    0% { transform: translate(-50%,-50%) scale(.2); opacity: .9; border-width: 12px; }
+    100% { transform: translate(-50%,-50%) scale(2.4); opacity: 0; border-width: 1px; }
+  }
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes ballDrop {
+    0% { transform: translateY(-40px) scale(.4); opacity: 0; }
+    50% { transform: translateY(6px) scale(1.05); opacity: 1; }
+    70% { transform: translateY(-4px) scale(.98); }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  @keyframes flashBg {
+    0% { background-color: var(--neon); }
+    100% { background-color: var(--bg-elev); }
+  }
+  @keyframes flashBgRed {
+    0% { background-color: var(--red); }
+    100% { background-color: var(--bg-elev); }
+  }
+
+  .anim-flipIn { animation: flipIn .45s cubic-bezier(.4,1.6,.5,1) backwards; }
+  .anim-popIn { animation: popIn .35s cubic-bezier(.5,1.7,.5,1) backwards; }
+  .anim-fadeInUp { animation: fadeInUp .35s ease backwards; }
+  .anim-shake { animation: shake .45s ease; }
+  .anim-pulseRing { animation: pulseRing 1.2s ease 2; }
+  .anim-pulseRingRed { animation: pulseRingRed 1s ease 1; }
+  .anim-glow { animation: glowPulse 1.4s ease infinite; }
+  .anim-wiggle { animation: wiggle .35s ease; }
+  .anim-coinSpin { animation: coinSpin 1.1s cubic-bezier(.3,.1,.3,1); }
+  .anim-slideInLeft { animation: slideInLeft .25s ease backwards; }
+  .anim-ballDrop { animation: ballDrop .5s cubic-bezier(.3,1.4,.5,1) backwards; }
+  .anim-flashBg { animation: flashBg .8s ease; }
+  .anim-flashBgRed { animation: flashBgRed .8s ease; }
+
+  /* every card flips in */
+  .card-face { animation: flipIn .45s cubic-bezier(.4,1.6,.5,1) backwards; }
+
+  /* lobby grid cards stagger in */
+  #lobby-grid .game-grid-card { animation: fadeInUp .35s ease backwards; }
+  #lobby-grid .game-grid-card:nth-child(2n) { animation-delay: .04s; }
+  #lobby-grid .game-grid-card:nth-child(3n) { animation-delay: .08s; }
+  #lobby-grid .game-grid-card:nth-child(4n) { animation-delay: .12s; }
+
+  /* Header mint button extra glow */
+  #mint-btn { position: relative; overflow: hidden; }
+  #mint-btn::after {
+    content: ''; position: absolute; top: 0; left: -60%;
+    width: 40%; height: 100%; transform: skewX(-20deg);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent);
+    animation: shimmer 2.4s infinite;
+  }
+  @keyframes shimmer { 0% { left: -60%; } 100% { left: 140%; } }
+
+  /* burst already exists; enhance */
+  .burst { font-size: 22px; }
+
+  /* nav-btn active accent bar */
+  .nav-btn.active { position: relative; }
+  .nav-btn.active::before {
+    content: ''; position: absolute; left: -3px; top: 6px; bottom: 6px;
+    width: 3px; background: var(--neon); border-radius: 2px;
+    box-shadow: 0 0 6px var(--neon);
+  }
+
+  /* main view fade-in on route change */
+  .view-fade-in > * { animation: fadeInUp .3s ease backwards; }
+
+  /* Screen flash overlay */
+  #screen-flash {
+    position: fixed; inset: 0; pointer-events: none; z-index: 60;
+    background: transparent; transition: background .12s ease, opacity .35s ease;
+    opacity: 0;
+  }
+  #screen-flash.win { background: radial-gradient(ellipse at center, rgba(0,231,1,.22), transparent 60%); opacity: 1; }
+  #screen-flash.bad { background: radial-gradient(ellipse at center, rgba(255,77,77,.22), transparent 60%); opacity: 1; }
+
+  /* Confetti */
+  .confetti {
+    position: fixed; top: -30px; width: 8px; height: 14px; z-index: 9999; pointer-events: none;
+    animation: confettiFall var(--dur, 2.5s) linear forwards;
+    border-radius: 1px;
+  }
+
+  /* explosion ring (Mines/Chicken bombs) */
+  .explosion-ring {
+    position: absolute; left: 50%; top: 50%;
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 4px solid var(--red); pointer-events: none;
+    animation: explosionRing .7s ease-out forwards;
+  }
+
+  /* tile reveal — for Mines/Chicken/Dragon Tower */
+  .grid-tile.safe, .grid-tile.bomb { animation: popIn .35s cubic-bezier(.5,1.7,.5,1); }
+
+  /* roulette winning highlight */
+  .roulette-cell.winning {
+    outline: 3px solid var(--neon);
+    animation: pulseRing 1.2s ease 2;
+    z-index: 2;
+  }
+
+  /* generic fade hint for ticker */
+  .ticker-row { animation: slideInLeft .25s ease; }
 </style>
 </head>
 <body class="bg-deep min-h-screen">
@@ -255,13 +414,36 @@ const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 function setBalance(v) {
-  State.balance = Math.max(0, v);
-  document.getElementById('balance-display').textContent = fmt(State.balance);
+  v = Math.max(0, v);
+  const el = document.getElementById('balance-display');
+  const start = State.balance;
+  State.balance = v;
+  if (!el) return;
+  if (el._raf) cancelAnimationFrame(el._raf);
+  const dur = 380;
+  const t0 = performance.now();
+  function tick() {
+    const t = Math.min(1, (performance.now() - t0) / dur);
+    const eased = 1 - Math.pow(1 - t, 3);
+    const cur = start + (v - start) * eased;
+    el.textContent = fmt(cur);
+    if (t < 1) el._raf = requestAnimationFrame(tick);
+    else el._raf = null;
+  }
+  tick();
 }
 function adjustBalance(delta) {
   setBalance(State.balance + delta);
-  if (delta > 0) burst('+' + fmt(delta), 'good');
-  else if (delta < 0) burst(fmt(delta), 'bad');
+  if (delta > 0) {
+    burst('+' + fmt(delta), 'good');
+    screenFlash('good');
+    if (delta >= 1000) confetti(70);
+    else if (delta >= 200) confetti(30);
+  } else if (delta < 0) {
+    burst(fmt(delta), 'bad');
+    screenFlash('bad');
+    shakeMain();
+  }
 }
 function burst(text, kind = 'good') {
   const wrap = document.getElementById('header-right');
@@ -275,6 +457,38 @@ function burst(text, kind = 'good') {
   if (kind === 'gold') el.style.color = 'var(--gold)';
   wrap.appendChild(el);
   setTimeout(() => el.remove(), 900);
+}
+
+/* Screen flash overlay */
+function screenFlash(kind) {
+  let el = document.getElementById('screen-flash');
+  if (!el) { el = document.createElement('div'); el.id = 'screen-flash'; document.body.appendChild(el); }
+  el.className = kind === 'good' ? 'win' : 'bad';
+  setTimeout(() => { el.className = ''; }, 220);
+}
+
+/* Confetti for big wins */
+function confetti(count = 60) {
+  const colors = ['#00e701', '#ffd700', '#3b82f6', '#ef4444', '#a855f7', '#ffffff'];
+  for (let i = 0; i < count; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = (Math.random() * 100) + 'vw';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.setProperty('--dur', (1.6 + Math.random() * 1.6) + 's');
+    c.style.transform = `rotate(${Math.random() * 360}deg)`;
+    c.style.animationDelay = (Math.random() * 0.4) + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 4500);
+  }
+}
+
+/* Brief shake on the main view for losses */
+function shakeMain() {
+  const m = document.getElementById('main-view');
+  if (!m) return;
+  m.classList.remove('anim-shake'); void m.offsetWidth; m.classList.add('anim-shake');
+  setTimeout(() => m.classList.remove('anim-shake'), 500);
 }
 
 /* =====================================================================
@@ -340,6 +554,7 @@ function navigate(route) {
   currentCleanup = null;
   const main = document.getElementById('main-view');
   main.innerHTML = '';
+  main.classList.remove('view-fade-in'); void main.offsetWidth; main.classList.add('view-fade-in');
   const cleanup = ROUTES[route].render(main);
   currentCleanup = cleanup;
   if (window.lucide) lucide.createIcons();
@@ -355,6 +570,8 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
 document.getElementById('mint-btn').addEventListener('click', () => {
   setBalance(State.balance + 10000);
   for (let i = 0; i < 6; i++) setTimeout(() => burst('+$' + (1000 + i * 500), 'gold'), i * 60);
+  confetti(50);
+  screenFlash('good');
   toast('🪙 Minted $10,000 of pretend currency. The IRS does not care.');
 });
 
@@ -525,6 +742,10 @@ ROUTES['mines'] = {
       if (mineSet.has(i)) {
         el.classList.add('bomb'); el.innerHTML = '<i data-lucide="bomb" class="w-5 h-5"></i>';
         if (window.lucide) lucide.createIcons();
+        // explosion ring
+        el.style.position = 'relative';
+        const ring = document.createElement('div'); ring.className = 'explosion-ring';
+        el.appendChild(ring); setTimeout(() => ring.remove(), 700);
         // reveal all
         mineSet.forEach(j => { if (j !== i) { cells[j].classList.add('bomb'); cells[j].innerHTML = '💣'; } });
         cells.forEach(c => c.classList.add('disabled'));
@@ -817,6 +1038,13 @@ ROUTES['plinko'] = {
           const payout = b.stake * m;
           adjustBalance(payout);
           reportOutcome(b.stake, payout);
+          // flash the slot bar cell
+          const slotEl = document.getElementById('p-slots').children[idx];
+          if (slotEl) {
+            slotEl.classList.remove(m >= 1 ? 'anim-flashBg' : 'anim-flashBgRed');
+            void slotEl.offsetWidth;
+            slotEl.classList.add(m >= 1 ? 'anim-flashBg' : 'anim-flashBgRed');
+          }
           balls.splice(i, 1);
         }
       }
@@ -1393,6 +1621,11 @@ ROUTES['roulette'] = {
       strip.style.transform = `translateX(${offset}px)`;
       setTimeout(() => {
         document.getElementById('r-last').textContent = String(n);
+        const winCell = cells.get('num:' + n);
+        if (winCell) {
+          winCell.classList.add('winning');
+          setTimeout(() => winCell.classList.remove('winning'), 2500);
+        }
         const won = payout(n);
         if (won > 0) adjustBalance(won);
         reportOutcome(totalWager, won);
@@ -2156,18 +2389,26 @@ ROUTES['keno'] = {
       drawn.clear();
       while (drawn.size < 20) drawn.add(randInt(1, 80));
       let hits = 0;
-      document.querySelectorAll('#k-grid .grid-tile').forEach(c => {
-        const n = parseInt(c.dataset.n, 10);
-        if (drawn.has(n)) {
+      const drawnArr = [...drawn];
+      // reveal one-by-one with stagger
+      drawnArr.forEach((n, idx) => {
+        setTimeout(() => {
+          const c = document.querySelector(`#k-grid .grid-tile[data-n="${n}"]`);
+          if (!c) return;
+          c.classList.add('anim-ballDrop');
           if (picks.has(n)) { c.classList.add('safe'); hits++; }
           else { c.style.background = '#2563eb'; c.style.color = '#fff'; }
-        }
+          document.getElementById('k-hits').textContent = hits;
+          if (idx === drawnArr.length - 1) {
+            setTimeout(() => {
+              const m = payTable(picks.size, hits);
+              const payout = v * m;
+              if (payout > 0) adjustBalance(payout);
+              reportOutcome(v, payout);
+            }, 250);
+          }
+        }, idx * 90);
       });
-      document.getElementById('k-hits').textContent = hits;
-      const m = payTable(picks.size, hits);
-      const payout = v * m;
-      if (payout > 0) adjustBalance(payout);
-      reportOutcome(v, payout);
     });
     build();
   }
@@ -2349,6 +2590,9 @@ ROUTES['chicken'] = {
       if (!active || el.classList.contains('safe') || el.classList.contains('bomb')) return;
       if (bones.has(i)) {
         el.classList.add('bomb'); el.textContent = '🦴'; el.style.color = '#fff';
+        el.style.position = 'relative';
+        const ring = document.createElement('div'); ring.className = 'explosion-ring';
+        el.appendChild(ring); setTimeout(() => ring.remove(), 700);
         bones.forEach(j => { if (j !== i) { cells[j].classList.add('bomb'); cells[j].textContent = '🦴'; cells[j].style.color = '#fff'; } });
         cells.forEach(c => c.classList.add('disabled'));
         active = false;
