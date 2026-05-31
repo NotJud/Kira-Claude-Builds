@@ -1017,6 +1017,34 @@
     font-size: 11px; font-weight: 800; color: #fff;
     text-shadow: 0 1px 4px rgba(0,0,0,.8);
   }
+  .game-thumb-scene {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .game-thumb-scene .scene-emoji {
+    position: absolute;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.5));
+    transition: transform .3s ease;
+  }
+  .game-thumb-scene .scene-glow {
+    position: absolute;
+    border-radius: 50%;
+    animation: thumb-pulse 2s ease-in-out infinite;
+  }
+  @keyframes thumb-pulse {
+    0%, 100% { opacity: .3; transform: scale(1); }
+    50% { opacity: .7; transform: scale(1.2); }
+  }
+  @keyframes thumb-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  .game-thumb-scene .scene-float {
+    animation: thumb-float 3s ease-in-out infinite;
+  }
+  .game-grid-card:hover .game-thumb-scene .scene-emoji {
+    transform: scale(1.1);
+  }
 
   .collection-card {
     background: var(--bg-elev); border-radius: 8px; padding: 8px;
@@ -1101,6 +1129,8 @@
       <button class="nav-btn" data-route="dice"><i data-lucide="dices" class="w-4 h-4"></i> Dice</button>
       <button class="nav-btn" data-route="limbo"><i data-lucide="infinity" class="w-4 h-4"></i> Limbo</button>
       <button class="nav-btn" data-route="slide"><i data-lucide="move-horizontal" class="w-4 h-4"></i> Slide</button>
+      <button class="nav-btn" data-route="towers"><i data-lucide="building-2" class="w-4 h-4"></i> Towers</button>
+      <button class="nav-btn" data-route="slots"><i data-lucide="cherry" class="w-4 h-4"></i> Slots</button>
 
       <div class="mt-4 mb-1 px-3 text-[11px] text-dim font-black tracking-wider">CARDS & TABLES</div>
       <button class="nav-btn" data-route="blackjack"><i data-lucide="club" class="w-4 h-4"></i> Blackjack</button>
@@ -1108,6 +1138,7 @@
       <button class="nav-btn" data-route="baccarat"><i data-lucide="diamond" class="w-4 h-4"></i> Baccarat</button>
       <button class="nav-btn" data-route="videopoker"><i data-lucide="spade" class="w-4 h-4"></i> Video Poker</button>
       <button class="nav-btn" data-route="holdem"><i data-lucide="users" class="w-4 h-4"></i> Texas Hold'em</button>
+      <button class="nav-btn" data-route="cardwar"><i data-lucide="swords" class="w-4 h-4"></i> War</button>
 
       <div class="mt-4 mb-1 px-3 text-[11px] text-dim font-black tracking-wider">ARCADE & SPECIALTY</div>
       <button class="nav-btn" data-route="hilo"><i data-lucide="arrow-up-down" class="w-4 h-4"></i> Hilo</button>
@@ -1119,6 +1150,8 @@
       <button class="nav-btn" data-route="flip"><i data-lucide="rotate-cw" class="w-4 h-4"></i> Flip</button>
       <button class="nav-btn" data-route="pump"><i data-lucide="circle" class="w-4 h-4"></i> Pump</button>
       <button class="nav-btn" data-route="snakes"><i data-lucide="grid-2x2" class="w-4 h-4"></i> Snakes</button>
+      <button class="nav-btn" data-route="scratch"><i data-lucide="credit-card" class="w-4 h-4"></i> Scratch Cards</button>
+      <button class="nav-btn" data-route="coinflip"><i data-lucide="coins" class="w-4 h-4"></i> Coin Flip</button>
 
       <div class="mt-4 mb-1 px-3 text-[11px] text-dim font-black tracking-wider">TRADING CARDS</div>
       <button class="nav-btn" data-route="packs"><i data-lucide="package" class="w-4 h-4"></i> Mistakémon Packs</button>
@@ -1355,27 +1388,32 @@ document.getElementById('mint-btn').addEventListener('click', () => {
    LOBBY VIEW
 ===================================================================== */
 const LOBBY_GAMES = [
-  { route:'mines', name:'Mines', desc:'Avoid the bombs. Cash out the chain.', icon:'bomb', cat:'Originals', bg:'linear-gradient(135deg, #1a2c38, #0c4a1a)', visual:'💎💣💎<br>💎💎💣<br>💎💎💎' },
-  { route:'crash', name:'Crash', desc:'Eject before the rocket explodes.', icon:'trending-up', cat:'Originals', bg:'linear-gradient(135deg, #0f212e, #dc2626)', visual:'🚀' },
-  { route:'plinko', name:'Plinko', desc:'Drop the ball. Pray to physics.', icon:'git-branch', cat:'Originals', bg:'linear-gradient(135deg, #1e3a5f, #7c3aed)', visual:'⚪<br>⬤ ⬤<br>⬤ ⬤ ⬤' },
-  { route:'dice', name:'Dice', desc:'Roll over or under. You decide.', icon:'dices', cat:'Originals', bg:'linear-gradient(135deg, #1a2c38, #2563eb)', visual:'🎲' },
-  { route:'limbo', name:'Limbo', desc:'How high can the multiplier go?', icon:'infinity', cat:'Originals', bg:'linear-gradient(135deg, #0a0820, #818cf8)', visual:'∞' },
-  { route:'slide', name:'Slide', desc:'Stop the slider on a winner.', icon:'move-horizontal', cat:'Originals', bg:'linear-gradient(135deg, #1a0d1f, #ff7a45)', visual:'→' },
-  { route:'blackjack', name:'Blackjack', desc:'21 or bust. Dealer hits soft 17.', icon:'club', cat:'Tables', bg:'linear-gradient(135deg, #0a1410, #166534)', visual:'🂡🂫' },
-  { route:'roulette', name:'Roulette', desc:'European 0–36. Place your chips.', icon:'circle-dot', cat:'Tables', bg:'linear-gradient(135deg, #14080a, #b91c1c)', visual:'🎰' },
-  { route:'baccarat', name:'Baccarat', desc:'Player. Banker. Tie.', icon:'diamond', cat:'Tables', bg:'linear-gradient(135deg, #1a0a30, #502a90)', visual:'🃏🃏' },
-  { route:'videopoker', name:'Video Poker', desc:'Jacks or Better. Hold and draw.', icon:'spade', cat:'Tables', bg:'linear-gradient(135deg, #0f212e, #d97706)', visual:'♠♥♦♣' },
-  { route:'holdem', name:'Texas Hold\'em', desc:'4-player AI. Three difficulty modes.', icon:'users', cat:'Tables', bg:'linear-gradient(135deg, #14080a, #0c4a1a)', visual:'🂡🂢🂣🂤🂥' },
-  { route:'hilo', name:'Hilo', desc:'Higher or lower than the card?', icon:'arrow-up-down', cat:'Specialty', bg:'linear-gradient(135deg, #0a0820, #3b82f6)', visual:'↑↓' },
-  { route:'keno', name:'Keno', desc:'Pick numbers. Match draws.', icon:'grid-3x3', cat:'Specialty', bg:'linear-gradient(135deg, #1a0a2e, #a855f7)', visual:'🔢' },
-  { route:'wheel', name:'Wheel', desc:'Spin. Stop. Collect.', icon:'loader', cat:'Specialty', bg:'linear-gradient(135deg, #1a2c38, #fbbf24)', visual:'🎡' },
-  { route:'chicken', name:'Chicken', desc:'Roast chickens, dodge bones.', icon:'drumstick', cat:'Specialty', bg:'linear-gradient(135deg, #14080a, #ea580c)', visual:'🍗🦴🍗' },
-  { route:'diamonds', name:'Diamonds', desc:'Match the gemstone columns.', icon:'gem', cat:'Specialty', bg:'linear-gradient(135deg, #0a2a26, #06b6d4)', visual:'💎🔶🔷🟣🟢' },
-  { route:'dragontower', name:'Dragon Tower', desc:'Climb. Dodge skulls.', icon:'tower-control', cat:'Specialty', bg:'linear-gradient(135deg, #14080a, #b91c1c)', visual:'🐉<br>🥚💀🥚' },
-  { route:'flip', name:'Flip', desc:'Heads or tails. That\'s it.', icon:'rotate-cw', cat:'Specialty', bg:'linear-gradient(135deg, #1a0a30, #fde047)', visual:'🪙' },
-  { route:'pump', name:'Pump', desc:'Inflate. Don\'t pop.', icon:'circle', cat:'Specialty', bg:'linear-gradient(135deg, #2a0a14, #ef4444)', visual:'🎈' },
-  { route:'snakes', name:'Snakes', desc:'Roll dice. Climb ladders.', icon:'grid-2x2', cat:'Specialty', bg:'linear-gradient(135deg, #0a1410, #22c55e)', visual:'🐍🪜🎲' },
-  { route:'packs', name:'Mistakémon Packs', desc:'Rip parody booster packs. Spin 3D card slabs.', icon:'package', cat:'Cards', bg:'linear-gradient(135deg, #dc2626, #fbbf24)', visual:'📦✨' },
+  { route:'mines', name:'Mines', desc:'Avoid the bombs. Cash out the chain.', icon:'bomb', cat:'Originals', bg:'linear-gradient(135deg, #1a2c38, #0c4a1a)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:32px;top:15px;left:20%">💎</span><span class="scene-emoji" style="font-size:24px;top:40px;right:25%">💎</span><span class="scene-emoji scene-float" style="font-size:28px;bottom:15px;left:35%">💣</span><span class="scene-glow" style="width:30px;height:30px;bottom:10px;left:32%;background:rgba(255,0,0,.4)"></span></div>' },
+  { route:'crash', name:'Crash', desc:'Eject before the rocket explodes.', icon:'trending-up', cat:'Originals', bg:'linear-gradient(135deg, #0f212e, #dc2626)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:36px;top:10px;left:40%">🚀</span><span class="scene-glow" style="width:40px;height:40px;top:35px;left:42%;background:rgba(255,100,0,.4)"></span><span class="scene-emoji" style="font-size:16px;bottom:15px;left:30%;opacity:.6">💨</span><span class="scene-emoji" style="font-size:14px;bottom:20px;left:50%;opacity:.4">💨</span></div>' },
+  { route:'plinko', name:'Plinko', desc:'Drop the ball. Pray to physics.', icon:'git-branch', cat:'Originals', bg:'linear-gradient(135deg, #1e3a5f, #7c3aed)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:24px;top:8px;left:45%">⚪</span><span class="scene-emoji" style="font-size:12px;top:35px;left:25%">⬤</span><span class="scene-emoji" style="font-size:12px;top:35px;left:55%">⬤</span><span class="scene-emoji" style="font-size:12px;bottom:15px;left:20%">⬤</span><span class="scene-emoji" style="font-size:12px;bottom:15px;left:45%">⬤</span><span class="scene-emoji" style="font-size:12px;bottom:15px;right:20%">⬤</span><span class="scene-glow" style="width:25px;height:25px;top:5px;left:43%;background:rgba(124,58,237,.5)"></span></div>' },
+  { route:'dice', name:'Dice', desc:'Roll over or under. You decide.', icon:'dices', cat:'Originals', bg:'linear-gradient(135deg, #1a2c38, #2563eb)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:40px;top:15px;left:32%">🎲</span><span class="scene-glow" style="width:45px;height:45px;top:20px;left:34%;background:rgba(37,99,235,.4)"></span><span class="scene-emoji" style="font-size:18px;bottom:10px;right:20%;opacity:.5">⚡</span></div>' },
+  { route:'limbo', name:'Limbo', desc:'How high can the multiplier go?', icon:'infinity', cat:'Originals', bg:'linear-gradient(135deg, #0a0820, #818cf8)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:38px;top:12px;left:35%">∞</span><span class="scene-glow" style="width:50px;height:50px;top:15px;left:33%;background:rgba(129,140,248,.4)"></span><span class="scene-emoji" style="font-size:16px;bottom:10px;left:25%;opacity:.5">📈</span><span class="scene-emoji" style="font-size:14px;bottom:15px;right:25%;opacity:.4">💫</span></div>' },
+  { route:'slide', name:'Slide', desc:'Stop the slider on a winner.', icon:'move-horizontal', cat:'Originals', bg:'linear-gradient(135deg, #1a0d1f, #ff7a45)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:30px;top:20px;left:30%">→</span><span class="scene-emoji" style="font-size:22px;top:22px;right:20%">🎯</span><span class="scene-glow" style="width:35px;height:35px;top:18px;right:18%;background:rgba(255,122,69,.4)"></span></div>' },
+  { route:'blackjack', name:'Blackjack', desc:'21 or bust. Dealer hits soft 17.', icon:'club', cat:'Tables', bg:'linear-gradient(135deg, #0a1410, #166534)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:28px;top:10px;left:20%">🂡</span><span class="scene-emoji" style="font-size:28px;top:15px;left:45%">🂫</span><span class="scene-emoji scene-float" style="font-size:18px;bottom:10px;right:20%">💰</span><span class="scene-glow" style="width:30px;height:30px;top:12px;left:32%;background:rgba(22,101,52,.4)"></span></div>' },
+  { route:'roulette', name:'Roulette', desc:'European 0–36. Place your chips.', icon:'circle-dot', cat:'Tables', bg:'linear-gradient(135deg, #14080a, #b91c1c)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:36px;top:12px;left:33%">🎰</span><span class="scene-glow" style="width:40px;height:40px;top:18px;left:35%;background:rgba(185,28,28,.4)"></span><span class="scene-emoji" style="font-size:14px;bottom:10px;left:20%;opacity:.6">🔴</span><span class="scene-emoji" style="font-size:14px;bottom:10px;right:20%;opacity:.6">⚫</span></div>' },
+  { route:'baccarat', name:'Baccarat', desc:'Player. Banker. Tie.', icon:'diamond', cat:'Tables', bg:'linear-gradient(135deg, #1a0a30, #502a90)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:26px;top:12px;left:22%">🃏</span><span class="scene-emoji" style="font-size:26px;top:12px;right:22%">🃏</span><span class="scene-emoji scene-float" style="font-size:20px;bottom:10px;left:40%">👑</span><span class="scene-glow" style="width:30px;height:30px;bottom:8px;left:38%;background:rgba(80,42,144,.4)"></span></div>' },
+  { route:'videopoker', name:'Video Poker', desc:'Jacks or Better. Hold and draw.', icon:'spade', cat:'Tables', bg:'linear-gradient(135deg, #0f212e, #d97706)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:22px;top:12px;left:10%">♠</span><span class="scene-emoji" style="font-size:22px;top:12px;left:30%">♥</span><span class="scene-emoji" style="font-size:22px;top:12px;right:30%">♦</span><span class="scene-emoji" style="font-size:22px;top:12px;right:10%">♣</span><span class="scene-emoji scene-float" style="font-size:18px;bottom:10px;left:38%">💎</span><span class="scene-glow" style="width:35px;height:35px;top:8px;left:35%;background:rgba(217,119,6,.3)"></span></div>' },
+  { route:'holdem', name:'Texas Hold\'em', desc:'4-player AI. Three difficulty modes.', icon:'users', cat:'Tables', bg:'linear-gradient(135deg, #14080a, #0c4a1a)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:20px;top:8px;left:10%">🂡</span><span class="scene-emoji" style="font-size:20px;top:8px;left:28%">🂢</span><span class="scene-emoji" style="font-size:20px;top:8px;left:46%">🂣</span><span class="scene-emoji" style="font-size:20px;top:8px;left:64%">🂤</span><span class="scene-emoji" style="font-size:20px;top:8px;right:10%">🂥</span><span class="scene-emoji scene-float" style="font-size:18px;bottom:8px;left:40%">🏆</span><span class="scene-glow" style="width:30px;height:30px;bottom:5px;left:38%;background:rgba(12,74,26,.4)"></span></div>' },
+  { route:'hilo', name:'Hilo', desc:'Higher or lower than the card?', icon:'arrow-up-down', cat:'Specialty', bg:'linear-gradient(135deg, #0a0820, #3b82f6)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:30px;top:10px;left:25%">↑</span><span class="scene-emoji scene-float" style="font-size:30px;top:30px;right:25%;animation-delay:-.5s">↓</span><span class="scene-glow" style="width:35px;height:35px;top:20px;left:40%;background:rgba(59,130,246,.4)"></span></div>' },
+  { route:'keno', name:'Keno', desc:'Pick numbers. Match draws.', icon:'grid-3x3', cat:'Specialty', bg:'linear-gradient(135deg, #1a0a2e, #a855f7)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:18px;top:8px;left:15%">🔢</span><span class="scene-emoji" style="font-size:16px;top:8px;left:45%">7</span><span class="scene-emoji" style="font-size:16px;top:8px;right:15%">13</span><span class="scene-emoji scene-float" style="font-size:22px;bottom:10px;left:35%">🎱</span><span class="scene-glow" style="width:30px;height:30px;bottom:8px;left:33%;background:rgba(168,85,247,.4)"></span></div>' },
+  { route:'wheel', name:'Wheel', desc:'Spin. Stop. Collect.', icon:'loader', cat:'Specialty', bg:'linear-gradient(135deg, #1a2c38, #fbbf24)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:38px;top:10px;left:32%">🎡</span><span class="scene-glow" style="width:45px;height:45px;top:12px;left:34%;background:rgba(251,191,36,.3)"></span><span class="scene-emoji" style="font-size:14px;bottom:8px;left:25%;opacity:.6">✨</span><span class="scene-emoji" style="font-size:14px;bottom:8px;right:25%;opacity:.6">✨</span></div>' },
+  { route:'chicken', name:'Chicken', desc:'Roast chickens, dodge bones.', icon:'drumstick', cat:'Specialty', bg:'linear-gradient(135deg, #14080a, #ea580c)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:26px;top:10px;left:15%">🍗</span><span class="scene-emoji scene-float" style="font-size:22px;top:12px;left:45%">🦴</span><span class="scene-emoji" style="font-size:26px;top:10px;right:15%">🍗</span><span class="scene-glow" style="width:30px;height:30px;bottom:12px;left:40%;background:rgba(234,88,12,.4)"></span><span class="scene-emoji" style="font-size:18px;bottom:10px;left:38%">🔥</span></div>' },
+  { route:'diamonds', name:'Diamonds', desc:'Match the gemstone columns.', icon:'gem', cat:'Specialty', bg:'linear-gradient(135deg, #0a2a26, #06b6d4)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:20px;top:10px;left:10%">💎</span><span class="scene-emoji" style="font-size:20px;top:10px;left:30%">🔶</span><span class="scene-emoji scene-float" style="font-size:20px;top:10px;left:50%">🔷</span><span class="scene-emoji" style="font-size:20px;top:10px;left:70%">🟣</span><span class="scene-emoji" style="font-size:20px;top:10px;right:10%">🟢</span><span class="scene-glow" style="width:60px;height:25px;top:8px;left:30%;background:rgba(6,182,212,.3)"></span></div>' },
+  { route:'dragontower', name:'Dragon Tower', desc:'Climb. Dodge skulls.', icon:'tower-control', cat:'Specialty', bg:'linear-gradient(135deg, #14080a, #b91c1c)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:30px;top:5px;left:35%">🐉</span><span class="scene-emoji" style="font-size:18px;bottom:10px;left:20%">🥚</span><span class="scene-emoji" style="font-size:18px;bottom:10px;left:45%">💀</span><span class="scene-emoji" style="font-size:18px;bottom:10px;right:20%">🥚</span><span class="scene-glow" style="width:35px;height:35px;top:8px;left:33%;background:rgba(185,28,28,.4)"></span></div>' },
+  { route:'flip', name:'Flip', desc:'Heads or tails. That\'s it.', icon:'rotate-cw', cat:'Specialty', bg:'linear-gradient(135deg, #1a0a30, #fde047)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:40px;top:12px;left:33%">🪙</span><span class="scene-glow" style="width:45px;height:45px;top:15px;left:35%;background:rgba(253,224,71,.4)"></span></div>' },
+  { route:'pump', name:'Pump', desc:'Inflate. Don\'t pop.', icon:'circle', cat:'Specialty', bg:'linear-gradient(135deg, #2a0a14, #ef4444)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:36px;top:10px;left:35%">🎈</span><span class="scene-glow" style="width:40px;height:40px;top:12px;left:37%;background:rgba(239,68,68,.3)"></span><span class="scene-emoji" style="font-size:14px;bottom:10px;left:30%;opacity:.5">💥</span></div>' },
+  { route:'snakes', name:'Snakes', desc:'Roll dice. Climb ladders.', icon:'grid-2x2', cat:'Specialty', bg:'linear-gradient(135deg, #0a1410, #22c55e)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:24px;top:8px;left:15%">🐍</span><span class="scene-emoji scene-float" style="font-size:22px;top:12px;left:45%">🪜</span><span class="scene-emoji" style="font-size:24px;bottom:10px;right:20%">🎲</span><span class="scene-glow" style="width:30px;height:30px;top:10px;left:43%;background:rgba(34,197,94,.3)"></span></div>' },
+  { route:'packs', name:'Mistakémon Packs', desc:'Rip parody booster packs. Spin 3D card slabs.', icon:'package', cat:'Cards', bg:'linear-gradient(135deg, #dc2626, #fbbf24)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:32px;top:10px;left:30%">📦</span><span class="scene-emoji" style="font-size:20px;top:8px;right:25%">✨</span><span class="scene-emoji" style="font-size:16px;bottom:12px;left:25%;opacity:.6">🃏</span><span class="scene-glow" style="width:35px;height:35px;top:12px;left:28%;background:rgba(251,191,36,.4)"></span></div>' },
+  { route:'towers', name:'Towers', desc:'Pick a path. Climb for multipliers.', icon:'building-2', cat:'Originals', bg:'linear-gradient(135deg, #1a2c38, #7c3aed)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:28px;top:10px;left:30%">🏗️</span><span class="scene-emoji scene-float" style="font-size:22px;top:35px;right:30%">⬆️</span><span class="scene-glow" style="width:35px;height:35px;top:20px;left:28%;background:rgba(124,58,237,.5)"></span><span class="scene-emoji" style="font-size:18px;bottom:10px;left:45%;opacity:.6">💰</span></div>' },
+  { route:'slots', name:'Slots', desc:'Spin three reels. Match to win.', icon:'cherry', cat:'Originals', bg:'linear-gradient(135deg, #14080a, #fbbf24)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:26px;top:15px;left:15%">🍒</span><span class="scene-emoji scene-float" style="font-size:26px;top:15px;left:42%">7️⃣</span><span class="scene-emoji" style="font-size:26px;top:15px;right:15%">🍋</span><span class="scene-glow" style="width:50px;height:50px;top:20px;left:38%;background:rgba(251,191,36,.4)"></span></div>' },
+  { route:'scratch', name:'Scratch Cards', desc:'Scratch to reveal. Match 3 to win.', icon:'credit-card', cat:'Specialty', bg:'linear-gradient(135deg, #0a2a26, #fbbf24)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:30px;top:15px;left:30%">🎫</span><span class="scene-emoji scene-float" style="font-size:20px;top:10px;right:25%">✨</span><span class="scene-glow" style="width:30px;height:30px;bottom:15px;left:40%;background:rgba(251,191,36,.5)"></span><span class="scene-emoji" style="font-size:16px;bottom:12px;right:30%;opacity:.7">💰</span></div>' },
+  { route:'coinflip', name:'Coin Flip', desc:'Best of series. Heads or tails.', icon:'coins', cat:'Specialty', bg:'linear-gradient(135deg, #1a0a30, #fde047)', visual:'<div class="game-thumb-scene"><span class="scene-emoji scene-float" style="font-size:36px;top:12px;left:35%">🪙</span><span class="scene-glow" style="width:40px;height:40px;top:15px;left:37%;background:rgba(253,224,71,.4)"></span><span class="scene-emoji" style="font-size:16px;bottom:10px;left:25%;opacity:.6">👑</span><span class="scene-emoji" style="font-size:16px;bottom:10px;right:25%;opacity:.6">🦅</span></div>' },
+  { route:'cardwar', name:'War', desc:'Highest card wins. Ties mean war.', icon:'swords', cat:'Tables', bg:'linear-gradient(135deg, #14080a, #b91c1c)', visual:'<div class="game-thumb-scene"><span class="scene-emoji" style="font-size:26px;top:12px;left:20%">🂡</span><span class="scene-emoji" style="font-size:26px;top:12px;right:20%">🂮</span><span class="scene-emoji scene-float" style="font-size:22px;bottom:10px;left:38%">⚔️</span><span class="scene-glow" style="width:35px;height:35px;bottom:8px;left:36%;background:rgba(185,28,28,.4)"></span></div>' },
 ];
 
 ROUTES['lobby'] = {
@@ -1395,7 +1433,7 @@ ROUTES['lobby'] = {
       el.innerHTML = `
         <div class="game-thumb">
           <div class="game-thumb-inner" style="background: ${g.bg || 'var(--bg-elev)'}">
-            <span style="font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.5))">${g.visual || ''}</span>
+            ${g.visual || ''}
             <span class="overlay-text">${g.cat}</span>
           </div>
         </div>
@@ -4989,6 +5027,485 @@ navigate('lobby');
 if (window.lucide) lucide.createIcons();
 if (Auth.user) toast(`Welcome back, ${Auth.user}. Profile restored.`);
 else toast('🪙 Welcome to Mistake. Sign in to keep your progress across visits.');
+
+/* =====================================================================
+   TOWERS GAME
+===================================================================== */
+ROUTES['towers'] = {
+  render(main) {
+    main.innerHTML = gameShell('Towers', 'Pick a path. Climb for multipliers.', `
+      <div class="flex flex-col gap-4">
+        <div class="flex gap-3 items-end">
+          <div class="flex-1"><label class="text-dim text-xs">Bet</label><input id="tw-bet" type="number" class="w-full bg-deep border border-[#2f4553] rounded px-3 py-2 text-white" value="100"></div>
+          <div class="flex-1"><label class="text-dim text-xs">Difficulty</label>
+            <select id="tw-diff" class="w-full bg-deep border border-[#2f4553] rounded px-3 py-2 text-white">
+              <option value="easy">Easy (3 cols)</option>
+              <option value="medium" selected>Medium (2 cols)</option>
+              <option value="hard">Hard (4 cols)</option>
+            </select>
+          </div>
+          <button id="tw-start" class="neon-btn px-4 py-2 rounded">Start</button>
+          <button id="tw-cash" class="px-4 py-2 rounded bg-green-700 text-white font-bold hidden">Cash Out</button>
+        </div>
+        <div class="text-center font-black text-lg" id="tw-mult">1.00x</div>
+        <div id="tw-grid" class="flex flex-col gap-1"></div>
+        <div id="tw-msg" class="text-center font-bold text-lg"></div>
+      </div>
+    `);
+    const DIFFS = {
+      easy: { cols: 3, bombs: 1, mults: [1.4,1.7,2.0,2.4,2.9,3.5,4.2,5.0] },
+      medium: { cols: 2, bombs: 1, mults: [1.9,3.6,6.8,13.0,24.7,47.0,89.0,170.0] },
+      hard: { cols: 4, bombs: 3, mults: [1.3,1.7,2.2,2.9,3.7,4.8,6.3,8.2] }
+    };
+    let state = null;
+    const grid = document.getElementById('tw-grid');
+    const msg = document.getElementById('tw-msg');
+    const multEl = document.getElementById('tw-mult');
+    const cashBtn = document.getElementById('tw-cash');
+
+    function renderGrid() {
+      grid.innerHTML = '';
+      const d = DIFFS[state.diff];
+      for (let r = 7; r >= 0; r--) {
+        const row = document.createElement('div');
+        row.className = 'flex gap-1 justify-center';
+        for (let c = 0; c < d.cols; c++) {
+          const btn = document.createElement('button');
+          btn.className = 'flex-1 max-w-[80px] h-10 rounded font-bold text-sm ';
+          if (r < state.row) {
+            btn.className += state.bombs[r].includes(c) ? 'bg-red-800 text-white' : 'bg-green-800 text-white';
+            btn.textContent = state.bombs[r].includes(c) ? '💣' : '✓';
+            btn.disabled = true;
+          } else if (r === state.row && state.active) {
+            btn.className += 'bg-purple-700 hover:bg-purple-500 text-white cursor-pointer';
+            btn.textContent = '?';
+            btn.addEventListener('click', () => pickTile(r, c));
+          } else {
+            btn.className += 'bg-[#1a2c38] text-dim';
+            btn.textContent = d.mults[r] + 'x';
+            btn.disabled = true;
+          }
+          row.appendChild(btn);
+        }
+        grid.appendChild(row);
+      }
+    }
+
+    function pickTile(r, c) {
+      const d = DIFFS[state.diff];
+      if (state.bombs[r].includes(c)) {
+        state.active = false;
+        cashBtn.classList.add('hidden');
+        msg.textContent = '💣 BOOM! You hit a bomb!';
+        msg.className = 'text-center font-bold text-lg text-red-400';
+        adjustBalance(-state.stake);
+        reportOutcome(state.stake, 0);
+        toast('Tower collapsed!', 'error');
+      } else {
+        state.row++;
+        const mult = d.mults[r];
+        state.currentMult = mult;
+        multEl.textContent = mult.toFixed(2) + 'x';
+        if (state.row >= 8) {
+          state.active = false;
+          cashBtn.classList.add('hidden');
+          const payout = Math.floor(state.stake * mult);
+          adjustBalance(payout - state.stake);
+          reportOutcome(state.stake, payout);
+          msg.textContent = '🏆 Tower climbed! Won ' + fmt(payout);
+          msg.className = 'text-center font-bold text-lg text-neon';
+          toast('Tower conquered! +' + fmt(payout), 'success');
+        }
+      }
+      renderGrid();
+    }
+
+    cashBtn.addEventListener('click', () => {
+      if (!state || !state.active || state.row === 0) return;
+      state.active = false;
+      cashBtn.classList.add('hidden');
+      const payout = Math.floor(state.stake * state.currentMult);
+      adjustBalance(payout - state.stake);
+      reportOutcome(state.stake, payout);
+      msg.textContent = '💰 Cashed out at ' + state.currentMult.toFixed(2) + 'x! Won ' + fmt(payout);
+      msg.className = 'text-center font-bold text-lg text-neon';
+      toast('Cashed out +' + fmt(payout), 'success');
+      renderGrid();
+    });
+
+    document.getElementById('tw-start').addEventListener('click', () => {
+      const stake = getStake(document.getElementById('tw-bet'));
+      if (!stake) return;
+      const diff = document.getElementById('tw-diff').value;
+      const d = DIFFS[diff];
+      const bombs = [];
+      for (let r = 0; r < 8; r++) {
+        const rowBombs = [];
+        const indices = Array.from({length: d.cols}, (_,i) => i);
+        for (let b = 0; b < d.bombs; b++) {
+          const idx = randInt(0, indices.length - 1);
+          rowBombs.push(indices.splice(idx, 1)[0]);
+        }
+        bombs.push(rowBombs);
+      }
+      state = { stake, diff, bombs, row: 0, active: true, currentMult: 1 };
+      msg.textContent = '';
+      multEl.textContent = '1.00x';
+      cashBtn.classList.remove('hidden');
+      renderGrid();
+    });
+  }
+};
+
+/* =====================================================================
+   SLOTS GAME
+===================================================================== */
+ROUTES['slots'] = {
+  render(main) {
+    main.innerHTML = gameShell('Slots', 'Spin three reels. Match to win.', `
+      <div class="flex flex-col gap-4 items-center">
+        <div class="flex gap-3 items-end justify-center">
+          <div><label class="text-dim text-xs">Bet</label><input id="sl-bet" type="number" class="w-32 bg-deep border border-[#2f4553] rounded px-3 py-2 text-white" value="100"></div>
+          <button id="sl-spin" class="neon-btn px-6 py-2 rounded font-bold">SPIN</button>
+        </div>
+        <div class="flex gap-4 justify-center items-center">
+          <div id="sl-r0" class="w-24 h-24 bg-[#1a2c38] rounded-lg flex items-center justify-center text-5xl border-2 border-[#2f4553]">🍒</div>
+          <div id="sl-r1" class="w-24 h-24 bg-[#1a2c38] rounded-lg flex items-center justify-center text-5xl border-2 border-[#2f4553]">🍋</div>
+          <div id="sl-r2" class="w-24 h-24 bg-[#1a2c38] rounded-lg flex items-center justify-center text-5xl border-2 border-[#2f4553]">🔔</div>
+        </div>
+        <div id="sl-msg" class="text-center font-bold text-lg"></div>
+        <div class="text-dim text-xs text-center">3x 7️⃣ = 25x | 3x 💎 = 15x | 3x match = 10x | 2x match = 2x</div>
+      </div>
+    `);
+    const SYMS = ['🍒','🍋','🔔','💎','7️⃣','⭐'];
+    let spinning = false;
+
+    document.getElementById('sl-spin').addEventListener('click', () => {
+      if (spinning) return;
+      const stake = getStake(document.getElementById('sl-bet'));
+      if (!stake) return;
+      spinning = true;
+      const msg = document.getElementById('sl-msg');
+      msg.textContent = '';
+      const results = [pick(SYMS), pick(SYMS), pick(SYMS)];
+      let step = 0;
+      const interval = setInterval(() => {
+        for (let i = 0; i < 3; i++) {
+          if (step < (i + 1) * 5) {
+            document.getElementById('sl-r' + i).textContent = pick(SYMS);
+          }
+        }
+        step++;
+        if (step >= 5) document.getElementById('sl-r0').textContent = results[0];
+        if (step >= 10) document.getElementById('sl-r1').textContent = results[1];
+        if (step >= 15) {
+          document.getElementById('sl-r2').textContent = results[2];
+          clearInterval(interval);
+          spinning = false;
+          let mult = 0;
+          if (results[0] === results[1] && results[1] === results[2]) {
+            if (results[0] === '7️⃣') mult = 25;
+            else if (results[0] === '💎') mult = 15;
+            else mult = 10;
+          } else if (results[0] === results[1] || results[1] === results[2] || results[0] === results[2]) {
+            mult = 2;
+          }
+          if (mult > 0) {
+            const payout = Math.floor(stake * mult);
+            adjustBalance(payout - stake);
+            reportOutcome(stake, payout);
+            msg.textContent = '🎉 ' + mult + 'x! Won ' + fmt(payout);
+            msg.className = 'text-center font-bold text-lg text-neon';
+            toast(mult + 'x win! +' + fmt(payout), 'success');
+          } else {
+            adjustBalance(-stake);
+            reportOutcome(stake, 0);
+            msg.textContent = 'No match. Lost ' + fmt(stake);
+            msg.className = 'text-center font-bold text-lg text-red-400';
+            toast('No match', 'error');
+          }
+        }
+      }, 80);
+    });
+  }
+};
+
+/* =====================================================================
+   SCRATCH CARDS GAME
+===================================================================== */
+ROUTES['scratch'] = {
+  render(main) {
+    main.innerHTML = gameShell('Scratch Cards', 'Scratch to reveal. Match 3 to win.', `
+      <div class="flex flex-col gap-4 items-center">
+        <div class="flex gap-3 items-end justify-center">
+          <div><label class="text-dim text-xs">Bet</label><input id="sc-bet" type="number" class="w-32 bg-deep border border-[#2f4553] rounded px-3 py-2 text-white" value="100"></div>
+          <button id="sc-buy" class="neon-btn px-6 py-2 rounded font-bold">Buy Card</button>
+        </div>
+        <div id="sc-grid" class="grid grid-cols-3 gap-2 w-64"></div>
+        <div id="sc-msg" class="text-center font-bold text-lg"></div>
+        <div class="text-dim text-xs text-center">3x💰 = 5x | 3x💎 = 10x | 3x🌟 = 25x | 2x match = 1.5x</div>
+      </div>
+    `);
+    let cardState = null;
+
+    function renderCard() {
+      const grid = document.getElementById('sc-grid');
+      grid.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'w-20 h-20 rounded-lg flex items-center justify-center text-3xl font-bold cursor-pointer transition-all';
+        if (cardState.revealed[i]) {
+          cell.className += ' bg-[#1a2c38] border border-[#2f4553]';
+          cell.textContent = cardState.symbols[i];
+        } else {
+          cell.className += ' bg-gradient-to-br from-yellow-600 to-yellow-800 hover:from-yellow-500 hover:to-yellow-700';
+          cell.textContent = '?';
+          cell.addEventListener('click', () => revealCell(i));
+        }
+        grid.appendChild(cell);
+      }
+    }
+
+    function revealCell(idx) {
+      if (!cardState || cardState.revealed[idx]) return;
+      cardState.revealed[idx] = true;
+      cardState.revealedCount++;
+      renderCard();
+      if (cardState.revealedCount >= 9) evaluate();
+    }
+
+    function evaluate() {
+      const syms = cardState.symbols;
+      const counts = {};
+      syms.forEach(s => { counts[s] = (counts[s] || 0) + 1; });
+      let mult = 0;
+      if (counts['🌟'] >= 3) mult = 25;
+      else if (counts['💎'] >= 3) mult = 10;
+      else if (counts['💰'] >= 3) mult = 5;
+      else {
+        const hasTwo = Object.values(counts).some(v => v >= 2);
+        if (hasTwo) mult = 1.5;
+      }
+      const msg = document.getElementById('sc-msg');
+      if (mult > 0) {
+        const payout = Math.floor(cardState.stake * mult);
+        adjustBalance(payout - cardState.stake);
+        reportOutcome(cardState.stake, payout);
+        msg.textContent = '🎉 ' + mult + 'x! Won ' + fmt(payout);
+        msg.className = 'text-center font-bold text-lg text-neon';
+        toast('Scratch win! +' + fmt(payout), 'success');
+      } else {
+        adjustBalance(-cardState.stake);
+        reportOutcome(cardState.stake, 0);
+        msg.textContent = 'No luck. Lost ' + fmt(cardState.stake);
+        msg.className = 'text-center font-bold text-lg text-red-400';
+        toast('No matches', 'error');
+      }
+      cardState = null;
+    }
+
+    document.getElementById('sc-buy').addEventListener('click', () => {
+      const stake = getStake(document.getElementById('sc-bet'));
+      if (!stake) return;
+      const pool = ['💰','💰','💰','💎','💎','🌟','💀','💀','💀'];
+      const symbols = [];
+      const temp = [...pool];
+      while (temp.length) {
+        const idx = randInt(0, temp.length - 1);
+        symbols.push(temp.splice(idx, 1)[0]);
+      }
+      cardState = { stake, symbols, revealed: Array(9).fill(false), revealedCount: 0 };
+      document.getElementById('sc-msg').textContent = '';
+      renderCard();
+    });
+  }
+};
+
+/* =====================================================================
+   COIN FLIP GAME
+===================================================================== */
+ROUTES['coinflip'] = {
+  render(main) {
+    main.innerHTML = gameShell('Coin Flip', 'Best of series. Heads or tails.', `
+      <div class="flex flex-col gap-4 items-center">
+        <div class="flex gap-3 items-end justify-center">
+          <div><label class="text-dim text-xs">Bet</label><input id="cf-bet" type="number" class="w-32 bg-deep border border-[#2f4553] rounded px-3 py-2 text-white" value="100"></div>
+          <div><label class="text-dim text-xs">Best Of</label>
+            <div class="flex gap-1" id="cf-bo">
+              <button class="px-3 py-2 rounded bg-purple-700 text-white font-bold text-sm cf-bo-btn" data-bo="3">Bo3</button>
+              <button class="px-3 py-2 rounded bg-[#1a2c38] text-dim font-bold text-sm cf-bo-btn" data-bo="5">Bo5</button>
+              <button class="px-3 py-2 rounded bg-[#1a2c38] text-dim font-bold text-sm cf-bo-btn" data-bo="7">Bo7</button>
+            </div>
+          </div>
+        </div>
+        <div id="cf-score" class="text-xl font-black">You 0 - 0 Opponent</div>
+        <div id="cf-coin" class="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-700 flex items-center justify-center text-4xl border-4 border-yellow-300 transition-transform duration-300">🪙</div>
+        <div class="flex gap-4" id="cf-picks">
+          <button id="cf-heads" class="px-6 py-3 rounded bg-blue-700 hover:bg-blue-500 text-white font-bold">👑 Heads</button>
+          <button id="cf-tails" class="px-6 py-3 rounded bg-red-700 hover:bg-red-500 text-white font-bold">🦅 Tails</button>
+        </div>
+        <button id="cf-start" class="neon-btn px-6 py-2 rounded font-bold">Start Series</button>
+        <div id="cf-msg" class="text-center font-bold text-lg"></div>
+        <div class="text-dim text-xs text-center">Bo3: 1.8x | Bo5: 2.5x | Bo7: 4x</div>
+      </div>
+    `);
+    const MULTS = { 3: 1.8, 5: 2.5, 7: 4 };
+    let state = null;
+    let bestOf = 3;
+    const picks = document.getElementById('cf-picks');
+    picks.style.display = 'none';
+
+    document.querySelectorAll('.cf-bo-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cf-bo-btn').forEach(b => { b.className = 'px-3 py-2 rounded bg-[#1a2c38] text-dim font-bold text-sm cf-bo-btn'; });
+        btn.className = 'px-3 py-2 rounded bg-purple-700 text-white font-bold text-sm cf-bo-btn';
+        bestOf = parseInt(btn.dataset.bo);
+      });
+    });
+
+    document.getElementById('cf-start').addEventListener('click', () => {
+      const stake = getStake(document.getElementById('cf-bet'));
+      if (!stake) return;
+      state = { stake, bestOf, playerWins: 0, oppWins: 0, needed: Math.ceil(bestOf / 2) };
+      document.getElementById('cf-score').textContent = 'You 0 - 0 Opponent';
+      document.getElementById('cf-msg').textContent = '';
+      picks.style.display = 'flex';
+      document.getElementById('cf-start').classList.add('hidden');
+    });
+
+    function flipCoin(playerPick) {
+      if (!state) return;
+      const coin = document.getElementById('cf-coin');
+      coin.style.transform = 'rotateY(360deg)';
+      const result = Math.random() < 0.5 ? 'heads' : 'tails';
+      setTimeout(() => {
+        coin.textContent = result === 'heads' ? '👑' : '🦅';
+        coin.style.transform = 'rotateY(0deg)';
+        if (playerPick === result) state.playerWins++;
+        else state.oppWins++;
+        document.getElementById('cf-score').textContent = 'You ' + state.playerWins + ' - ' + state.oppWins + ' Opponent';
+        if (state.playerWins >= state.needed) endSeries(true);
+        else if (state.oppWins >= state.needed) endSeries(false);
+      }, 300);
+    }
+
+    function endSeries(won) {
+      picks.style.display = 'none';
+      document.getElementById('cf-start').classList.remove('hidden');
+      const msg = document.getElementById('cf-msg');
+      if (won) {
+        const mult = MULTS[state.bestOf];
+        const payout = Math.floor(state.stake * mult);
+        adjustBalance(payout - state.stake);
+        reportOutcome(state.stake, payout);
+        msg.textContent = '🏆 Series won! ' + mult + 'x = ' + fmt(payout);
+        msg.className = 'text-center font-bold text-lg text-neon';
+        toast('Series won! +' + fmt(payout), 'success');
+      } else {
+        adjustBalance(-state.stake);
+        reportOutcome(state.stake, 0);
+        msg.textContent = '😞 Series lost!';
+        msg.className = 'text-center font-bold text-lg text-red-400';
+        toast('Series lost', 'error');
+      }
+      state = null;
+    }
+
+    document.getElementById('cf-heads').addEventListener('click', () => flipCoin('heads'));
+    document.getElementById('cf-tails').addEventListener('click', () => flipCoin('tails'));
+  }
+};
+
+/* =====================================================================
+   WAR CARD GAME
+===================================================================== */
+ROUTES['cardwar'] = {
+  render(main) {
+    main.innerHTML = gameShell('War', 'Highest card wins. Ties mean war.', `
+      <div class="flex flex-col gap-4 items-center">
+        <div class="flex gap-3 items-end justify-center">
+          <div><label class="text-dim text-xs">Bet</label><input id="cw-bet" type="number" class="w-32 bg-deep border border-[#2f4553] rounded px-3 py-2 text-white" value="100"></div>
+          <button id="cw-start" class="neon-btn px-6 py-2 rounded font-bold">Deal</button>
+        </div>
+        <div id="cw-score" class="text-lg font-black">Rounds Won: 0 / 10</div>
+        <div class="flex gap-8 items-center justify-center">
+          <div class="text-center">
+            <div class="text-dim text-xs mb-1">Your Card</div>
+            <div id="cw-player" class="w-20 h-28 bg-[#1a2c38] rounded-lg flex items-center justify-center border-2 border-[#2f4553] text-2xl">?</div>
+          </div>
+          <div id="cw-vs" class="text-2xl font-black text-dim">VS</div>
+          <div class="text-center">
+            <div class="text-dim text-xs mb-1">Dealer Card</div>
+            <div id="cw-dealer" class="w-20 h-28 bg-[#1a2c38] rounded-lg flex items-center justify-center border-2 border-[#2f4553] text-2xl">?</div>
+          </div>
+        </div>
+        <button id="cw-flip" class="px-6 py-2 rounded bg-purple-700 hover:bg-purple-500 text-white font-bold hidden">Flip Cards</button>
+        <div id="cw-msg" class="text-center font-bold text-lg"></div>
+        <div class="text-dim text-xs text-center">10 rounds. Each round won = +0.2x your bet.</div>
+      </div>
+    `);
+    let state = null;
+    const RANK_VAL = { '2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14 };
+
+    document.getElementById('cw-start').addEventListener('click', () => {
+      const stake = getStake(document.getElementById('cw-bet'));
+      if (!stake) return;
+      const deck = freshDeck();
+      const shuffled = [];
+      const temp = [...deck];
+      while (temp.length) { shuffled.push(temp.splice(randInt(0, temp.length - 1), 1)[0]); }
+      state = { stake, deck: shuffled, round: 0, wins: 0, total: 10 };
+      document.getElementById('cw-score').textContent = 'Rounds Won: 0 / 10';
+      document.getElementById('cw-msg').textContent = '';
+      document.getElementById('cw-player').innerHTML = '?';
+      document.getElementById('cw-dealer').innerHTML = '?';
+      document.getElementById('cw-flip').classList.remove('hidden');
+      document.getElementById('cw-start').classList.add('hidden');
+    });
+
+    document.getElementById('cw-flip').addEventListener('click', () => {
+      if (!state || state.round >= state.total) return;
+      const pCard = state.deck[state.round * 2];
+      const dCard = state.deck[state.round * 2 + 1];
+      document.getElementById('cw-player').innerHTML = renderCard(pCard);
+      document.getElementById('cw-dealer').innerHTML = renderCard(dCard);
+      const pVal = RANK_VAL[pCard.rank] || parseInt(pCard.rank) || 0;
+      const dVal = RANK_VAL[dCard.rank] || parseInt(dCard.rank) || 0;
+      if (pVal > dVal) state.wins++;
+      else if (pVal === dVal) {
+        if (Math.random() < 0.5) state.wins++;
+      }
+      state.round++;
+      document.getElementById('cw-score').textContent = 'Rounds Won: ' + state.wins + ' / ' + state.total + ' (Round ' + state.round + ')';
+      if (state.round >= state.total) {
+        document.getElementById('cw-flip').classList.add('hidden');
+        document.getElementById('cw-start').classList.remove('hidden');
+        const msg = document.getElementById('cw-msg');
+        const mult = 0.2 * state.wins;
+        if (state.wins > 5) {
+          const payout = Math.floor(state.stake * mult);
+          adjustBalance(payout - state.stake);
+          reportOutcome(state.stake, payout);
+          msg.textContent = '🏆 ' + state.wins + ' wins! ' + mult.toFixed(1) + 'x = ' + fmt(payout);
+          msg.className = 'text-center font-bold text-lg text-neon';
+          toast('War won! +' + fmt(payout), 'success');
+        } else if (state.wins === 5) {
+          reportOutcome(state.stake, state.stake);
+          msg.textContent = '🤝 Draw! Bet returned.';
+          msg.className = 'text-center font-bold text-lg text-yellow-400';
+          toast('Draw — bet returned', 'info');
+        } else {
+          adjustBalance(-state.stake);
+          reportOutcome(state.stake, 0);
+          msg.textContent = '😞 Only ' + state.wins + ' wins. Lost ' + fmt(state.stake);
+          msg.className = 'text-center font-bold text-lg text-red-400';
+          toast('War lost', 'error');
+        }
+        state = null;
+      }
+    });
+  }
+};
 
 /* GAME_INJECTION_POINT */
 </script>
