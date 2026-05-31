@@ -536,6 +536,36 @@
     border-radius: 14px; overflow: hidden;
   }
 
+  /* THICKNESS — 3D depth edge panels */
+  .slab-edge-top, .slab-edge-bottom, .slab-edge-left, .slab-edge-right {
+    position: absolute; backface-visibility: hidden;
+    background: linear-gradient(180deg, #b8bcc4, #8a8e94);
+  }
+  .slab-edge-top {
+    top: 0; left: 0; right: 0; height: 8px;
+    transform-origin: top; transform: rotateX(90deg);
+    border-radius: 14px 14px 0 0;
+    background: linear-gradient(180deg, #d4d8de, #a8acb2);
+  }
+  .slab-edge-bottom {
+    bottom: 0; left: 0; right: 0; height: 8px;
+    transform-origin: bottom; transform: rotateX(-90deg);
+    border-radius: 0 0 14px 14px;
+    background: linear-gradient(180deg, #6e7278, #4a4e52);
+  }
+  .slab-edge-left {
+    top: 0; bottom: 0; left: 0; width: 8px;
+    transform-origin: left; transform: rotateY(-90deg);
+    border-radius: 14px 0 0 14px;
+    background: linear-gradient(90deg, #c0c4ca, #8a8e94);
+  }
+  .slab-edge-right {
+    top: 0; bottom: 0; right: 0; width: 8px;
+    transform-origin: right; transform: rotateY(90deg);
+    border-radius: 0 14px 14px 0;
+    background: linear-gradient(90deg, #8a8e94, #b0b4ba);
+  }
+
   /* PLASTIC SLAB — front face (glassy holder) */
   .slab-face.front {
     /* layered: subtle inner shadow for the cardboard recess + glassy outer plastic */
@@ -582,26 +612,52 @@
       0 22px 40px rgba(0,0,0,.55);
   }
   .slab-face.back::after {
-    /* parody card-back design — original geometric pattern */
-    content: ''; position: absolute; inset: 22px;
-    border-radius: 8px;
+    /* Mistakémon card-back design — branded pattern */
+    content: ''; position: absolute; inset: 16px;
+    border-radius: 10px;
     background:
-      radial-gradient(circle at 50% 35%, rgba(255,255,255,.25) 0%, transparent 40%),
-      conic-gradient(from 0deg at 50% 50%, #1e3a8a 0deg, #2563eb 90deg, #1e3a8a 180deg, #2563eb 270deg, #1e3a8a 360deg),
-      linear-gradient(180deg, #1e3a8a, #1e40af);
-    border: 3px solid rgba(255,255,255,.5);
-    box-shadow: inset 0 0 20px rgba(0,0,0,.4);
+      radial-gradient(circle at 50% 45%, rgba(255,255,255,.3) 0%, transparent 35%),
+      radial-gradient(circle at 50% 50%, #1e3a8a 0%, #1e40af 100%);
+    border: 3px solid rgba(255,215,0,.7);
+    box-shadow: inset 0 0 30px rgba(0,0,0,.5), 0 0 10px rgba(255,215,0,.3);
   }
   .slab-back-logo {
-    position: absolute; inset: 22px;
-    display: flex; align-items: center; justify-content: center;
+    position: absolute; inset: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
     z-index: 1; pointer-events: none;
-    color: rgba(255,255,255,.95);
-    font-weight: 900; font-size: 64px;
-    text-shadow: 0 2px 0 rgba(0,0,0,.4), 0 0 20px rgba(0,0,0,.5);
-    letter-spacing: 2px;
+    text-align: center;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
   }
-  .slab-back-logo small { display: block; font-size: 11px; letter-spacing: 4px; margin-top: 2px; opacity: .9; }
+  .slab-back-logo .logo-m {
+    font-weight: 900; font-size: 56px; line-height: 1;
+    color: #fde047;
+    text-shadow: 0 2px 0 rgba(0,0,0,.5), 0 0 20px rgba(253,224,71,.5), 2px 2px 0 #b45309;
+    letter-spacing: -2px;
+    -webkit-text-stroke: 2px #b45309;
+  }
+  .slab-back-logo .logo-text {
+    font-weight: 900; font-size: 13px; letter-spacing: 4px;
+    color: #fde047;
+    text-shadow: 0 1px 0 rgba(0,0,0,.6), 0 0 8px rgba(253,224,71,.4);
+    margin-top: 2px;
+  }
+  .slab-back-logo .logo-sub {
+    font-weight: 700; font-size: 8px; letter-spacing: 2px;
+    color: rgba(255,255,255,.8);
+    margin-top: 6px;
+  }
+  .slab-back-logo .logo-pokeball {
+    width: 28px; height: 28px; border-radius: 50%; margin-top: 10px;
+    background: linear-gradient(180deg, #ef4444 0% 48%, #1a1a1a 48% 52%, #fff 52% 100%);
+    border: 2px solid #1a1a1a; position: relative;
+  }
+  .slab-back-logo .logo-pokeball::after {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #fff; border: 2px solid #1a1a1a;
+  }
 
   /* PMG GRADE LABEL (top of slab) */
   .slab-grade {
@@ -910,6 +966,59 @@
     100% { transform: translateY(0) rotateY(-15deg) scale(1); opacity: 1; }
   }
   .slab.revealing { animation: slabReveal .9s cubic-bezier(.3,1.3,.4,1) backwards; }
+
+  /* Single card draw — TCG Pocket / Triumph style */
+  @keyframes singleDraw {
+    0%   { transform: translateY(200px) rotateY(180deg) scale(.5); opacity: 0; filter: brightness(2.5); }
+    30%  { transform: translateY(-20px) rotateY(180deg) scale(1.1); opacity: 1; filter: brightness(1.8); }
+    60%  { transform: translateY(10px) rotateY(90deg) scale(1.05); filter: brightness(1.2); }
+    85%  { transform: translateY(-5px) rotateY(-20deg) scale(1.02); filter: brightness(1); }
+    100% { transform: translateY(0) rotateY(-15deg) scale(1); filter: brightness(1); }
+  }
+  .slab.single-draw { animation: singleDraw 1.8s cubic-bezier(.2,1,.3,1) backwards; }
+
+  /* Glow slit from which card emerges */
+  .draw-slit {
+    width: 180px; height: 6px; border-radius: 3px;
+    background: radial-gradient(ellipse at center, var(--neon) 0%, transparent 70%);
+    box-shadow: 0 0 30px var(--neon), 0 0 60px var(--neon);
+    margin: 0 auto 30px;
+    animation: slitGlow 1.8s ease forwards;
+  }
+  @keyframes slitGlow {
+    0% { opacity: 1; transform: scaleX(.3); }
+    30% { opacity: 1; transform: scaleX(1.2); }
+    100% { opacity: 0; transform: scaleX(.5); }
+  }
+
+  /* Card viewer modal for collection */
+  .card-viewer-overlay {
+    position: fixed; inset: 0; z-index: 110;
+    background: rgba(0,0,0,.8);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 16px;
+    animation: fadeInUp .2s ease;
+  }
+  .card-viewer-controls {
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  /* Game thumbnails for lobby */
+  .game-thumb {
+    width: 100%; height: 80px; border-radius: 8px; overflow: hidden;
+    position: relative; margin-bottom: 8px;
+  }
+  .game-thumb-inner {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; font-weight: 900; position: relative;
+  }
+  .game-thumb-inner .overlay-text {
+    position: absolute; bottom: 4px; left: 6px;
+    font-size: 11px; font-weight: 800; color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,.8);
+  }
 
   .collection-card {
     background: var(--bg-elev); border-radius: 8px; padding: 8px;
@@ -1248,27 +1357,27 @@ document.getElementById('mint-btn').addEventListener('click', () => {
    LOBBY VIEW
 ===================================================================== */
 const LOBBY_GAMES = [
-  { route:'mines', name:'Mines', desc:'Avoid the bombs. Cash out the chain.', icon:'bomb', cat:'Originals' },
-  { route:'crash', name:'Crash', desc:'Eject before the rocket explodes.', icon:'trending-up', cat:'Originals' },
-  { route:'plinko', name:'Plinko', desc:'Drop the ball. Pray to physics.', icon:'git-branch', cat:'Originals' },
-  { route:'dice', name:'Dice', desc:'Roll over or under. You decide.', icon:'dices', cat:'Originals' },
-  { route:'limbo', name:'Limbo', desc:'How high can the multiplier go?', icon:'infinity', cat:'Originals' },
-  { route:'slide', name:'Slide', desc:'Stop the slider on a winner.', icon:'move-horizontal', cat:'Originals' },
-  { route:'blackjack', name:'Blackjack', desc:'21 or bust. Dealer hits soft 17.', icon:'club', cat:'Tables' },
-  { route:'roulette', name:'Roulette', desc:'European 0–36. Place your chips.', icon:'circle-dot', cat:'Tables' },
-  { route:'baccarat', name:'Baccarat', desc:'Player. Banker. Tie.', icon:'diamond', cat:'Tables' },
-  { route:'videopoker', name:'Video Poker', desc:'Jacks or Better. Hold and draw.', icon:'spade', cat:'Tables' },
-  { route:'holdem', name:'Texas Hold\'em', desc:'4-player AI. Three difficulty modes.', icon:'users', cat:'Tables' },
-  { route:'hilo', name:'Hilo', desc:'Higher or lower than the card?', icon:'arrow-up-down', cat:'Specialty' },
-  { route:'keno', name:'Keno', desc:'Pick numbers. Match draws.', icon:'grid-3x3', cat:'Specialty' },
-  { route:'wheel', name:'Wheel', desc:'Spin. Stop. Collect.', icon:'loader', cat:'Specialty' },
-  { route:'chicken', name:'Chicken', desc:'Roast chickens, dodge bones.', icon:'drumstick', cat:'Specialty' },
-  { route:'diamonds', name:'Diamonds', desc:'Match the gemstone columns.', icon:'gem', cat:'Specialty' },
-  { route:'dragontower', name:'Dragon Tower', desc:'Climb. Dodge skulls.', icon:'tower-control', cat:'Specialty' },
-  { route:'flip', name:'Flip', desc:'Heads or tails. That\'s it.', icon:'rotate-cw', cat:'Specialty' },
-  { route:'pump', name:'Pump', desc:'Inflate. Don\'t pop.', icon:'circle', cat:'Specialty' },
-  { route:'snakes', name:'Snakes', desc:'Roll dice. Climb ladders.', icon:'grid-2x2', cat:'Specialty' },
-  { route:'packs', name:'Mistakémon Packs', desc:'Rip parody booster packs. Spin 3D card slabs.', icon:'package', cat:'Cards' },
+  { route:'mines', name:'Mines', desc:'Avoid the bombs. Cash out the chain.', icon:'bomb', cat:'Originals', bg:'linear-gradient(135deg, #1a2c38, #0c4a1a)', visual:'💎💣💎<br>💎💎💣<br>💎💎💎' },
+  { route:'crash', name:'Crash', desc:'Eject before the rocket explodes.', icon:'trending-up', cat:'Originals', bg:'linear-gradient(135deg, #0f212e, #dc2626)', visual:'🚀' },
+  { route:'plinko', name:'Plinko', desc:'Drop the ball. Pray to physics.', icon:'git-branch', cat:'Originals', bg:'linear-gradient(135deg, #1e3a5f, #7c3aed)', visual:'⚪<br>⬤ ⬤<br>⬤ ⬤ ⬤' },
+  { route:'dice', name:'Dice', desc:'Roll over or under. You decide.', icon:'dices', cat:'Originals', bg:'linear-gradient(135deg, #1a2c38, #2563eb)', visual:'🎲' },
+  { route:'limbo', name:'Limbo', desc:'How high can the multiplier go?', icon:'infinity', cat:'Originals', bg:'linear-gradient(135deg, #0a0820, #818cf8)', visual:'∞' },
+  { route:'slide', name:'Slide', desc:'Stop the slider on a winner.', icon:'move-horizontal', cat:'Originals', bg:'linear-gradient(135deg, #1a0d1f, #ff7a45)', visual:'→' },
+  { route:'blackjack', name:'Blackjack', desc:'21 or bust. Dealer hits soft 17.', icon:'club', cat:'Tables', bg:'linear-gradient(135deg, #0a1410, #166534)', visual:'🂡🂫' },
+  { route:'roulette', name:'Roulette', desc:'European 0–36. Place your chips.', icon:'circle-dot', cat:'Tables', bg:'linear-gradient(135deg, #14080a, #b91c1c)', visual:'🎰' },
+  { route:'baccarat', name:'Baccarat', desc:'Player. Banker. Tie.', icon:'diamond', cat:'Tables', bg:'linear-gradient(135deg, #1a0a30, #502a90)', visual:'🃏🃏' },
+  { route:'videopoker', name:'Video Poker', desc:'Jacks or Better. Hold and draw.', icon:'spade', cat:'Tables', bg:'linear-gradient(135deg, #0f212e, #d97706)', visual:'♠♥♦♣' },
+  { route:'holdem', name:'Texas Hold\'em', desc:'4-player AI. Three difficulty modes.', icon:'users', cat:'Tables', bg:'linear-gradient(135deg, #14080a, #0c4a1a)', visual:'🂡🂢🂣🂤🂥' },
+  { route:'hilo', name:'Hilo', desc:'Higher or lower than the card?', icon:'arrow-up-down', cat:'Specialty', bg:'linear-gradient(135deg, #0a0820, #3b82f6)', visual:'↑↓' },
+  { route:'keno', name:'Keno', desc:'Pick numbers. Match draws.', icon:'grid-3x3', cat:'Specialty', bg:'linear-gradient(135deg, #1a0a2e, #a855f7)', visual:'🔢' },
+  { route:'wheel', name:'Wheel', desc:'Spin. Stop. Collect.', icon:'loader', cat:'Specialty', bg:'linear-gradient(135deg, #1a2c38, #fbbf24)', visual:'🎡' },
+  { route:'chicken', name:'Chicken', desc:'Roast chickens, dodge bones.', icon:'drumstick', cat:'Specialty', bg:'linear-gradient(135deg, #14080a, #ea580c)', visual:'🍗🦴🍗' },
+  { route:'diamonds', name:'Diamonds', desc:'Match the gemstone columns.', icon:'gem', cat:'Specialty', bg:'linear-gradient(135deg, #0a2a26, #06b6d4)', visual:'💎🔶🔷🟣🟢' },
+  { route:'dragontower', name:'Dragon Tower', desc:'Climb. Dodge skulls.', icon:'tower-control', cat:'Specialty', bg:'linear-gradient(135deg, #14080a, #b91c1c)', visual:'🐉<br>🥚💀🥚' },
+  { route:'flip', name:'Flip', desc:'Heads or tails. That\'s it.', icon:'rotate-cw', cat:'Specialty', bg:'linear-gradient(135deg, #1a0a30, #fde047)', visual:'🪙' },
+  { route:'pump', name:'Pump', desc:'Inflate. Don\'t pop.', icon:'circle', cat:'Specialty', bg:'linear-gradient(135deg, #2a0a14, #ef4444)', visual:'🎈' },
+  { route:'snakes', name:'Snakes', desc:'Roll dice. Climb ladders.', icon:'grid-2x2', cat:'Specialty', bg:'linear-gradient(135deg, #0a1410, #22c55e)', visual:'🐍🪜🎲' },
+  { route:'packs', name:'Mistakémon Packs', desc:'Rip parody booster packs. Spin 3D card slabs.', icon:'package', cat:'Cards', bg:'linear-gradient(135deg, #dc2626, #fbbf24)', visual:'📦✨' },
 ];
 
 ROUTES['lobby'] = {
@@ -1286,13 +1395,19 @@ ROUTES['lobby'] = {
       const el = document.createElement('div');
       el.className = 'game-grid-card flex flex-col gap-2';
       el.innerHTML = `
+        <div class="game-thumb">
+          <div class="game-thumb-inner" style="background: ${g.bg || 'var(--bg-elev)'}">
+            <span style="font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.5))">${g.visual || ''}</span>
+            <span class="overlay-text">${g.cat}</span>
+          </div>
+        </div>
         <div class="flex items-center justify-between">
           <i data-lucide="${g.icon}" class="w-5 h-5 text-neon"></i>
           <span class="badge">${g.cat}</span>
         </div>
         <div class="font-black text-lg">${g.name}</div>
         <div class="text-dim text-sm">${g.desc}</div>
-        <button class="neon-btn rounded-md text-sm py-1 mt-2">Play</button>
+        <button class="neon-btn rounded-md text-sm py-1 mt-auto">Play</button>
       `;
       el.addEventListener('click', () => navigate(g.route));
       grid.appendChild(el);
@@ -3997,8 +4112,18 @@ function buildSlabHTML(card) {
       </div>
 
       <div class="slab-face back">
-        <div class="slab-back-logo">M<small>MISTAKÉMON</small></div>
+        <div class="slab-back-logo">
+          <div class="logo-m">M</div>
+          <div class="logo-text">MISTAKÉMON</div>
+          <div class="logo-sub">TRADING CARD GAME</div>
+          <div class="logo-pokeball"></div>
+        </div>
       </div>
+
+      <div class="slab-edge-top"></div>
+      <div class="slab-edge-bottom"></div>
+      <div class="slab-edge-left"></div>
+      <div class="slab-edge-right"></div>
     </div>`;
 }
 
@@ -4085,7 +4210,7 @@ ROUTES['packs'] = {
       'Parody trading cards. Buy a pack, rip it, drag the 3D slabs to spin them.',
       `
       <div id="pp-shop">
-        <div class="text-dim text-sm mb-3">Pick a pack tier. Drag any revealed slab with mouse/finger to rotate in 3D.</div>
+        <div class="text-dim text-sm mb-3">Pick a pack tier (5-card rip) or single draw (1-card reveal, TCG Pocket style). Drag slabs to rotate.</div>
         <div class="flex gap-5 flex-wrap justify-center" id="pp-pack-list"></div>
       </div>
 
@@ -4095,6 +4220,7 @@ ROUTES['packs'] = {
           <div id="pp-summary" class="text-sm text-dim"></div>
           <button id="pp-keep" class="neon-btn rounded-md px-4 py-2 text-sm">Add to collection</button>
         </div>
+        <div id="pp-draw-slit" class="hidden"><div class="draw-slit"></div></div>
         <div id="pp-slabs" class="flex gap-5 flex-wrap justify-center min-h-[320px] py-6 pack-stage"></div>
       </div>
 
@@ -4120,31 +4246,47 @@ ROUTES['packs'] = {
           <div class="booster-pack" data-pack="${p.id}" style="--pc1:${p.pc1}; --pc2:${p.pc2}">
             <div class="booster-pack-title">MISTAKÉMON</div>
             <div class="booster-pack-tier">${p.tier}</div>
-            <div class="booster-pack-price">RIP — $${p.price}</div>
+            <div class="booster-pack-price">5-CARD RIP — $${p.price}</div>
           </div>
+          <button class="neon-btn rounded-md text-xs px-3 py-1 single-draw-btn" data-pack="${p.id}" style="background:${p.pc1}; color:#fff">
+            Single Draw — $${Math.ceil(p.price * 0.35)}
+          </button>
           <div class="text-center text-xs text-dim max-w-[200px] leading-snug">
             5 cards · ${p.slots.filter(s => s === 'rareTier').length || 1} guaranteed hit slot${p.slots.filter(s => s === 'rareTier').length === 1 ? '' : 's'}
           </div>
         `;
         list.appendChild(el);
-        el.querySelector('.booster-pack').addEventListener('click', () => ripPack(p));
+        el.querySelector('.booster-pack').addEventListener('click', () => ripPack(p, false));
+        el.querySelector('.single-draw-btn').addEventListener('click', () => ripPack(p, true));
       });
     }
 
     let lastPulled = [];
-    function ripPack(pack) {
-      if (State.balance < pack.price) { toast('Need more fake balance.', 'bad'); return; }
-      setBalance(State.balance - pack.price);
+    let isSingleDraw = false;
+    function ripPack(pack, single = false) {
+      const cost = single ? Math.ceil(pack.price * 0.35) : pack.price;
+      if (State.balance < cost) { toast('Need more fake balance.', 'bad'); return; }
+      setBalance(State.balance - cost);
+      isSingleDraw = single;
       const packEl = document.querySelector(`.booster-pack[data-pack="${pack.id}"]`);
       if (packEl) packEl.classList.add('tearing');
 
       // generate cards
-      lastPulled = pack.slots.map(slot => {
+      if (single) {
+        // Single draw: pick one slot, prefer the rareTier slot
+        const slot = pack.slots.includes('rareTier') ? 'rareTier' : pick(pack.slots);
         const rarity = rollRarity(slot, pack.rareSplit);
         const creature = pickCreatureForRarity(rarity);
         const grade = rollGrade(rarity);
-        return { creature, rarity, grade, value: RARITY_VALUE[rarity] * (1 + (grade - 5) * 0.15) };
-      });
+        lastPulled = [{ creature, rarity, grade, value: RARITY_VALUE[rarity] * (1 + (grade - 5) * 0.15) }];
+      } else {
+        lastPulled = pack.slots.map(slot => {
+          const rarity = rollRarity(slot, pack.rareSplit);
+          const creature = pickCreatureForRarity(rarity);
+          const grade = rollGrade(rarity);
+          return { creature, rarity, grade, value: RARITY_VALUE[rarity] * (1 + (grade - 5) * 0.15) };
+        });
+      }
 
       // small surprise screen flash for legendaries
       const bestRarity = lastPulled.reduce((b, c) => (RARITY_VALUE[c.rarity] > RARITY_VALUE[b] ? c.rarity : b), 'common');
@@ -4155,25 +4297,47 @@ ROUTES['packs'] = {
       setTimeout(() => {
         document.getElementById('pp-shop').classList.add('hidden');
         document.getElementById('pp-rip').classList.remove('hidden');
-        revealCards(lastPulled, bestRarity);
+        revealCards(lastPulled, bestRarity, single);
       }, 700);
     }
 
-    function revealCards(cards, bestRarity) {
+    function revealCards(cards, bestRarity, single = false) {
       cleanupAllSlabs();
       const wrap = document.getElementById('pp-slabs');
+      const slitEl = document.getElementById('pp-draw-slit');
       wrap.innerHTML = '';
-      cards.forEach((card, i) => {
-        const stage = document.createElement('div');
-        stage.className = 'slab-stage';
-        stage.innerHTML = buildSlabHTML(card);
-        wrap.appendChild(stage);
-        const slab = stage.querySelector('.slab');
-        slab.classList.add('revealing');
-        slab.style.animationDelay = (0.25 + i * 0.4) + 's';
-        // Activate drag rotation after the reveal animation has finished
-        setTimeout(() => makeSlabInteractive(slab), 250 + i * 400 + 900);
-      });
+
+      if (single) {
+        // TCG Pocket style: show glow slit, then card rises from it
+        slitEl.classList.remove('hidden');
+        slitEl.innerHTML = '<div class="draw-slit"></div>';
+        setTimeout(() => {
+          const card = cards[0];
+          const stage = document.createElement('div');
+          stage.className = 'slab-stage';
+          stage.innerHTML = buildSlabHTML(card);
+          wrap.appendChild(stage);
+          const slab = stage.querySelector('.slab');
+          slab.classList.add('single-draw');
+          setTimeout(() => {
+            makeSlabInteractive(slab);
+            slitEl.classList.add('hidden');
+          }, 1900);
+        }, 300);
+      } else {
+        slitEl.classList.add('hidden');
+        cards.forEach((card, i) => {
+          const stage = document.createElement('div');
+          stage.className = 'slab-stage';
+          stage.innerHTML = buildSlabHTML(card);
+          wrap.appendChild(stage);
+          const slab = stage.querySelector('.slab');
+          slab.classList.add('revealing');
+          slab.style.animationDelay = (0.25 + i * 0.4) + 's';
+          setTimeout(() => makeSlabInteractive(slab), 250 + i * 400 + 900);
+        });
+      }
+
       const totalValue = cards.reduce((s, c) => s + c.value, 0);
       const counts = cards.reduce((a, c) => (a[c.rarity] = (a[c.rarity] || 0) + 1, a), {});
       const summary = Object.entries(counts).map(([k, v]) => `<span class="rarity-tag ${k}">${k.toUpperCase()} × ${v}</span>`).join(' ');
@@ -4189,34 +4353,115 @@ ROUTES['packs'] = {
     function renderCollection() {
       const wrap = document.getElementById('pp-coll');
       wrap.innerHTML = '';
-      const counts = new Map(); // creatureId|rarity -> { card, count }
-      Collection.cards.forEach(c => {
+      if (Collection.cards.length === 0) {
+        wrap.innerHTML = '<div class="col-span-full text-dim text-sm text-center py-6">No cards yet. Rip a pack to start your binder.</div>';
+        document.getElementById('pp-coll-count').textContent = '0';
+        document.getElementById('pp-coll-value').textContent = '$0';
+        return;
+      }
+      // group by creature+rarity
+      const groups = new Map();
+      Collection.cards.forEach((c, idx) => {
         const k = c.creature.id + '|' + c.rarity;
-        if (!counts.has(k)) counts.set(k, { card: c, count: 0 });
-        counts.get(k).count++;
+        if (!groups.has(k)) groups.set(k, []);
+        groups.get(k).push({ card: c, idx });
       });
-      const sorted = [...counts.values()].sort((a, b) => RARITY_VALUE[b.card.rarity] - RARITY_VALUE[a.card.rarity]);
-      sorted.forEach(({ card, count }) => {
+      const sorted = [...groups.entries()].sort((a, b) =>
+        RARITY_VALUE[b[1][0].card.rarity] - RARITY_VALUE[a[1][0].card.rarity]
+      );
+      sorted.forEach(([key, items]) => {
+        const card = items[0].card;
         const el = document.createElement('div');
         el.className = 'collection-card';
         el.innerHTML = `
-          <div class="collection-mini-art type-${card.creature.type} slab-card" style="margin:0; border-radius:4px">${card.creature.emoji}</div>
+          <div class="collection-mini-art type-${card.creature.type}" style="background:linear-gradient(180deg, var(--art-c1), var(--art-c2)); border-radius:4px; display:flex; align-items:center; justify-content:center">${card.creature.emoji}</div>
           <div class="flex-1 min-w-0">
             <div class="font-bold truncate text-sm">${card.creature.name}</div>
             <div class="flex items-center gap-2 mt-1">
               <span class="rarity-tag ${card.rarity}">${card.rarity.toUpperCase()}</span>
-              ${count > 1 ? `<span class="text-xs text-dim">×${count}</span>` : ''}
+              ${items.length > 1 ? `<span class="text-xs text-dim">×${items.length}</span>` : ''}
+              <span class="text-[10px] text-dim">$${card.value.toFixed(0)}</span>
             </div>
+          </div>
+          <div class="flex flex-col gap-1">
+            <button class="text-xs font-bold px-2 py-1 rounded bg-elev hover:bg-soft view-card-btn" data-key="${key}">View</button>
+            <button class="text-xs font-bold px-2 py-1 rounded bg-elev hover:bg-soft sell-card-btn" style="color:var(--gold)" data-key="${key}">Sell</button>
           </div>
         `;
         wrap.appendChild(el);
       });
+
+      // bind view buttons
+      wrap.querySelectorAll('.view-card-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const key = btn.dataset.key;
+          const items = groups.get(key);
+          if (!items || items.length === 0) return;
+          openCardViewer(items[0].card);
+        });
+      });
+      // bind sell buttons
+      wrap.querySelectorAll('.sell-card-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const key = btn.dataset.key;
+          const items = groups.get(key);
+          if (!items || items.length === 0) return;
+          const item = items[items.length - 1]; // sell last copy
+          const val = item.card.value;
+          Collection.cards.splice(item.idx, 1);
+          adjustBalance(val);
+          toast(`Sold ${item.card.creature.name} (${item.card.rarity}) for $${val.toFixed(0)}.`);
+          renderCollection();
+        });
+      });
+
       document.getElementById('pp-coll-count').textContent = Collection.cards.length;
       const v = Collection.cards.reduce((s, c) => s + c.value, 0);
       document.getElementById('pp-coll-value').textContent = '$' + v.toFixed(0);
-      if (Collection.cards.length === 0) {
-        wrap.innerHTML = '<div class="col-span-full text-dim text-sm text-center py-6">No cards yet. Rip a pack to start your binder.</div>';
-      }
+    }
+
+    function openCardViewer(card) {
+      // full-screen overlay with the interactive 3D slab
+      const overlay = document.createElement('div');
+      overlay.className = 'card-viewer-overlay';
+      overlay.innerHTML = `
+        <div class="slab-stage" id="viewer-slab-stage">${buildSlabHTML(card)}</div>
+        <div class="card-viewer-controls">
+          <div class="text-center">
+            <div class="font-black text-lg">${card.creature.name}</div>
+            <span class="rarity-tag ${card.rarity}">${card.rarity.toUpperCase()}</span>
+            <span class="text-sm text-dim ml-2">Grade ${card.grade} · $${card.value.toFixed(0)}</span>
+          </div>
+        </div>
+        <div class="card-viewer-controls">
+          <button class="ghost-btn rounded-md px-4 py-2 text-sm" id="viewer-close">Close</button>
+          <button class="neon-btn rounded-md px-4 py-2 text-sm" id="viewer-sell" style="background:var(--gold); color:#111">Sell for $${card.value.toFixed(0)}</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      const slab = overlay.querySelector('.slab');
+      const cleanFn = makeSlabInteractive(slab);
+      overlay.querySelector('#viewer-close').addEventListener('click', () => {
+        cleanFn(); overlay.remove();
+      });
+      overlay.querySelector('#viewer-sell').addEventListener('click', () => {
+        // find and remove from collection
+        const idx = Collection.cards.findIndex(c =>
+          c.creature.id === card.creature.id && c.rarity === card.rarity && c.grade === card.grade
+        );
+        if (idx !== -1) {
+          Collection.cards.splice(idx, 1);
+          adjustBalance(card.value);
+          toast(`Sold ${card.creature.name} for $${card.value.toFixed(0)}.`);
+          renderCollection();
+        }
+        cleanFn(); overlay.remove();
+      });
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) { cleanFn(); overlay.remove(); }
+      });
     }
 
     document.getElementById('pp-back').addEventListener('click', () => {
