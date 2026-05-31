@@ -7,17 +7,130 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
-  :root {
-    --bg-deep: #0f212e;
-    --bg-card: #1a2c38;
-    --bg-elev: #213743;
-    --bg-soft: #2f4553;
-    --neon: #00e701;
-    --neon-soft: #00e70133;
-    --gold: #ffd700;
-    --red: #ff4d4d;
-    --text-dim: #b1bad3;
+  :root, body[data-theme="stake"] {
+    --bg-deep: #0f212e; --bg-card: #1a2c38; --bg-elev: #213743; --bg-soft: #2f4553;
+    --neon: #00e701; --neon-soft: rgba(0,231,1,.2); --neon-ink: #003500;
+    --gold: #ffd700; --red: #ff4d4d;
+    --text: #ffffff; --text-dim: #b1bad3;
+    --border: #213743; --border-soft: #2f4553;
   }
+  body[data-theme="midnight"] {
+    --bg-deep: #0a0820; --bg-card: #14122e; --bg-elev: #1f1d4a; --bg-soft: #2c2a66;
+    --neon: #818cf8; --neon-soft: rgba(129,140,248,.25); --neon-ink: #0a0820;
+    --gold: #fbbf24; --red: #ef4444;
+    --text: #ffffff; --text-dim: #a5a3d4;
+    --border: #1f1d4a; --border-soft: #2c2a66;
+  }
+  body[data-theme="cyberpunk"] {
+    --bg-deep: #0a0a14; --bg-card: #14141f; --bg-elev: #1f1f30; --bg-soft: #2d2d44;
+    --neon: #ff00aa; --neon-soft: rgba(255,0,170,.25); --neon-ink: #14141f;
+    --gold: #00ffff; --red: #ff3355;
+    --text: #ffffff; --text-dim: #b0b0d0;
+    --border: #2a2a44; --border-soft: #3a3a5a;
+  }
+  body[data-theme="sunset"] {
+    --bg-deep: #1a0d1f; --bg-card: #2a1530; --bg-elev: #3a1f44; --bg-soft: #4a2954;
+    --neon: #ff7a45; --neon-soft: rgba(255,122,69,.25); --neon-ink: #2a1530;
+    --gold: #fcd34d; --red: #f43f5e;
+    --text: #ffe6d6; --text-dim: #d4a8a0;
+    --border: #3a1f44; --border-soft: #4a2954;
+  }
+  body[data-theme="forest"] {
+    --bg-deep: #0a1410; --bg-card: #14241c; --bg-elev: #1f3829; --bg-soft: #2a4a37;
+    --neon: #84cc16; --neon-soft: rgba(132,204,22,.25); --neon-ink: #0a1410;
+    --gold: #facc15; --red: #ef4444;
+    --text: #f0fdf4; --text-dim: #b3d4ad;
+    --border: #1f3829; --border-soft: #2a4a37;
+  }
+  body[data-theme="royal"] {
+    --bg-deep: #1a0a30; --bg-card: #2a1450; --bg-elev: #3d1f70; --bg-soft: #502a90;
+    --neon: #fbbf24; --neon-soft: rgba(251,191,36,.25); --neon-ink: #1a0a30;
+    --gold: #facc15; --red: #f43f5e;
+    --text: #fffce0; --text-dim: #d4b8e8;
+    --border: #3d1f70; --border-soft: #502a90;
+  }
+  body[data-theme="vampire"] {
+    --bg-deep: #14080a; --bg-card: #240e12; --bg-elev: #381820; --bg-soft: #4a222b;
+    --neon: #ef4444; --neon-soft: rgba(239,68,68,.25); --neon-ink: #14080a;
+    --gold: #f59e0b; --red: #f43f5e;
+    --text: #fef2f2; --text-dim: #d4a3a8;
+    --border: #381820; --border-soft: #4a222b;
+  }
+  body[data-theme="ocean"] {
+    --bg-deep: #061a26; --bg-card: #0c2a3e; --bg-elev: #143e58; --bg-soft: #1f5070;
+    --neon: #2dd4bf; --neon-soft: rgba(45,212,191,.25); --neon-ink: #061a26;
+    --gold: #fbbf24; --red: #f87171;
+    --text: #e0f7fa; --text-dim: #a0c8d0;
+    --border: #143e58; --border-soft: #1f5070;
+  }
+  body[data-theme="vaporwave"] {
+    --bg-deep: #1a0a2e; --bg-card: #2d1b50; --bg-elev: #3f2870; --bg-soft: #523590;
+    --neon: #f472b6; --neon-soft: rgba(244,114,182,.25); --neon-ink: #1a0a2e;
+    --gold: #67e8f9; --red: #f43f5e;
+    --text: #f0f0ff; --text-dim: #b8a4d4;
+    --border: #3f2870; --border-soft: #523590;
+  }
+  body[data-theme="mono"] {
+    --bg-deep: #0d0d0d; --bg-card: #1a1a1a; --bg-elev: #2a2a2a; --bg-soft: #3d3d3d;
+    --neon: #d4d4d4; --neon-soft: rgba(212,212,212,.2); --neon-ink: #0d0d0d;
+    --gold: #d4d4d4; --red: #d4d4d4;
+    --text: #ffffff; --text-dim: #a0a0a0;
+    --border: #2a2a2a; --border-soft: #3d3d3d;
+  }
+  body[data-theme="contrast"] {
+    --bg-deep: #000000; --bg-card: #0a0a0a; --bg-elev: #1a1a1a; --bg-soft: #2a2a2a;
+    --neon: #fde047; --neon-soft: rgba(253,224,71,.3); --neon-ink: #000000;
+    --gold: #fde047; --red: #ef4444;
+    --text: #ffffff; --text-dim: #e0e0e0;
+    --border: #2a2a2a; --border-soft: #3d3d3d;
+  }
+  body[data-theme="solarized"] {
+    --bg-deep: #002b36; --bg-card: #073642; --bg-elev: #0f4855; --bg-soft: #1d5868;
+    --neon: #b58900; --neon-soft: rgba(181,137,0,.3); --neon-ink: #002b36;
+    --gold: #cb9b00; --red: #dc322f;
+    --text: #fdf6e3; --text-dim: #93a1a1;
+    --border: #0f4855; --border-soft: #1d5868;
+  }
+  body[data-theme="mint"] {
+    --bg-deep: #0a2a26; --bg-card: #134a45; --bg-elev: #1f6661; --bg-soft: #2a8579;
+    --neon: #4ade80; --neon-soft: rgba(74,222,128,.25); --neon-ink: #0a2a26;
+    --gold: #facc15; --red: #f87171;
+    --text: #ecfdf5; --text-dim: #a7d8c1;
+    --border: #1f6661; --border-soft: #2a8579;
+  }
+  body[data-theme="rosegold"] {
+    --bg-deep: #2a0a14; --bg-card: #3d1424; --bg-elev: #501f35; --bg-soft: #6b2a45;
+    --neon: #f9a8d4; --neon-soft: rgba(249,168,212,.25); --neon-ink: #2a0a14;
+    --gold: #f59e0b; --red: #fb7185;
+    --text: #fdf2f8; --text-dim: #d4a8c0;
+    --border: #501f35; --border-soft: #6b2a45;
+  }
+  body[data-theme="matrix"] {
+    --bg-deep: #000000; --bg-card: #050a05; --bg-elev: #0a1f0a; --bg-soft: #143514;
+    --neon: #00ff41; --neon-soft: rgba(0,255,65,.2); --neon-ink: #000000;
+    --gold: #00ff41; --red: #ff4d4d;
+    --text: #00ff88; --text-dim: #008f24;
+    --border: #0a1f0a; --border-soft: #143514;
+  }
+  body[data-theme="lava"] {
+    --bg-deep: #14080a; --bg-card: #1f0a0e; --bg-elev: #381514; --bg-soft: #4f1e1c;
+    --neon: #f97316; --neon-soft: rgba(249,115,22,.25); --neon-ink: #14080a;
+    --gold: #fbbf24; --red: #ef4444;
+    --text: #fef2f2; --text-dim: #d4a8a0;
+    --border: #381514; --border-soft: #4f1e1c;
+  }
+  body[data-theme="slate"] {
+    --bg-deep: #0f172a; --bg-card: #1e293b; --bg-elev: #334155; --bg-soft: #475569;
+    --neon: #38bdf8; --neon-soft: rgba(56,189,248,.25); --neon-ink: #0f172a;
+    --gold: #fbbf24; --red: #f87171;
+    --text: #f1f5f9; --text-dim: #94a3b8;
+    --border: #334155; --border-soft: #475569;
+  }
+
+  /* override Tailwind hard-coded colors so themes propagate */
+  .border-\[\#213743\] { border-color: var(--border) !important; }
+  .border-\[\#2f4553\] { border-color: var(--border-soft) !important; }
+  .text-white { color: var(--text); }
   html, body { background: var(--bg-deep); color: #fff; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: #0a1822; }
@@ -32,7 +145,7 @@
   .border-neon { border-color: var(--neon); }
   .ring-neon { box-shadow: 0 0 0 2px var(--neon); }
   .neon-btn {
-    background: var(--neon); color: #003500; font-weight: 800;
+    background: var(--neon); color: var(--neon-ink); font-weight: 800;
     transition: filter .15s ease, transform .05s ease;
   }
   .neon-btn:hover { filter: brightness(1.1); }
@@ -135,7 +248,7 @@
   .roulette-cell:hover { outline: 2px solid var(--neon); }
   .chip-marker {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    background: var(--gold); color: #111; font-weight: 900; font-size: 10px;
+    background: var(--gold); color: var(--neon-ink); font-weight: 900; font-size: 10px;
     border-radius: 999px; padding: 1px 5px;
   }
   .balloon {
@@ -308,6 +421,65 @@
   .ticker-row { animation: slideInLeft .25s ease; }
 
   /* ============================================================
+     POPOVERS, MODALS, THEME SWATCHES, AUTH UI
+  ============================================================ */
+  .popover {
+    position: absolute; right: 0; top: calc(100% + 8px); z-index: 50;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px; min-width: 280px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.5);
+    animation: fadeInUp .18s ease;
+  }
+  .popover.hidden { display: none; }
+
+  .theme-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .theme-swatch {
+    cursor: pointer; border-radius: 8px; padding: 8px 6px;
+    border: 2px solid var(--border-soft); background: var(--bg-elev);
+    text-align: center; transition: transform .12s ease, border-color .12s ease;
+    position: relative;
+  }
+  .theme-swatch:hover { transform: translateY(-2px); border-color: var(--neon); }
+  .theme-swatch.active { border-color: var(--neon); box-shadow: 0 0 12px var(--neon-soft); }
+  .theme-swatch .swatch-bar {
+    height: 10px; border-radius: 4px; display: flex; overflow: hidden; margin-bottom: 6px;
+  }
+  .theme-swatch .swatch-bar > * { flex: 1; }
+  .theme-swatch .swatch-name {
+    font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: #fff;
+  }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeInUp .2s ease;
+  }
+  .modal-backdrop.hidden { display: none; }
+  .modal {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; width: 100%; max-width: 420px; padding: 24px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.6);
+  }
+  .modal h2 { font-size: 22px; font-weight: 900; }
+  .modal .tabs {
+    display: flex; gap: 4px; background: var(--bg-deep); border-radius: 8px;
+    padding: 4px; margin: 16px 0;
+  }
+  .modal .tabs button {
+    flex: 1; padding: 8px 12px; border-radius: 6px; font-weight: 700;
+    color: var(--text-dim); font-size: 13px;
+  }
+  .modal .tabs button.active { background: var(--bg-elev); color: var(--text); }
+
+  .user-menu-row {
+    width: 100%; text-align: left; padding: 8px 10px; border-radius: 6px;
+    color: var(--text); display: flex; align-items: center; gap: 8px; font-size: 13px;
+  }
+  .user-menu-row:hover { background: var(--bg-elev); }
+
+  /* ============================================================
      MISTAKEMON — PACK RIPPING & 3D CARD SLABS
   ============================================================ */
   @property --holo-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
@@ -350,119 +522,376 @@
 
   .slab-stage { perspective: 1100px; perspective-origin: 50% 35%; display: inline-block; }
   .slab {
-    width: 200px; height: 280px; position: relative;
+    width: 220px; height: 308px; position: relative;
     transform-style: preserve-3d;
     transform: rotateY(-15deg) rotateX(2deg);
     cursor: grab;
     will-change: transform;
+    --tx: 0; --ty: -15; /* set by drag JS for tilt-reactive effects */
   }
   .slab:active { cursor: grabbing; }
 
   .slab-face {
     position: absolute; inset: 0; backface-visibility: hidden;
     border-radius: 14px; overflow: hidden;
-    background: linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.03));
-    border: 1px solid rgba(255,255,255,.25);
-    box-shadow:
-      inset 0 0 30px rgba(255,255,255,.06),
-      0 18px 35px rgba(0,0,0,.55);
   }
+
+  /* PLASTIC SLAB — front face (glassy holder) */
+  .slab-face.front {
+    /* layered: subtle inner shadow for the cardboard recess + glassy outer plastic */
+    background:
+      /* glass tint */
+      linear-gradient(135deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.04) 35%, rgba(255,255,255,.02) 65%, rgba(255,255,255,.14) 100%),
+      /* base plastic */
+      linear-gradient(180deg, #e8ebf0, #c4c8d0);
+    border: 1px solid rgba(255,255,255,.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.85),       /* top highlight rim */
+      inset 0 -1px 0 rgba(0,0,0,.35),            /* bottom shadow rim */
+      inset 0 0 18px rgba(255,255,255,.25),
+      inset 1px 0 0 rgba(255,255,255,.4),
+      inset -1px 0 0 rgba(0,0,0,.15),
+      0 22px 40px rgba(0,0,0,.55),
+      0 4px 8px rgba(0,0,0,.4);
+  }
+  /* Plastic edge highlight (tilt-reactive) */
+  .slab-face.front::before {
+    content: ''; position: absolute; inset: 0; border-radius: 13px;
+    pointer-events: none;
+    background: linear-gradient(
+      calc((var(--ty, 0) + 90) * 1deg),
+      transparent 30%,
+      rgba(255,255,255,.55) 47%,
+      rgba(255,255,255,.85) 50%,
+      rgba(255,255,255,.55) 53%,
+      transparent 70%
+    );
+    mix-blend-mode: overlay;
+    opacity: .8;
+  }
+  /* Plastic back */
   .slab-face.back {
     transform: rotateY(180deg);
     background:
-      linear-gradient(135deg, rgba(255,255,255,.1), rgba(255,255,255,.02)),
-      repeating-linear-gradient(45deg, #1e3a8a 0 12px, #2563eb 12px 24px);
+      linear-gradient(135deg, rgba(255,255,255,.2) 0%, transparent 40%, rgba(255,255,255,.1) 100%),
+      linear-gradient(180deg, #e8ebf0, #c4c8d0);
+    border: 1px solid rgba(255,255,255,.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.8),
+      inset 0 -1px 0 rgba(0,0,0,.3),
+      0 22px 40px rgba(0,0,0,.55);
   }
   .slab-face.back::after {
-    content: 'M'; position: absolute; inset: 0;
+    /* parody card-back design — original geometric pattern */
+    content: ''; position: absolute; inset: 22px;
+    border-radius: 8px;
+    background:
+      radial-gradient(circle at 50% 35%, rgba(255,255,255,.25) 0%, transparent 40%),
+      conic-gradient(from 0deg at 50% 50%, #1e3a8a 0deg, #2563eb 90deg, #1e3a8a 180deg, #2563eb 270deg, #1e3a8a 360deg),
+      linear-gradient(180deg, #1e3a8a, #1e40af);
+    border: 3px solid rgba(255,255,255,.5);
+    box-shadow: inset 0 0 20px rgba(0,0,0,.4);
+  }
+  .slab-back-logo {
+    position: absolute; inset: 22px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 92px; font-weight: 900;
-    color: rgba(255,255,255,.85);
-    text-shadow: 0 0 20px rgba(0,0,0,.5);
-    border: 3px solid rgba(255,255,255,.35);
-    border-radius: 10px; margin: 16px;
+    z-index: 1; pointer-events: none;
+    color: rgba(255,255,255,.95);
+    font-weight: 900; font-size: 64px;
+    text-shadow: 0 2px 0 rgba(0,0,0,.4), 0 0 20px rgba(0,0,0,.5);
+    letter-spacing: 2px;
   }
+  .slab-back-logo small { display: block; font-size: 11px; letter-spacing: 4px; margin-top: 2px; opacity: .9; }
 
+  /* PMG GRADE LABEL (top of slab) */
   .slab-grade {
-    position: absolute; top: 6px; left: 6px; right: 6px; height: 22px;
-    background: linear-gradient(90deg, #111827, #1f2937);
-    color: #fff; font-weight: 900; font-size: 9px; letter-spacing: 1.5px;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 8px; border-radius: 4px;
-    border: 1px solid rgba(255,255,255,.18);
+    position: absolute; top: 6px; left: 6px; right: 6px; height: 36px;
+    background: linear-gradient(180deg, #fafafa, #d4d4d8 60%, #a1a1aa);
+    color: #111; border-radius: 4px;
+    border: 1px solid rgba(0,0,0,.4);
+    box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0,0,0,.3);
+    display: grid; grid-template-columns: 32px 1fr 38px;
+    align-items: stretch; overflow: hidden;
   }
-  .slab-grade .grade-num {
-    background: var(--neon); color: #003500; padding: 1px 6px; border-radius: 3px;
-    font-size: 10px; font-weight: 900;
+  .slab-grade .pmg-logo {
+    background: linear-gradient(180deg, #b91c1c, #7f1d1d);
+    color: #fff; font-weight: 900; font-size: 9px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    line-height: 1; padding: 2px 0; letter-spacing: .5px;
+    text-shadow: 0 1px 0 rgba(0,0,0,.5);
   }
+  .slab-grade .pmg-logo small { font-size: 6px; opacity: .85; margin-top: 1px; letter-spacing: 1px; }
+  .slab-grade .pmg-info {
+    padding: 2px 6px; display: flex; flex-direction: column; justify-content: center;
+    font-size: 7px; font-weight: 700; line-height: 1.2; color: #1f2937;
+    border-left: 1px solid rgba(0,0,0,.2);
+    border-right: 1px solid rgba(0,0,0,.2);
+  }
+  .slab-grade .pmg-info .pmg-line1 { letter-spacing: .5px; opacity: .85; }
+  .slab-grade .pmg-info .pmg-line2 { font-size: 9px; font-weight: 900; letter-spacing: .3px; }
+  .slab-grade .pmg-info .pmg-cert { font-size: 6px; opacity: .7; margin-top: 1px; }
+  .slab-grade .pmg-grade {
+    background: linear-gradient(180deg, #fde047, #f59e0b);
+    color: #1a1a1a; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; line-height: 1;
+    border-left: 1px solid rgba(0,0,0,.25);
+  }
+  .slab-grade .pmg-grade .label { font-size: 6px; font-weight: 900; letter-spacing: .5px; }
+  .slab-grade .pmg-grade .num   { font-size: 18px; font-weight: 900; }
 
+  /* CARDBOARD INSET — the actual TCG card sits here */
   .slab-card {
-    position: absolute; top: 32px; left: 8px; right: 8px; bottom: 8px;
-    border-radius: 8px; overflow: hidden; color: #fff;
+    position: absolute; top: 48px; left: 10px; right: 10px; bottom: 24px;
+    border-radius: 8px; overflow: hidden;
+    background: linear-gradient(180deg, #fef3c7, #d4a574);
+    color: #1a1a1a;
     display: flex; flex-direction: column;
-    border: 2px solid rgba(0,0,0,.2);
+    /* paper recess */
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.6),
+      inset 0 -1px 0 rgba(0,0,0,.3),
+      0 0 0 1px rgba(0,0,0,.4),
+      0 2px 4px rgba(0,0,0,.25);
+    font-family: ui-sans-serif, system-ui, sans-serif;
   }
-  .slab-card-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 4px 8px; background: rgba(0,0,0,.25); font-weight: 800; font-size: 11px;
+  /* Slab "barcode" footer area below the card */
+  .slab-barcode {
+    position: absolute; left: 10px; right: 10px; bottom: 6px; height: 14px;
+    background:
+      linear-gradient(90deg,
+        #111 0 2px, transparent 2px 4px, #111 4px 7px, transparent 7px 9px,
+        #111 9px 10px, transparent 10px 13px, #111 13px 14px, transparent 14px 16px,
+        #111 16px 19px, transparent 19px 20px, #111 20px 23px, transparent 23px 25px,
+        #111 25px 27px, transparent 27px 30px, #111 30px 31px, transparent 31px 33px),
+      linear-gradient(180deg, #fafafa, #d4d4d8);
+    background-size: 33px 100%, 100% 100%;
+    border: 1px solid rgba(0,0,0,.4);
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 4px;
+    font-size: 6px; font-weight: 900; color: #111;
   }
-  .slab-card-art {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    font-size: 76px; line-height: 1; background: rgba(255,255,255,.18);
-    margin: 6px; border-radius: 6px; border: 1px solid rgba(0,0,0,.15);
-    text-shadow: 0 4px 8px rgba(0,0,0,.4);
-  }
-  .slab-card-footer {
-    padding: 4px 8px; background: rgba(0,0,0,.25); font-weight: 700;
-    font-size: 10px;
-  }
-  .slab-card-flavor { font-size: 8px; font-weight: 600; opacity: .8; margin-top: 2px; font-style: italic; }
 
-  /* Holo overlay */
-  .slab-holo {
-    position: absolute; top: 32px; left: 8px; right: 8px; bottom: 8px;
-    border-radius: 8px; pointer-events: none; opacity: 0;
-    background: conic-gradient(
-      from var(--holo-angle, 0deg),
-      rgba(255,0,170,.6), rgba(255,255,0,.6),
-      rgba(0,255,255,.6), rgba(170,0,255,.6),
-      rgba(255,0,170,.6)
+  /* TCG CARD INTERNALS */
+  .tcg-card { position: relative; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .tcg-header {
+    display: grid; grid-template-columns: auto 1fr auto auto;
+    gap: 4px; align-items: center;
+    padding: 3px 6px;
+    background: linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,.1));
+    border-bottom: 1px solid rgba(0,0,0,.15);
+  }
+  .tcg-stage { font-size: 6.5px; font-weight: 800; opacity: .75; text-transform: uppercase; letter-spacing: .5px; }
+  .tcg-name  { font-size: 11px; font-weight: 900; letter-spacing: .2px; line-height: 1; }
+  .tcg-hp    { display: flex; align-items: baseline; gap: 2px; font-weight: 800; }
+  .tcg-hp .hp-label { font-size: 6.5px; }
+  .tcg-hp .hp-val   { font-size: 13px; color: #b91c1c; }
+  .tcg-typeicon {
+    width: 16px; height: 16px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 11px;
+    background: linear-gradient(180deg, rgba(255,255,255,.6), rgba(0,0,0,.15));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 1px 2px rgba(0,0,0,.3);
+  }
+
+  .tcg-art-frame {
+    margin: 4px 6px 0; padding: 2px;
+    border-radius: 3px;
+    background: linear-gradient(135deg, #b8860b, #fde047, #b8860b);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.3);
+    flex: 1; min-height: 0;
+    position: relative;
+  }
+  .tcg-art {
+    width: 100%; height: 100%;
+    border-radius: 2px;
+    background:
+      radial-gradient(ellipse at 30% 25%, rgba(255,255,255,.35) 0%, transparent 50%),
+      linear-gradient(180deg, var(--art-c1, #fef3c7), var(--art-c2, #b45309));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 78px; line-height: 1;
+    text-shadow: 0 4px 6px rgba(0,0,0,.35), 0 0 8px rgba(255,255,255,.3);
+    overflow: hidden; position: relative;
+  }
+  .tcg-art-caption {
+    position: absolute; bottom: 2px; left: 2px; right: 2px;
+    background: rgba(0,0,0,.5); color: #fff;
+    font-size: 6px; font-weight: 700; letter-spacing: .3px;
+    padding: 1px 3px; border-radius: 2px; text-align: center;
+  }
+
+  .tcg-attack {
+    margin: 4px 6px 0;
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 4px; align-items: center;
+    padding-bottom: 2px;
+    border-bottom: 1px solid rgba(0,0,0,.2);
+  }
+  .tcg-cost { display: flex; gap: 2px; }
+  .tcg-cost-pip {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--cost-c, #6b7280);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -1px 0 rgba(0,0,0,.3), 0 1px 1px rgba(0,0,0,.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 7px; color: #fff; font-weight: 900;
+    text-shadow: 0 1px 0 rgba(0,0,0,.4);
+  }
+  .tcg-attack-name { font-size: 9.5px; font-weight: 900; letter-spacing: .2px; }
+  .tcg-attack-dmg  { font-size: 13px; font-weight: 900; letter-spacing: .3px; }
+  .tcg-attack-text {
+    margin: 1px 6px 0; font-size: 6.5px; line-height: 1.25; font-style: italic;
+    color: rgba(0,0,0,.7);
+  }
+
+  .tcg-stats-row {
+    margin-top: auto;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.18));
+    padding: 3px 4px;
+    border-top: 1px solid rgba(0,0,0,.2);
+  }
+  .tcg-stats-row > div { font-size: 6px; font-weight: 800; opacity: .7; text-transform: uppercase; letter-spacing: .4px; }
+  .tcg-stats-row > div .v { display: block; font-size: 9px; color: #1a1a1a; opacity: 1; margin-top: 1px; }
+  .tcg-stats-row > div .v.weak { color: #b91c1c; }
+
+  .tcg-flavor {
+    padding: 2px 6px; font-size: 6.5px; line-height: 1.25;
+    font-style: italic; color: rgba(0,0,0,.65);
+    border-top: 1px solid rgba(0,0,0,.1);
+  }
+
+  .tcg-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2px 6px;
+    background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(0,0,0,.85));
+    color: #fff; font-size: 6px; font-weight: 700; letter-spacing: .3px;
+  }
+  .tcg-footer .rarity-symbol { font-size: 10px; line-height: 1; }
+
+  /* TILT-REACTIVE GLOSSY SHINE — sits above the card, below grade label */
+  .slab-shine {
+    position: absolute; top: 48px; left: 10px; right: 10px; bottom: 24px;
+    border-radius: 8px; pointer-events: none; overflow: hidden;
+  }
+  .slab-shine::before {
+    content: ''; position: absolute; inset: -50%;
+    background: linear-gradient(
+      calc((var(--ty, 0) * 2 + 110) * 1deg),
+      transparent 38%,
+      rgba(255,255,255,.45) 48%,
+      rgba(255,255,255,.7) 50%,
+      rgba(255,255,255,.45) 52%,
+      transparent 62%
     );
+    mix-blend-mode: overlay;
+    transform: translate(calc(var(--ty, 0) * 0.4%), calc(var(--tx, 0) * 0.3%));
+  }
+  .slab-shine::after {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at calc(50% + var(--ty, 0) * 0.6%) calc(35% - var(--tx, 0) * 0.5%),
+        rgba(255,255,255,.35) 0%, transparent 45%);
+    mix-blend-mode: overlay;
+  }
+
+  /* TILT-REACTIVE HOLO — replaces previous static-spin overlay; angle tracks drag */
+  .slab-holo {
+    position: absolute; top: 48px; left: 10px; right: 10px; bottom: 24px;
+    border-radius: 8px; pointer-events: none; opacity: 0;
+    background:
+      conic-gradient(
+        from calc((var(--ty, 0) * 3) * 1deg) at 50% 50%,
+        rgba(255,0,170,.7), rgba(255,255,0,.7),
+        rgba(0,255,255,.7), rgba(170,0,255,.7),
+        rgba(255,0,170,.7)
+      );
     mix-blend-mode: color-dodge;
   }
-  .slab.holo .slab-holo  { opacity: .55; animation: holoSpin 5s linear infinite; }
-  .slab.ultra .slab-holo { opacity: .75; animation: holoSpin 3.5s linear infinite; }
-  .slab.secret .slab-holo{ opacity: .9;  animation: holoSpin 2.5s linear infinite; }
-  @keyframes holoSpin { to { --holo-angle: 360deg; } }
+  .slab.holo .slab-holo  { opacity: .55; }
+  .slab.ultra .slab-holo { opacity: .75; }
+  .slab.secret .slab-holo{ opacity: .9; }
 
-  /* Type themes */
-  .type-fire .slab-card     { background: linear-gradient(180deg, #fbbf24, #b91c1c); }
-  .type-water .slab-card    { background: linear-gradient(180deg, #60a5fa, #1d4ed8); }
-  .type-grass .slab-card    { background: linear-gradient(180deg, #86efac, #166534); }
-  .type-electric .slab-card { background: linear-gradient(180deg, #fde047, #a16207); color: #1f2937; }
-  .type-psychic .slab-card  { background: linear-gradient(180deg, #d8b4fe, #6b21a8); }
-  .type-fighting .slab-card { background: linear-gradient(180deg, #fb923c, #9a3412); }
-  .type-ice .slab-card      { background: linear-gradient(180deg, #67e8f9, #155e75); }
-  .type-poison .slab-card   { background: linear-gradient(180deg, #d8b4fe, #581c87); }
-  .type-flying .slab-card   { background: linear-gradient(180deg, #93c5fd, #1e40af); }
-  .type-dragon .slab-card   { background: linear-gradient(180deg, #fcd34d, #92400e); }
-  .type-dark .slab-card     { background: linear-gradient(180deg, #6b7280, #111827); }
-  .type-fairy .slab-card    { background: linear-gradient(180deg, #f9a8d4, #be185d); }
-  .type-steel .slab-card    { background: linear-gradient(180deg, #cbd5e1, #334155); }
-  .type-normal .slab-card   { background: linear-gradient(180deg, #e5e7eb, #4b5563); }
-
-  /* Rarity treatments */
-  .slab.common .slab-face.front   { border-color: rgba(156,163,175,.55); }
-  .slab.uncommon .slab-face.front { border-color: rgba(34,197,94,.7); box-shadow: inset 0 0 25px rgba(34,197,94,.18), 0 18px 35px rgba(0,0,0,.55); }
-  .slab.rare .slab-face.front     { border-color: rgba(234,179,8,.85); box-shadow: inset 0 0 30px rgba(234,179,8,.25), 0 18px 35px rgba(0,0,0,.55), 0 0 18px rgba(234,179,8,.2); }
-  .slab.holo .slab-face.front     { border-color: rgba(168,85,247,.85); box-shadow: inset 0 0 30px rgba(168,85,247,.3), 0 18px 35px rgba(0,0,0,.55), 0 0 24px rgba(168,85,247,.35); }
-  .slab.ultra .slab-face.front    { border-color: rgba(255,215,0,.95); box-shadow: inset 0 0 35px rgba(255,215,0,.4), 0 18px 35px rgba(0,0,0,.55), 0 0 36px rgba(255,215,0,.55); }
-  .slab.secret .slab-face.front {
-    border: 2px solid transparent;
-    background: linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.03)) padding-box,
-                conic-gradient(from var(--holo-angle, 0), #ff00ff, #00ffff, #ffff00, #ff00ff) border-box;
-    box-shadow: inset 0 0 35px rgba(255,255,255,.25), 0 0 40px rgba(255,0,255,.5);
+  /* additional sparkle layer for ultra/secret */
+  .slab.ultra .slab-shine::before,
+  .slab.secret .slab-shine::before {
+    background: linear-gradient(
+      calc((var(--ty, 0) * 2 + 110) * 1deg),
+      transparent 30%,
+      rgba(255,255,255,.55) 45%,
+      rgba(255,200,255,.9) 50%,
+      rgba(255,255,255,.55) 55%,
+      transparent 70%
+    );
   }
+
+  /* Type themes — set art-frame inner gradient */
+  .type-fire     { --art-c1: #fed7aa; --art-c2: #b91c1c; --type-c: #ef4444; }
+  .type-water    { --art-c1: #bfdbfe; --art-c2: #1d4ed8; --type-c: #3b82f6; }
+  .type-grass    { --art-c1: #bbf7d0; --art-c2: #166534; --type-c: #22c55e; }
+  .type-electric { --art-c1: #fef9c3; --art-c2: #a16207; --type-c: #eab308; }
+  .type-psychic  { --art-c1: #f3e8ff; --art-c2: #6b21a8; --type-c: #a855f7; }
+  .type-fighting { --art-c1: #fed7aa; --art-c2: #9a3412; --type-c: #ea580c; }
+  .type-ice      { --art-c1: #cffafe; --art-c2: #155e75; --type-c: #06b6d4; }
+  .type-poison   { --art-c1: #f5d0fe; --art-c2: #581c87; --type-c: #a21caf; }
+  .type-flying   { --art-c1: #e0f2fe; --art-c2: #1e40af; --type-c: #0ea5e9; }
+  .type-dragon   { --art-c1: #fde68a; --art-c2: #92400e; --type-c: #d97706; }
+  .type-dark     { --art-c1: #d1d5db; --art-c2: #111827; --type-c: #4b5563; }
+  .type-fairy    { --art-c1: #fce7f3; --art-c2: #be185d; --type-c: #ec4899; }
+  .type-steel    { --art-c1: #e5e7eb; --art-c2: #334155; --type-c: #64748b; }
+  .type-normal   { --art-c1: #e5e7eb; --art-c2: #4b5563; --type-c: #9ca3af; }
+
+  /* Cost pip color comes from --type-c too */
+  .cost-fire     { --cost-c: #ef4444; }
+  .cost-water    { --cost-c: #3b82f6; }
+  .cost-grass    { --cost-c: #22c55e; }
+  .cost-electric { --cost-c: #eab308; }
+  .cost-psychic  { --cost-c: #a855f7; }
+  .cost-fighting { --cost-c: #ea580c; }
+  .cost-ice      { --cost-c: #06b6d4; }
+  .cost-poison   { --cost-c: #a21caf; }
+  .cost-flying   { --cost-c: #0ea5e9; }
+  .cost-dragon   { --cost-c: #d97706; }
+  .cost-dark     { --cost-c: #4b5563; }
+  .cost-fairy    { --cost-c: #ec4899; }
+  .cost-steel    { --cost-c: #64748b; }
+  .cost-normal   { --cost-c: #9ca3af; }
+
+  /* Rarity treatments — apply to slab outer (already defined above earlier; keep) */
+
+  /* Rarity treatments — outer glow + accent rim that layer on glass plastic */
+  .slab.common .slab-face.front   {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.85), inset 0 -1px 0 rgba(0,0,0,.35),
+      inset 0 0 18px rgba(255,255,255,.25), 0 22px 40px rgba(0,0,0,.55), 0 4px 8px rgba(0,0,0,.4);
+  }
+  .slab.uncommon .slab-face.front {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.85), inset 0 -1px 0 rgba(0,0,0,.35),
+      inset 0 0 22px rgba(34,197,94,.25), 0 22px 40px rgba(0,0,0,.55), 0 0 14px rgba(34,197,94,.25);
+  }
+  .slab.rare .slab-face.front {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.85), inset 0 -1px 0 rgba(0,0,0,.35),
+      inset 0 0 26px rgba(234,179,8,.3), 0 22px 40px rgba(0,0,0,.55), 0 0 22px rgba(234,179,8,.4);
+  }
+  .slab.holo .slab-face.front {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.9), inset 0 -1px 0 rgba(0,0,0,.35),
+      inset 0 0 28px rgba(168,85,247,.35), 0 22px 40px rgba(0,0,0,.55), 0 0 26px rgba(168,85,247,.5);
+  }
+  .slab.ultra .slab-face.front {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(0,0,0,.35),
+      inset 0 0 30px rgba(255,215,0,.45), 0 22px 40px rgba(0,0,0,.55), 0 0 36px rgba(255,215,0,.65);
+  }
+  .slab.secret .slab-face.front {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(0,0,0,.4),
+      inset 0 0 36px rgba(255,255,255,.4), 0 22px 40px rgba(0,0,0,.6),
+      0 0 40px rgba(236,72,153,.55), 0 0 60px rgba(56,189,248,.4);
+  }
+  /* Secret rare gets a rainbow rim (animated) on the cardboard inset */
+  .slab.secret .slab-card { box-shadow: inset 0 0 0 2px rgba(255,255,255,.6), 0 0 0 1px rgba(0,0,0,.5), 0 2px 4px rgba(0,0,0,.3); }
 
   .rarity-tag {
     display: inline-block; padding: 2px 8px; border-radius: 999px;
@@ -516,11 +945,30 @@
         <i data-lucide="sparkles" class="w-4 h-4"></i>
         MINT $10,000 FAKE BALANCE
       </button>
-      <div class="bg-elev rounded-md px-3 py-2 flex items-center gap-2">
-        <div class="w-7 h-7 rounded-full bg-neon flex items-center justify-center text-[#003500] font-black">S</div>
-        <div class="leading-tight">
-          <div class="text-[11px] text-dim">handle</div>
-          <div class="text-sm font-bold">Simulation_King</div>
+
+      <!-- THEME SWITCHER -->
+      <div class="relative">
+        <button id="theme-btn" class="ghost-btn rounded-md px-3 py-2 flex items-center gap-2 text-sm" aria-label="Theme">
+          <i data-lucide="palette" class="w-4 h-4"></i>
+          <span id="theme-label" class="font-bold">Stake</span>
+        </button>
+        <div id="theme-popover" class="popover hidden">
+          <div class="text-[11px] text-dim font-black tracking-wider mb-2">CHOOSE A THEME</div>
+          <div id="theme-grid" class="theme-grid"></div>
+        </div>
+      </div>
+
+      <!-- USER / LOGIN -->
+      <div class="relative">
+        <button id="user-btn" class="bg-elev rounded-md px-3 py-2 flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full bg-neon flex items-center justify-center font-black" style="color: var(--neon-ink)" id="user-avatar">G</div>
+          <div class="leading-tight text-left">
+            <div class="text-[11px] text-dim" id="user-status">guest</div>
+            <div class="text-sm font-bold" id="user-name">Simulation_King</div>
+          </div>
+        </button>
+        <div id="user-popover" class="popover hidden">
+          <div id="user-popover-body"></div>
         </div>
       </div>
     </div>
@@ -587,6 +1035,37 @@
 
 <!-- TOAST CONTAINER -->
 <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+<!-- LOGIN / SIGNUP MODAL -->
+<div id="auth-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <div class="flex items-center justify-between">
+      <h2>Welcome to Mistake</h2>
+      <button id="auth-close" class="text-dim hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <p class="text-dim text-sm mt-1">Save your fake balance, card collection, and theme between visits. Stored 100% locally in your browser — no servers involved.</p>
+    <div class="tabs">
+      <button id="auth-tab-signin" class="active">Sign In</button>
+      <button id="auth-tab-signup">Sign Up</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="text-xs text-dim font-bold">Username</label>
+        <input id="auth-user" class="input-dark mt-1" placeholder="e.g. sparkrat42" maxlength="24"/>
+      </div>
+      <div>
+        <label class="text-xs text-dim font-bold">Password (local-only)</label>
+        <input id="auth-pass" type="password" class="input-dark mt-1" placeholder="min 4 chars" maxlength="64"/>
+      </div>
+      <div id="auth-error" class="text-sm font-bold hidden" style="color: var(--red)"></div>
+      <button id="auth-submit" class="neon-btn rounded-md w-full py-2">Sign In</button>
+      <button id="auth-guest" class="ghost-btn rounded-md w-full py-2">Continue as Guest</button>
+      <div class="text-[11px] text-dim text-center pt-1">
+        Reminder: this is a fully simulated, no-network site. Don't use a real password.
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 /* =====================================================================
@@ -3286,12 +3765,9 @@ ROUTES['snakes'] = {
 };
 
 /* =====================================================================
-   BOOT
+   BOOT (deferred — actual init happens after Auth/Theme module loads)
 ===================================================================== */
-setBalance(10000);
-toast('🪙 Welcome, Simulation_King. Starter $10,000 of imaginary money loaded.');
-navigate('lobby');
-if (window.lucide) lucide.createIcons();
+// (intentionally empty here — see final boot block below)
 /* =====================================================================
    MISTAKÉMON — pack ripping & 3D card slabs
    (parody-only; all creatures are fictional)
@@ -3376,6 +3852,11 @@ function gradeLabel(g) {
   return labels[g] || ('GRADE ' + g);
 }
 
+function gradeShortLabel(g) {
+  const labels = { 10: 'GEM MT', 9: 'MINT', 8: 'NM-MT', 7: 'NM', 6: 'EX-MT', 5: 'EX', 4: 'VG-EX', 3: 'VG', 2: 'GOOD', 1: 'POOR' };
+  return labels[g] || 'GRADE';
+}
+
 function rollGrade(rarity) {
   // higher rarity ⇒ better expected grade
   const bias = rarity === 'secret' ? 9.5 : rarity === 'ultra' ? 9 : rarity === 'holo' ? 8.5 : rarity === 'rare' ? 7.5 : rarity === 'uncommon' ? 7 : 6.5;
@@ -3383,31 +3864,141 @@ function rollGrade(rarity) {
   return clamp(g, 1, 10);
 }
 
+/* Pseudo-random certificate number deterministic from card */
+function certNumber(creature, rarity, grade) {
+  const seed = creature.id * 9301 + rarity.length * 49297 + grade * 233280;
+  const x = Math.abs(Math.sin(seed) * 100000) | 0;
+  const a = String(x % 9000 + 1000);
+  const b = String((x * 7) % 9000 + 1000);
+  return a + '-' + b;
+}
+
+const TYPE_GLYPH = {
+  fire: '🔥', water: '💧', grass: '🌿', electric: '⚡', psychic: '🔮',
+  fighting: '✊', ice: '❄', poison: '☣', flying: '🌪', dragon: '🐲',
+  dark: '◆', fairy: '✦', steel: '⚙', normal: '●'
+};
+const TYPE_LABEL = {
+  fire: 'FIRE', water: 'WATER', grass: 'GRASS', electric: 'LIGHTNING', psychic: 'PSYCHIC',
+  fighting: 'FIGHTING', ice: 'WATER', poison: 'DARKNESS', flying: 'COLORLESS', dragon: 'DRAGON',
+  dark: 'DARKNESS', fairy: 'FAIRY', steel: 'METAL', normal: 'COLORLESS'
+};
+/* Type-chart-style weakness/resistance (parody) */
+const WEAKNESS = {
+  fire: 'water', water: 'electric', grass: 'fire', electric: 'fighting', psychic: 'dark',
+  fighting: 'psychic', ice: 'fighting', poison: 'psychic', flying: 'electric',
+  dragon: 'fairy', dark: 'fairy', fairy: 'steel', steel: 'fire', normal: 'fighting'
+};
+const RESISTANCE = {
+  fire: 'grass', water: 'fire', grass: 'water', electric: 'flying', psychic: 'fighting',
+  fighting: 'normal', ice: 'water', poison: 'fairy', flying: 'grass',
+  dragon: 'electric', dark: 'psychic', fairy: 'dark', steel: 'psychic', normal: ''
+};
+const STAGE_LABEL = {
+  common: 'BASIC',
+  uncommon: 'STAGE 1',
+  rare: 'STAGE 2',
+  holo: 'LEGENDARY',
+};
+const RARITY_SYMBOL = {
+  common: '●',
+  uncommon: '◆',
+  rare: '★',
+  holo: '✦',
+  ultra: '★★',
+  secret: '✦✦',
+};
+function attackCostType(creatureType) {
+  // map some types to a "colorless" parody scheme
+  return creatureType;
+}
+
 function buildSlabHTML(card) {
   const { creature, rarity, grade } = card;
   const id = String(creature.id).padStart(3, '0');
+  const stage = STAGE_LABEL[creature.tier] || 'BASIC';
+  const cert = certNumber(creature, rarity, grade);
+  const year = 2024;
+  const setCode = 'MST';
+  const setSize = '030';
+  const costType = attackCostType(creature.type);
+  const costPips = (creature.tier === 'common') ? 1 : (creature.tier === 'uncommon') ? 2 : 3;
+  const costHTML = Array.from({ length: costPips }, () =>
+    `<div class="tcg-cost-pip cost-${costType}">${TYPE_GLYPH[creature.type] || '●'}</div>`
+  ).join('');
+  const wkType = WEAKNESS[creature.type] || '';
+  const reType = RESISTANCE[creature.type] || '';
+  const retreat = '●'.repeat(Math.min(3, costPips));
+
   return `
     <div class="slab ${rarity} type-${creature.type}" data-rarity="${rarity}">
       <div class="slab-face front">
         <div class="slab-grade">
-          <span>PMG</span>
-          <span class="grade-num">${gradeLabel(grade)}</span>
-          <span>#${id}</span>
+          <div class="pmg-logo">PMG<small>PRO</small></div>
+          <div class="pmg-info">
+            <div class="pmg-line1">${year} MISTAKÉMON · ${setCode} ${id}/${setSize}</div>
+            <div class="pmg-line2">${creature.name.toUpperCase()} — ${rarity.toUpperCase()}</div>
+            <div class="pmg-cert">CERT #${cert}</div>
+          </div>
+          <div class="pmg-grade">
+            <div class="label">${gradeShortLabel(grade)}</div>
+            <div class="num">${grade}</div>
+          </div>
         </div>
+
         <div class="slab-card">
-          <div class="slab-card-header">
-            <span>${creature.name.toUpperCase()}</span>
-            <span>HP ${creature.hp}</span>
-          </div>
-          <div class="slab-card-art">${creature.emoji}</div>
-          <div class="slab-card-footer">
-            <div>${creature.move} · ${creature.dmg}</div>
-            <div class="slab-card-flavor">${creature.flavor}</div>
+          <div class="tcg-card">
+            <div class="tcg-header">
+              <div>
+                <div class="tcg-stage">${stage}</div>
+                <div class="tcg-name">${creature.name}</div>
+              </div>
+              <div></div>
+              <div class="tcg-hp">
+                <span class="hp-label">HP</span><span class="hp-val">${creature.hp}</span>
+              </div>
+              <div class="tcg-typeicon" style="color: var(--type-c, #555)">${TYPE_GLYPH[creature.type] || '●'}</div>
+            </div>
+
+            <div class="tcg-art-frame">
+              <div class="tcg-art">
+                ${creature.emoji}
+                <div class="tcg-art-caption">NO.${id} · ${TYPE_LABEL[creature.type]}-TYPE · ILLUS. M.K.</div>
+              </div>
+            </div>
+
+            <div class="tcg-attack">
+              <div class="tcg-cost">${costHTML}</div>
+              <div class="tcg-attack-name">${creature.move}</div>
+              <div class="tcg-attack-dmg">${creature.dmg}</div>
+            </div>
+            <div class="tcg-attack-text">${creature.flavor}</div>
+
+            <div class="tcg-stats-row">
+              <div>weakness<span class="v weak">${wkType ? (TYPE_GLYPH[wkType] + ' ×2') : '—'}</span></div>
+              <div>resistance<span class="v">${reType ? (TYPE_GLYPH[reType] + ' −20') : '—'}</span></div>
+              <div>retreat<span class="v">${retreat}</span></div>
+            </div>
+
+            <div class="tcg-flavor">"${creature.flavor}"</div>
+
+            <div class="tcg-footer">
+              <span>illus. M.K.</span>
+              <span>${setCode} ${id}/${setSize}</span>
+              <span class="rarity-symbol">${RARITY_SYMBOL[rarity] || '●'}</span>
+            </div>
           </div>
         </div>
+
+        <div class="slab-shine"></div>
         <div class="slab-holo"></div>
+
+        <div class="slab-barcode">${cert.replace('-', '')}</div>
       </div>
-      <div class="slab-face back"></div>
+
+      <div class="slab-face back">
+        <div class="slab-back-logo">M<small>MISTAKÉMON</small></div>
+      </div>
     </div>`;
 }
 
@@ -3419,7 +4010,11 @@ function makeSlabInteractive(slabEl) {
   let lastInteract = performance.now();
   let raf = null;
 
-  function apply() { slabEl.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`; }
+  function apply() {
+    slabEl.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+    slabEl.style.setProperty('--ty', rotY);
+    slabEl.style.setProperty('--tx', rotX);
+  }
 
   function loop() {
     if (!dragging) {
@@ -3668,6 +4263,312 @@ ROUTES['packs'] = {
     return () => { cleanupAllSlabs(); };
   }
 };
+/* =====================================================================
+   THEME SYSTEM
+===================================================================== */
+const THEMES = [
+  { id: 'stake',     name: 'Stake',      colors: ['#0f212e', '#00e701', '#1a2c38'] },
+  { id: 'midnight',  name: 'Midnight',   colors: ['#0a0820', '#818cf8', '#1f1d4a'] },
+  { id: 'cyberpunk', name: 'Cyberpunk',  colors: ['#0a0a14', '#ff00aa', '#00ffff'] },
+  { id: 'sunset',    name: 'Sunset',     colors: ['#1a0d1f', '#ff7a45', '#fcd34d'] },
+  { id: 'forest',    name: 'Forest',     colors: ['#0a1410', '#84cc16', '#1f3829'] },
+  { id: 'royal',     name: 'Royal',      colors: ['#1a0a30', '#fbbf24', '#502a90'] },
+  { id: 'vampire',   name: 'Vampire',    colors: ['#14080a', '#ef4444', '#240e12'] },
+  { id: 'ocean',     name: 'Ocean',      colors: ['#061a26', '#2dd4bf', '#143e58'] },
+  { id: 'vaporwave', name: 'Vaporwave',  colors: ['#1a0a2e', '#f472b6', '#67e8f9'] },
+  { id: 'mono',      name: 'Mono',       colors: ['#0d0d0d', '#d4d4d4', '#3d3d3d'] },
+  { id: 'contrast',  name: 'Contrast',   colors: ['#000000', '#fde047', '#1a1a1a'] },
+  { id: 'solarized', name: 'Solarized',  colors: ['#002b36', '#b58900', '#073642'] },
+  { id: 'mint',      name: 'Mint',       colors: ['#0a2a26', '#4ade80', '#1f6661'] },
+  { id: 'rosegold',  name: 'Rose Gold',  colors: ['#2a0a14', '#f9a8d4', '#f59e0b'] },
+  { id: 'matrix',    name: 'Matrix',     colors: ['#000000', '#00ff41', '#0a1f0a'] },
+  { id: 'lava',      name: 'Lava',       colors: ['#14080a', '#f97316', '#fbbf24'] },
+  { id: 'slate',     name: 'Slate',      colors: ['#0f172a', '#38bdf8', '#334155'] },
+];
+
+let currentTheme = 'stake';
+
+function setTheme(id) {
+  if (!THEMES.find(t => t.id === id)) id = 'stake';
+  currentTheme = id;
+  document.body.dataset.theme = id;
+  const meta = THEMES.find(t => t.id === id);
+  const lab = document.getElementById('theme-label');
+  if (lab) lab.textContent = meta.name;
+  // mark active swatch
+  document.querySelectorAll('.theme-swatch').forEach(s => s.classList.toggle('active', s.dataset.theme === id));
+  Auth.scheduleSave();
+}
+
+function buildThemeGrid() {
+  const grid = document.getElementById('theme-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  THEMES.forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'theme-swatch' + (currentTheme === t.id ? ' active' : '');
+    el.dataset.theme = t.id;
+    el.innerHTML = `
+      <div class="swatch-bar">
+        <span style="background:${t.colors[0]}"></span>
+        <span style="background:${t.colors[1]}"></span>
+        <span style="background:${t.colors[2]}"></span>
+      </div>
+      <div class="swatch-name">${t.name}</div>
+    `;
+    el.addEventListener('click', () => setTheme(t.id));
+    grid.appendChild(el);
+  });
+}
+
+/* =====================================================================
+   AUTH / PROFILE / AUTOSAVE
+===================================================================== */
+const Auth = {
+  user: null,                  // current username, or null for guest
+  _saveTimer: null,
+  _STORE_KEY: 'mistake_users_v1',
+  _SESSION_KEY: 'mistake_session_v1',
+
+  _readUsers() {
+    try { return JSON.parse(localStorage.getItem(this._STORE_KEY) || '{}'); }
+    catch (e) { return {}; }
+  },
+  _writeUsers(u) { localStorage.setItem(this._STORE_KEY, JSON.stringify(u)); },
+
+  _hash(name, pw) {
+    // Local-only obfuscation. NOT real security — clearly not for sensitive use.
+    let h = 0; const s = pw + ':' + name + ':mistake';
+    for (let i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; }
+    return 'h_' + Math.abs(h).toString(36) + '_' + s.length;
+  },
+
+  init() {
+    try {
+      const session = localStorage.getItem(this._SESSION_KEY);
+      const users = this._readUsers();
+      if (session && users[session]) {
+        this.user = session;
+        this._loadProfile();
+      } else {
+        // guest: try to load guest profile too
+        if (users['__guest__']) { this._loadProfileFromUser('__guest__'); }
+        else { setBalance(10000); setTheme('stake'); }
+      }
+    } catch (e) { setBalance(10000); setTheme('stake'); }
+    this._refreshUI();
+  },
+
+  signUp(name, pw) {
+    name = (name || '').trim();
+    if (name.length < 3) return { error: 'Username must be at least 3 characters.' };
+    if (!/^[a-zA-Z0-9_]+$/.test(name)) return { error: 'Letters, numbers, and underscores only.' };
+    if (pw.length < 4) return { error: 'Password must be at least 4 characters.' };
+    const users = this._readUsers();
+    if (users[name]) return { error: 'Username taken — try Sign In.' };
+    users[name] = {
+      hash: this._hash(name, pw),
+      profile: { balance: 10000, collection: [], theme: 'stake', createdAt: Date.now() }
+    };
+    this._writeUsers(users);
+    return this.signIn(name, pw);
+  },
+
+  signIn(name, pw) {
+    name = (name || '').trim();
+    const users = this._readUsers();
+    if (!users[name]) return { error: 'No account with that username.' };
+    if (users[name].hash !== this._hash(name, pw)) return { error: 'Wrong password.' };
+    this.user = name;
+    localStorage.setItem(this._SESSION_KEY, name);
+    this._loadProfile();
+    this._refreshUI();
+    return { ok: true };
+  },
+
+  signOut() {
+    this.saveNow();
+    this.user = null;
+    localStorage.removeItem(this._SESSION_KEY);
+    setBalance(10000);
+    Collection.cards = [];
+    setTheme('stake');
+    this._refreshUI();
+    toast('Signed out. Back to guest mode.');
+  },
+
+  _loadProfile() {
+    if (!this.user) return;
+    this._loadProfileFromUser(this.user);
+  },
+  _loadProfileFromUser(key) {
+    const users = this._readUsers();
+    const p = users[key]?.profile;
+    if (!p) return;
+    setBalance(p.balance ?? 10000);
+    Collection.cards = Array.isArray(p.collection) ? p.collection : [];
+    setTheme(p.theme || 'stake');
+  },
+
+  scheduleSave() {
+    if (this._saveTimer) clearTimeout(this._saveTimer);
+    this._saveTimer = setTimeout(() => this.saveNow(), 600);
+  },
+
+  saveNow() {
+    try {
+      const key = this.user || '__guest__';
+      const users = this._readUsers();
+      if (!users[key]) users[key] = { hash: '', profile: {} };
+      users[key].profile = {
+        balance: State.balance,
+        collection: Collection.cards,
+        theme: currentTheme,
+        savedAt: Date.now(),
+      };
+      this._writeUsers(users);
+    } catch (e) { /* localStorage might be disabled */ }
+  },
+
+  _refreshUI() {
+    const avatar = document.getElementById('user-avatar');
+    const status = document.getElementById('user-status');
+    const nameEl = document.getElementById('user-name');
+    if (this.user) {
+      avatar.textContent = this.user[0].toUpperCase();
+      status.textContent = 'signed in';
+      nameEl.textContent = this.user;
+    } else {
+      avatar.textContent = 'G';
+      status.textContent = 'guest';
+      nameEl.textContent = 'Simulation_King';
+    }
+    this._renderUserPopover();
+  },
+
+  _renderUserPopover() {
+    const body = document.getElementById('user-popover-body');
+    if (!body) return;
+    if (this.user) {
+      body.innerHTML = `
+        <div class="text-xs text-dim font-black tracking-wider mb-2">SIGNED IN</div>
+        <div class="bg-elev rounded-md p-3 mb-3">
+          <div class="font-black">${this.user}</div>
+          <div class="text-[11px] text-dim mt-1">Auto-saving balance, collection &amp; theme.</div>
+        </div>
+        <button class="user-menu-row" id="user-save-now">
+          <i data-lucide="save" class="w-4 h-4 text-neon"></i> Save now
+        </button>
+        <button class="user-menu-row" id="user-signout">
+          <i data-lucide="log-out" class="w-4 h-4" style="color:var(--red)"></i> Sign out
+        </button>
+      `;
+      setTimeout(() => {
+        document.getElementById('user-save-now')?.addEventListener('click', () => { this.saveNow(); toast('Saved.'); });
+        document.getElementById('user-signout')?.addEventListener('click', () => { this.signOut(); closeAllPopovers(); });
+        if (window.lucide) lucide.createIcons();
+      }, 0);
+    } else {
+      body.innerHTML = `
+        <div class="text-xs text-dim font-black tracking-wider mb-2">GUEST MODE</div>
+        <div class="bg-elev rounded-md p-3 mb-3 text-sm">
+          <div class="font-bold">Progress is auto-saved locally.</div>
+          <div class="text-[11px] text-dim mt-1">Sign in to keep multiple profiles or use a different browser.</div>
+        </div>
+        <button class="user-menu-row" id="user-signin">
+          <i data-lucide="log-in" class="w-4 h-4 text-neon"></i> Sign in / Create account
+        </button>
+      `;
+      setTimeout(() => {
+        document.getElementById('user-signin')?.addEventListener('click', () => { closeAllPopovers(); openAuthModal(); });
+        if (window.lucide) lucide.createIcons();
+      }, 0);
+    }
+  },
+};
+
+/* Hook auto-save into balance + collection mutations */
+const _origSetBalance = setBalance;
+setBalance = function (v) { _origSetBalance(v); Auth.scheduleSave(); };
+const _origCollectionPush = Array.prototype.push; // not modifying global; using a shim:
+function recordCollectionChange() { Auth.scheduleSave(); }
+
+/* Auth modal wiring */
+let authMode = 'signin';
+function openAuthModal() {
+  document.getElementById('auth-modal').classList.remove('hidden');
+  document.getElementById('auth-error').classList.add('hidden');
+  setTimeout(() => document.getElementById('auth-user').focus(), 60);
+}
+function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
+function setAuthMode(m) {
+  authMode = m;
+  document.getElementById('auth-tab-signin').classList.toggle('active', m === 'signin');
+  document.getElementById('auth-tab-signup').classList.toggle('active', m === 'signup');
+  document.getElementById('auth-submit').textContent = m === 'signin' ? 'Sign In' : 'Create Account';
+  document.getElementById('auth-error').classList.add('hidden');
+}
+function submitAuth() {
+  const u = document.getElementById('auth-user').value;
+  const p = document.getElementById('auth-pass').value;
+  const err = document.getElementById('auth-error');
+  const res = (authMode === 'signin') ? Auth.signIn(u, p) : Auth.signUp(u, p);
+  if (res.error) { err.textContent = res.error; err.classList.remove('hidden'); return; }
+  closeAuthModal();
+  toast(authMode === 'signin' ? `Welcome back, ${Auth.user}.` : `Account created. Welcome, ${Auth.user}!`);
+  document.getElementById('auth-pass').value = '';
+}
+
+document.getElementById('auth-tab-signin').addEventListener('click', () => setAuthMode('signin'));
+document.getElementById('auth-tab-signup').addEventListener('click', () => setAuthMode('signup'));
+document.getElementById('auth-submit').addEventListener('click', submitAuth);
+document.getElementById('auth-pass').addEventListener('keydown', e => { if (e.key === 'Enter') submitAuth(); });
+document.getElementById('auth-close').addEventListener('click', closeAuthModal);
+document.getElementById('auth-guest').addEventListener('click', () => { closeAuthModal(); toast('Continuing as guest. Progress still saves locally.'); });
+document.getElementById('auth-modal').addEventListener('click', (e) => { if (e.target.id === 'auth-modal') closeAuthModal(); });
+
+/* Popover wiring */
+function closeAllPopovers() {
+  document.getElementById('theme-popover').classList.add('hidden');
+  document.getElementById('user-popover').classList.add('hidden');
+}
+document.getElementById('theme-btn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const pop = document.getElementById('theme-popover');
+  const wasHidden = pop.classList.contains('hidden');
+  closeAllPopovers();
+  if (wasHidden) pop.classList.remove('hidden');
+});
+document.getElementById('user-btn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const pop = document.getElementById('user-popover');
+  const wasHidden = pop.classList.contains('hidden');
+  closeAllPopovers();
+  if (wasHidden) {
+    Auth._renderUserPopover();
+    pop.classList.remove('hidden');
+  }
+});
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.popover') && !e.target.closest('#theme-btn') && !e.target.closest('#user-btn')) {
+    closeAllPopovers();
+  }
+});
+
+/* Save before leaving */
+window.addEventListener('beforeunload', () => Auth.saveNow());
+setInterval(() => Auth.saveNow(), 10000); // periodic safety save
+
+/* =====================================================================
+   FINAL BOOT
+===================================================================== */
+buildThemeGrid();
+Auth.init();
+navigate('lobby');
+if (window.lucide) lucide.createIcons();
+if (Auth.user) toast(`Welcome back, ${Auth.user}. Profile restored.`);
+else toast('🪙 Welcome to Mistake. Sign in to keep your progress across visits.');
+
 /* GAME_INJECTION_POINT */
 </script>
 </body>
