@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>FinanceOS — Personal Financial Operating System</title>
+<meta name="description" content="Your personal financial operating system from age 17 onward."/>
+<meta name="theme-color" content="#050709"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<div class="app">
+
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar">
+  <div class="sidebar-brand"><h1>FinanceOS</h1><span class="version">V5</span></div>
+  <div class="nav-item active" data-s="home"><span class="icon">🏠</span><span class="label">Home</span></div>
+  <div class="nav-item" data-s="starbucks"><span class="icon">☕</span><span class="label">Starbucks Pay</span></div>
+  <div class="nav-item" data-s="budget"><span class="icon">📊</span><span class="label">Spending</span></div>
+  <div class="nav-item" data-s="bills"><span class="icon">📅</span><span class="label">Bills</span></div>
+  <div class="nav-divider"></div>
+  <div class="nav-item" data-s="goals"><span class="icon">🎯</span><span class="label">Goals</span></div>
+  <div class="nav-item" data-s="tech"><span class="icon">💻</span><span class="label">Tech Tracker</span></div>
+  <div class="nav-item" data-s="investments"><span class="icon">📈</span><span class="label">Investments</span></div>
+  <div class="nav-item" data-s="speculative"><span class="icon">🚀</span><span class="label">Speculative</span></div>
+  <div class="nav-item" data-s="compound"><span class="icon">💰</span><span class="label">Compound Calc</span></div>
+  <div class="nav-divider"></div>
+  <div class="nav-item" data-s="education"><span class="icon">🎓</span><span class="label">Education</span></div>
+  <div class="nav-item" data-s="networth"><span class="icon">💎</span><span class="label">Net Worth</span></div>
+  <div class="nav-item" data-s="projections"><span class="icon">🔮</span><span class="label">Projections</span></div>
+  <div class="nav-item" data-s="whatif"><span class="icon">⚡</span><span class="label">What If?</span></div>
+  <div class="nav-divider"></div>
+  <div class="nav-item" data-s="timeline"><span class="icon">📅</span><span class="label">Timeline</span></div>
+  <div class="nav-item" data-s="health"><span class="icon">❤️</span><span class="label">Health Score</span></div>
+  <div class="nav-item" data-s="settings"><span class="icon">⚙️</span><span class="label">Settings</span></div>
+</aside>
+
+<!-- ===== TOPBAR ===== -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-greeting" id="greeting"></div>
+    <div class="topbar-date" id="dateDisplay"></div>
+  </div>
+  <div class="topbar-right">
+    <div class="health-pill"><span>Health:</span><span class="score" id="healthPill">--</span></div>
+    <div class="nw-pill"><span class="lbl">Net Worth</span><span class="val" id="nwPill">$0</span></div>
+  </div>
+</div>
+
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main">
+
+<!-- ======== HOME DASHBOARD ======== -->
+<div class="section active" id="sec-home">
+  <div class="quote-box" id="dailyQuote"><div class="quote-text">"The best time to plant a tree was 20 years ago. The second best time is now."</div><div class="quote-author">— Chinese Proverb</div></div>
+
+  <div class="g g4 mb">
+    <div class="card scard"><div class="scard-icon" style="background:var(--green-dim);color:var(--green);">💵</div><div class="scard-body"><div class="scard-val" id="h-checking">$0</div><div class="scard-lbl">Checking</div></div></div>
+    <div class="card scard"><div class="scard-icon" style="background:var(--yellow-dim);color:var(--yellow);">🚨</div><div class="scard-body"><div class="scard-val" id="h-emergency">$0</div><div class="scard-lbl">Emergency Fund</div></div></div>
+    <div class="card scard"><div class="scard-icon" style="background:var(--accent-dim);color:var(--accent);">📈</div><div class="scard-body"><div class="scard-val" id="h-investments">$0</div><div class="scard-lbl">Investments</div></div></div>
+    <div class="card scard"><div class="scard-icon" style="background:var(--green-dim);color:var(--green);">💎</div><div class="scard-body"><div class="scard-val glow-g" id="h-networth">$0</div><div class="scard-lbl">Net Worth</div></div></div>
+  </div>
+
+  <div class="g g3 mb">
+    <div class="card scard"><div class="scard-icon" style="background:var(--blue-dim);color:var(--blue);">📅</div><div class="scard-body"><div class="scard-val" id="h-nextpay">—</div><div class="scard-lbl">Next Payday</div></div></div>
+    <div class="card scard"><div class="scard-icon" style="background:var(--purple-dim);color:var(--purple);">🎯</div><div class="scard-body"><div class="scard-val" id="h-goals-progress">0%</div><div class="scard-lbl">Goals Progress</div></div></div>
+    <div class="card scard"><div class="scard-icon" style="background:var(--orange-dim);color:var(--orange);">🔥</div><div class="scard-body"><div class="scard-val" id="h-streak">0 days</div><div class="scard-lbl">Savings Streak</div></div></div>
+  </div>
+
+  <div class="g g21 mb">
+    <div class="card">
+      <div class="card-h"><span class="card-t">Monthly Spending</span><span class="tag tag-accent" id="h-month-label">—</span></div>
+      <div class="chart-box"><canvas id="chart-home-spending"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="card-t">Quick Goals</span></div>
+      <div id="h-goals-list"></div>
+    </div>
+  </div>
+
+  <div class="g g2 mb">
+    <div class="card">
+      <div class="card-h"><span class="card-t">Investment Allocation</span></div>
+      <div class="chart-box chart-short"><canvas id="chart-home-alloc"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="card-t">Achievements</span></div>
+      <div id="h-achievements"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ======== STARBUCKS PAY CENTER ======== -->
+<div class="section" id="sec-starbucks">
+  <div class="g g3 mb">
+    <div class="card scard"><div class="scard-icon" style="background:var(--green-dim);color:var(--green);">⏱</div><div class="scard-body"><div class="scard-val" id="sb-period-hrs">0 hrs</div><div class="scard-lbl">This Pay Period</div></div></div>
+    <div class="card scard"><div class="scard-icon" style="background:var(--yellow-dim);color:var(--yellow);">⚡</div><div class="scard-body"><div class="scard-val" id="sb-ot-hrs">0 hrs</div><div class="scard-lbl">Overtime (1.5x)</div></div></div>
+    <div class="card scard"><div class="scard-icon" style="background:var(--accent-dim);color:var(--accent);">$</div><div class="scard-body"><div class="scard-val" id="sb-est-net">$0</div><div class="scard-lbl">Est. Net This Period</div></div></div>
+  </div>
+
+  <div class="g g2 mb">
+    <div class="card">
+      <div class="card-h"><span class="card-t">Log a Shift</span></div>
+      <div class="g g2">
+        <div class="fg"><label>Date</label><input type="date" id="sh-date"/></div>
+        <div class="fg"><label>Type</label><select id="sh-type"><option value="regular">Regular</option><option value="overtime">Overtime (1.5x)</option><option value="holiday">Holiday (2x)</option><option value="training">Training</option></select></div>
+        <div class="fg"><label>Start</label><input type="time" id="sh-start" value="05:00"/></div>
+        <div class="fg"><label>End</label><input type="time" id="sh-end" value="11:00"/></div>
+        <div class="fg"><label>Break (min)</label><input type="number" id="sh-break" value="30" min="0" max="120"/></div>
+        <div class="fg"><label>Tips ($)</label><input type="number" id="sh-tips" value="0" min="0" step="1"/></div>
+      </div>
+      <button class="btn btn-p btn-block" style="margin-top:10px;" id="btn-add-shift">+ Add Shift</button>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="card-t">School-Year Planner</span></div>
+      <p class="card-desc">See what different weekly hours look like over the school year:</p>
+      <div class="tbl-wrap">
+        <table id="sb-planner-table">
+          <thead><tr><th>Hours/Wk</th><th>Monthly Net</th><th>Yearly Net</th><th>Invest @$300</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="divider"></div>
+      <div class="card-h"><span class="card-t">Pay Period Info</span></div>
+      <div class="small">Bi-weekly pay. OT after 40 hrs/week. Holiday = 2x. Current wage: <b id="sb-wage">$16.50/hr</b></div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Full Year Projection</span></div>
+    <div class="tbl-wrap"><table id="sb-year-table"><thead><tr><th>Month</th><th>Hrs/Wk</th><th>Gross</th><th>Fed</th><th>FICA</th><th>Net</th><th>Cumulative</th></tr></thead><tbody></tbody></table></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Shift Log</span><button class="btn btn-sm btn-danger" id="btn-clear-shifts">Clear All</button></div>
+    <div class="tbl-wrap" style="max-height:350px;overflow-y:auto;">
+      <table id="sb-shift-table"><thead><tr><th>Date</th><th>Time</th><th>Hrs</th><th>Type</th><th>Rate</th><th>Gross</th><th>Tips</th><th></th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ======== SPENDING / BUDGET ======== -->
+<div class="section" id="sec-budget">
+  <div class="g g2 mb">
+    <div class="card">
+      <div class="card-h"><span class="card-t">Add Transaction</span></div>
+      <div class="g g2">
+        <div class="fg"><label>Date</label><input type="date" id="exp-date"/></div>
+        <div class="fg"><label>Type</label><select id="exp-type"><option value="expense">Expense</option><option value="income">Income</option></select></div>
+      </div>
+      <div class="g g2">
+        <div class="fg"><label>Category</label><select id="exp-cat">
+          <option value="food">🍔 Food & Drinks</option><option value="gas">⛽ Gas/Transport</option><option value="clothes">👕 Clothes</option><option value="games">🎮 Games/Ent</option><option value="subscriptions">📱 Subscriptions</option><option value="school">📚 School</option><option value="phone">📞 Phone</option><option value="personal">✨ Personal</option><option value="gifts">🎁 Gifts</option><option value="tech">💻 Tech</option><option value="savings">💰 Savings</option><option value="investing">📈 Investing</option><option value="travel">✈️ Travel</option><option value="other">📦 Other</option>
+        </select></div>
+        <div class="fg"><label>Amount ($)</label><input type="number" id="exp-amt" placeholder="0.00" min="0" step="0.01"/></div>
+      </div>
+      <div class="fg"><label>Note</label><input type="text" id="exp-note" placeholder="Chipotle, Spotify, gas..."/></div>
+      <button class="btn btn-p btn-block" id="btn-add-exp">+ Add Entry</button>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="card-t">This Month</span></div>
+      <div class="g g2 mb">
+        <div class="mstat"><div class="mstat-val c-green" id="bud-income">$0</div><div class="mstat-lbl">Income</div></div>
+        <div class="mstat"><div class="mstat-val c-red" id="bud-expense">$0</div><div class="mstat-lbl">Expenses</div></div>
+        <div class="mstat"><div class="mstat-val c-accent" id="bud-net">$0</div><div class="mstat-lbl">Net</div></div>
+        <div class="mstat"><div class="mstat-val c-purple" id="bud-avg">$0/day</div><div class="mstat-lbl">Avg Spend</div></div>
+      </div>
+      <div class="chart-box chart-short"><canvas id="chart-budget-cat"></canvas></div>
+    </div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Transactions</span><select id="bud-filter" style="padding:4px 8px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;"><option value="all">All</option></select></div>
+    <div class="tbl-wrap" style="max-height:400px;overflow-y:auto;"><table id="exp-table"><thead><tr><th>Date</th><th>Category</th><th>Note</th><th>Amount</th><th></th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Spending Trends</span></div>
+    <div class="chart-box"><canvas id="chart-spend-trends"></canvas></div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Spending Insights</span></div>
+    <div id="spend-insights"></div>
+  </div>
+</div>
+
+
+<!-- ======== RECURRING BILLS ======== -->
+<div class="section" id="sec-bills">
+  <div class="g g2 mb">
+    <div class="card">
+      <div class="card-h"><span class="card-t">Add Recurring Bill</span></div>
+      <div class="g g2">
+        <div class="fg"><label>Name</label><input type="text" id="bill-name" placeholder="Spotify, Phone, iCloud..."/></div>
+        <div class="fg"><label>Amount ($)</label><input type="number" id="bill-amt" placeholder="0" min="0" step="0.01"/></div>
+        <div class="fg"><label>Due Day (1-28)</label><input type="number" id="bill-day" value="1" min="1" max="28"/></div>
+        <div class="fg"><label>Category</label><select id="bill-cat"><option value="📱">📱 Subscription</option><option value="📞">📞 Phone</option><option value="🚗">🚗 Car</option><option value="🏠">🏠 Housing</option><option value="💪">💪 Gym</option><option value="📦">📦 Other</option></select></div>
+      </div>
+      <button class="btn btn-p btn-block" id="btn-add-bill">+ Add Bill</button>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="card-t">Monthly Fixed Costs</span></div>
+      <div class="g g2">
+        <div class="mstat"><div class="mstat-val c-red" id="bills-total">$0</div><div class="mstat-lbl">Total/Month</div></div>
+        <div class="mstat"><div class="mstat-val c-yellow" id="bills-due-soon">0</div><div class="mstat-lbl">Due This Week</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="card-h"><span class="card-t">Upcoming</span></div>
+      <div id="bills-upcoming"></div>
+    </div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">All Bills</span></div>
+    <div id="bills-list"></div>
+  </div>
+</div>
+
+<!-- ======== GOALS ======== -->
+<div class="section" id="sec-goals">
+  <div class="g g2 mb">
+    <div class="card">
+      <div class="card-h"><span class="card-t">Major Goals</span></div>
+      <div id="goals-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="card-t">Add / Edit Goal</span></div>
+      <div class="fg"><label>Goal Name</label><input type="text" id="goal-name" placeholder="e.g., Move Out Fund"/></div>
+      <div class="g g2">
+        <div class="fg"><label>Target ($)</label><input type="number" id="goal-target" placeholder="0" min="0"/></div>
+        <div class="fg"><label>Saved ($)</label><input type="number" id="goal-saved" value="0" min="0"/></div>
+      </div>
+      <div class="fg"><label>Icon</label><select id="goal-icon"><option value="🎯">🎯</option><option value="🚗">🚗</option><option value="🏠">🏠</option><option value="💻">💻</option><option value="📱">📱</option><option value="🎮">🎮</option><option value="✈️">✈️</option><option value="🎓">🎓</option><option value="💰">💰</option><option value="🛡️">🛡️</option><option value="🏎️">🏎️</option></select></div>
+      <button class="btn btn-p btn-block" id="btn-add-goal">+ Add Goal</button>
+    </div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Savings Challenges</span></div>
+    <div class="g g3">
+      <div class="mstat"><div class="mstat-val c-orange" id="streak-count">0</div><div class="mstat-lbl">Day Streak</div></div>
+      <div class="mstat"><div class="mstat-val c-green" id="nospend-count">0</div><div class="mstat-lbl">No-Spend Days (Month)</div></div>
+      <div class="mstat"><div class="mstat-val c-purple" id="challenge-saved">$0</div><div class="mstat-lbl">Challenge Savings</div></div>
+    </div>
+    <div class="divider"></div>
+    <button class="btn btn-g" id="btn-nospend">Mark Today as No-Spend Day ✓</button>
+  </div>
+</div>
+
+
+<!-- ======== TECH PURCHASE TRACKER ======== -->
+<div class="section" id="sec-tech">
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Tech Purchases</span></div>
+    <p class="card-desc">Track what you want, what you have, and what's next.</p>
+    <div class="tbl-wrap"><table id="tech-table"><thead><tr><th>Item</th><th>Cost</th><th>Saved</th><th>Remaining</th><th>Progress</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Add Tech Goal</span></div>
+    <div class="g g3">
+      <div class="fg"><label>Item</label><input type="text" id="tech-name" placeholder="PS5, PC Build, RX-7..."/></div>
+      <div class="fg"><label>Cost ($)</label><input type="number" id="tech-cost" min="0"/></div>
+      <div class="fg"><label>Saved ($)</label><input type="number" id="tech-saved" value="0" min="0"/></div>
+    </div>
+    <button class="btn btn-p" id="btn-add-tech">+ Add Item</button>
+  </div>
+</div>
+
+<!-- ======== INVESTMENTS ======== -->
+<div class="section" id="sec-investments">
+  <div class="g g4 mb">
+    <div class="card scard"><div class="scard-icon" style="background:var(--green-dim);color:var(--green);">📈</div><div class="scard-body"><div class="scard-val" id="inv-total">$0</div><div class="scard-lbl">Portfolio</div></div></div>
+    <div class="card scard"><div class="scard-icon" style="background:var(--accent-dim);color:var(--accent);">↗</div><div class="scard-body"><div class="scard-val" id="inv-monthly">$300/mo</div><div class="scard-lbl">Monthly</div></div></div>
+    <div class="card scard"><div class="scard-icon" style="background:var(--yellow-dim);color:var(--yellow);">💵</div><div class="scard-body"><div class="scard-val" id="inv-divs">$0/yr</div><div class="scard-lbl">Dividends</div></div></div>
+    <div class="card scard"><div class="scard-icon" style="background:var(--purple-dim);color:var(--purple);">%</div><div class="scard-body"><div class="scard-val" id="inv-return">10%</div><div class="scard-lbl">Exp. Return</div></div></div>
+  </div>
+  <div class="g g2 mb">
+    <div class="card">
+      <div class="card-h"><span class="card-t">Portfolio Allocation</span></div>
+      <div class="chart-box"><canvas id="chart-portfolio"></canvas></div>
+      <div class="divider"></div>
+      <div class="tbl-wrap"><table id="inv-table"><thead><tr><th>Ticker</th><th>%</th><th>Value</th><th>Type</th><th>Yield</th></tr></thead><tbody></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="card-t">Dividend Tracker</span></div>
+      <div id="div-summary"></div>
+      <div class="chart-box chart-short"><canvas id="chart-divs"></canvas></div>
+      <div class="divider"></div>
+      <div class="card-h"><span class="card-t">Contribution Tracker</span></div>
+      <div id="inv-contrib-summary"></div>
+    </div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Growth Projection</span></div>
+    <div class="g g3 mb">
+      <div class="mstat"><div class="mstat-val c-green" id="inv-1yr">$0</div><div class="mstat-lbl">1 Year</div></div>
+      <div class="mstat"><div class="mstat-val c-accent" id="inv-5yr">$0</div><div class="mstat-lbl">5 Years</div></div>
+      <div class="mstat"><div class="mstat-val c-purple" id="inv-10yr">$0</div><div class="mstat-lbl">10 Years</div></div>
+    </div>
+    <div class="chart-box chart-tall"><canvas id="chart-inv-growth"></canvas></div>
+  </div>
+</div>
+
+
+<!-- ======== SPECULATIVE INVESTMENTS ======== -->
+<div class="section" id="sec-speculative">
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Speculative / High-Risk Positions</span></div>
+    <p class="card-desc">Separate from your core portfolio. These are bets with a thesis, not blind gambles.</p>
+    <div class="tbl-wrap"><table id="spec-table"><thead><tr><th>Asset</th><th>Thesis</th><th>Entry $</th><th>Current $</th><th>Shares</th><th>Gain/Loss</th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Add Position</span></div>
+    <div class="g g3">
+      <div class="fg"><label>Ticker</label><input type="text" id="spec-ticker" placeholder="TTWO"/></div>
+      <div class="fg"><label>Entry Price ($)</label><input type="number" id="spec-entry" min="0" step="0.01"/></div>
+      <div class="fg"><label>Current Price ($)</label><input type="number" id="spec-current" min="0" step="0.01"/></div>
+    </div>
+    <div class="g g2">
+      <div class="fg"><label>Shares</label><input type="number" id="spec-shares" value="1" min="0" step="0.01"/></div>
+      <div class="fg"><label>Thesis</label><input type="text" id="spec-thesis" placeholder="GTA VI release, uranium demand..."/></div>
+    </div>
+    <button class="btn btn-p" id="btn-add-spec">+ Add Position</button>
+  </div>
+</div>
+
+<!-- ======== COMPOUND INTEREST ======== -->
+<div class="section" id="sec-compound">
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Compound Interest Simulator</span></div>
+    <p class="card-desc">What if you invest $200-500/month starting at 17? See what time + compound growth does.</p>
+    <div class="g g4 mb">
+      <div class="fg"><label>Monthly ($)</label><input type="number" id="ci-monthly" value="300" min="0" step="50"/></div>
+      <div class="fg"><label>Start Age</label><input type="number" id="ci-start" value="17" min="14" max="35"/></div>
+      <div class="fg"><label>End Age</label><input type="number" id="ci-end" value="60" min="25" max="80"/></div>
+      <div class="fg"><label>Annual Return (%)</label><input type="number" id="ci-return" value="10" min="0" max="20" step="0.5"/></div>
+    </div>
+    <div class="g g4 mb">
+      <div class="mstat"><div class="mstat-val c-green" id="ci-total">$0</div><div class="mstat-lbl">Total Value</div></div>
+      <div class="mstat"><div class="mstat-val c-accent" id="ci-contrib">$0</div><div class="mstat-lbl">Contributed</div></div>
+      <div class="mstat"><div class="mstat-val c-purple" id="ci-gains">$0</div><div class="mstat-lbl">Compound Gains</div></div>
+      <div class="mstat"><div class="mstat-val c-yellow" id="ci-income">$0/mo</div><div class="mstat-lbl">Retirement Income (4%)</div></div>
+    </div>
+    <div class="chart-box chart-tall"><canvas id="chart-compound"></canvas></div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Age Milestones</span></div>
+    <div class="tbl-wrap"><table id="ci-milestones"><thead><tr><th>Age</th><th>Portfolio</th><th>Contributed</th><th>Gains</th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">The Cost of Waiting</span></div>
+    <p class="card-desc">Starting at 17 vs 22 vs 30:</p>
+    <div class="g g3" id="ci-comparison"></div>
+  </div>
+</div>
+
+
+<!-- ======== EDUCATION PLANNER ======== -->
+<div class="section" id="sec-education">
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Education Path Options</span></div>
+    <p class="card-desc">Compare costs and plan for OTC, Valencia, UCF, trade school, or semiconductor engineering.</p>
+    <div class="g g3" id="edu-options"></div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Funding Sources</span></div>
+    <div class="g g4 mb">
+      <div class="mstat"><div class="mstat-val c-green" id="edu-savings">$0</div><div class="mstat-lbl">Savings</div></div>
+      <div class="mstat"><div class="mstat-val c-blue" id="edu-fafsa">$0</div><div class="mstat-lbl">FAFSA (Est.)</div></div>
+      <div class="mstat"><div class="mstat-val c-yellow" id="edu-bright">$0</div><div class="mstat-lbl">Bright Futures</div></div>
+      <div class="mstat"><div class="mstat-val c-purple" id="edu-scholar">$0</div><div class="mstat-lbl">Scholarships</div></div>
+    </div>
+    <div class="g g2">
+      <div class="fg"><label>Education Savings ($)</label><input type="number" id="edu-sav-input" value="0" min="0"/></div>
+      <div class="fg"><label>Est. FAFSA Award ($)</label><input type="number" id="edu-fafsa-input" value="0" min="0"/></div>
+      <div class="fg"><label>Bright Futures ($/semester)</label><input type="number" id="edu-bright-input" value="0" min="0"/></div>
+      <div class="fg"><label>Scholarships ($)</label><input type="number" id="edu-scholar-input" value="0" min="0"/></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== NET WORTH ======== -->
+<div class="section" id="sec-networth">
+  <div class="g g2 mb">
+    <div class="card">
+      <div class="card-h"><span class="card-t">Net Worth Breakdown</span></div>
+      <div class="chart-box"><canvas id="chart-nw-pie"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="card-t">Assets</span></div>
+      <div class="tbl-wrap"><table id="nw-table"><thead><tr><th>Asset</th><th>Value</th><th>%</th></tr></thead><tbody></tbody></table></div>
+      <div class="divider"></div>
+      <div class="mstat"><div class="mstat-val c-green glow-g" id="nw-total">$0</div><div class="mstat-lbl">Total Net Worth</div></div>
+    </div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Net Worth Over Time</span></div>
+    <div class="chart-box chart-tall"><canvas id="chart-nw-history"></canvas></div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Update Asset Values</span></div>
+    <div id="nw-inputs"></div>
+    <button class="btn btn-p" id="btn-save-nw" style="margin-top:10px;">Save Values</button>
+  </div>
+</div>
+
+
+<!-- ======== PROJECTIONS ======== -->
+<div class="section" id="sec-projections">
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Future Projection Dashboard</span></div>
+    <p class="card-desc">"If I work 15-20 hours/week at Starbucks and invest $300/month until age 22, where will I be?"</p>
+    <div class="tbl-wrap"><table id="proj-table"><thead><tr><th>Age</th><th>Year</th><th>Savings</th><th>Investments</th><th>Net Worth</th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Net Worth Growth</span></div>
+    <div class="chart-box chart-tall"><canvas id="chart-proj"></canvas></div>
+  </div>
+</div>
+
+<!-- ======== WHAT-IF SIMULATOR ======== -->
+<div class="section" id="sec-whatif">
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">What-If? Simulator</span></div>
+    <p class="card-desc">Change any variable and instantly see the impact on your finances.</p>
+    <div class="g g2 mb">
+      <div class="fg"><label>Scenario</label><select id="wi-scenario">
+        <option value="hours">What if I work __ hours/week?</option>
+        <option value="invest">What if I invest $__/month?</option>
+        <option value="buy">What if I buy the __ now?</option>
+        <option value="ttwo">What if TTWO doubles after GTA VI?</option>
+        <option value="rx7">What if I save for an RX-7?</option>
+        <option value="engineer">What if I become an electrical engineer?</option>
+        <option value="custom">Custom scenario</option>
+      </select></div>
+      <div class="fg"><label>Value</label><input type="number" id="wi-value" placeholder="Enter value..." min="0"/></div>
+    </div>
+    <button class="btn btn-p" id="btn-whatif">Run Simulation</button>
+    <div id="wi-result"></div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Buy vs Save Calculator</span></div>
+    <p class="card-desc">Before buying, see what that money could become if invested.</p>
+    <div class="g g3">
+      <div class="fg"><label>Item</label><input type="text" id="bvs-item" placeholder="PS5, Jordans..."/></div>
+      <div class="fg"><label>Price ($)</label><input type="number" id="bvs-price" min="0"/></div>
+      <div class="fg"><label>Happiness (1-10)</label><input type="number" id="bvs-happy" value="5" min="1" max="10"/></div>
+    </div>
+    <button class="btn btn-g" id="btn-bvs">Analyze</button>
+    <div id="bvs-result"></div>
+  </div>
+</div>
+
+
+<!-- ======== TIMELINE ======== -->
+<div class="section" id="sec-timeline">
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Senior Year Timeline</span></div>
+    <div class="timeline" id="timeline-list"></div>
+  </div>
+</div>
+
+<!-- ======== HEALTH SCORE ======== -->
+<div class="section" id="sec-health">
+  <div class="g g21 mb">
+    <div class="card">
+      <div class="card-h"><span class="card-t">Financial Health Score</span></div>
+      <div class="g g2">
+        <div style="display:flex;justify-content:center;align-items:center;">
+          <div class="score-ring">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle class="ring-bg" cx="60" cy="60" r="50"/>
+              <circle class="ring-fill" id="health-ring" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="314"/>
+            </svg>
+            <div class="score-center"><div class="score-num" id="health-score">0</div><div class="score-label">/ 100</div></div>
+          </div>
+        </div>
+        <div>
+          <div id="health-breakdown"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="card-t">Achievements</span></div>
+      <div id="achievements-list"></div>
+    </div>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Monthly Score History</span></div>
+    <div class="chart-box"><canvas id="chart-health"></canvas></div>
+  </div>
+</div>
+
+<!-- ======== SETTINGS ======== -->
+<div class="section" id="sec-settings">
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Profile & Preferences</span></div>
+    <div class="g g3">
+      <div class="fg"><label>Hourly Wage ($)</label><input type="number" id="set-wage" value="16.50" step="0.25" min="0"/></div>
+      <div class="fg"><label>Federal Tax (%)</label><input type="number" id="set-fed" value="10" min="0" max="37" step="0.5"/></div>
+      <div class="fg"><label>FICA (%)</label><input type="number" id="set-fica" value="7.65" min="0" max="15" step="0.01"/></div>
+      <div class="fg"><label>State Tax (%)</label><input type="number" id="set-state" value="0" min="0" max="15" step="0.5"/></div>
+      <div class="fg"><label>Expected Return (%)</label><input type="number" id="set-return" value="10" min="0" max="20" step="0.5"/></div>
+      <div class="fg"><label>Monthly Invest Goal ($)</label><input type="number" id="set-invest" value="300" min="0" step="25"/></div>
+    </div>
+    <button class="btn btn-p" id="btn-save-settings">Save Settings</button>
+  </div>
+  <div class="card mb">
+    <div class="card-h"><span class="card-t">Data Management</span></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-g" id="btn-export">Export JSON</button>
+      <button class="btn btn-g" id="btn-import-trigger">Import Backup</button>
+      <input type="file" id="btn-import" accept=".json" style="display:none;"/>
+      <button class="btn btn-danger" id="btn-reset">Reset All Data</button>
+    </div>
+  </div>
+</div>
+
+</main><!-- /main -->
+</div><!-- /app -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js');}</script>
+</body>
+</html>
