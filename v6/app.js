@@ -56,7 +56,7 @@ const DEFAULTS={
   trips:[],
   watchlist:['VOO','QQQM','TTWO','AAPL','TSLA'],
   stockPrices:{},
-  autopilotRules:{needs:50,wants:30,save:20},
+  autopilotRules:{spend:50,invest:40,save:10},
   pinCode:'',pinEnabled:false,
   theme:'dark',
   calMonth:new Date().getMonth(),calYear:new Date().getFullYear(),
@@ -264,12 +264,12 @@ function showAutopilot(gross,tips){
   const card=document.getElementById('autopilotCard');
   const content=document.getElementById('autopilotSuggestion');
   if(!card||!content)return;
-  const rules=DATA.autopilotRules||{needs:50,wants:30,save:20};
-  const needs=net*rules.needs/100;
-  const wants=net*rules.wants/100;
+  const rules=DATA.autopilotRules||{spend:50,invest:40,save:10};
+  const spendAmt=net*rules.spend/100;
+  const investAmt=net*rules.invest/100;
   const saveAmt=net*rules.save/100;
   card.style.display='block';
-  content.innerHTML=`<div class="g g3"><div class="mstat"><div class="mstat-val c-blue">${fmt(needs)}</div><div class="mstat-lbl">Needs (${rules.needs}%)</div></div><div class="mstat"><div class="mstat-val c-purple">${fmt(wants)}</div><div class="mstat-lbl">Wants (${rules.wants}%)</div></div><div class="mstat"><div class="mstat-val c-green">${fmt(saveAmt)}</div><div class="mstat-lbl">Save/Invest (${rules.save}%)</div></div></div><p class="small" style="margin-top:10px;">Based on est. net pay of ${fmt(net)} from this shift. Adjust rules in Settings.</p>`;
+  content.innerHTML=`<div class="g g3"><div class="mstat"><div class="mstat-val c-blue">${fmt(spendAmt)}</div><div class="mstat-lbl">Spend (${rules.spend}%)</div></div><div class="mstat"><div class="mstat-val c-green">${fmt(investAmt)}</div><div class="mstat-lbl">Invest (${rules.invest}%)</div></div><div class="mstat"><div class="mstat-val c-yellow">${fmt(saveAmt)}</div><div class="mstat-lbl">Save (${rules.save}%)</div></div></div><p class="small" style="margin-top:10px;">Based on est. net pay of ${fmt(net)} from this shift. Adjust rules in Settings.</p>`;
 }
 
 function renderStarbucks(){
@@ -1347,9 +1347,9 @@ function saveSettings(){
 }
 function saveAutopilot(){
   DATA.autopilotRules={
-    needs:+document.getElementById('set-needs').value||50,
-    wants:+document.getElementById('set-wants').value||30,
-    save:+document.getElementById('set-saveinvest').value||20,
+    spend:+document.getElementById('set-needs').value||50,
+    invest:+document.getElementById('set-wants').value||40,
+    save:+document.getElementById('set-saveinvest').value||10,
   };
   save();
 }
@@ -1460,9 +1460,9 @@ function init(){
   document.getElementById('set-return').value=DATA.expectedReturn;
   document.getElementById('set-invest').value=DATA.monthlyInvest;
   if(DATA.autopilotRules){
-    document.getElementById('set-needs').value=DATA.autopilotRules.needs||50;
-    document.getElementById('set-wants').value=DATA.autopilotRules.wants||30;
-    document.getElementById('set-saveinvest').value=DATA.autopilotRules.save||20;
+    document.getElementById('set-needs').value=DATA.autopilotRules.spend||50;
+    document.getElementById('set-wants').value=DATA.autopilotRules.invest||40;
+    document.getElementById('set-saveinvest').value=DATA.autopilotRules.save||10;
   }
   if(DATA.pinEnabled)document.getElementById('set-pin-enabled').value='on';
   if(DATA.pinCode)document.getElementById('set-pin').value=DATA.pinCode;
