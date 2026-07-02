@@ -40,12 +40,12 @@ const DEFAULTS={
   ],
   nospendDays:[],decisions:[],healthHistory:[],
   timeline:[
-    {date:'2026-06-01',title:'Starbucks Start',desc:'First day at Starbucks',status:'done'},
-    {date:'2026-08-12',title:'Senior Year Begins',desc:'First day of school',status:'active'},
+    {date:'2026-06-29',title:'Starbucks Start',desc:'First official day at Starbucks',status:'done'},
+    {date:'2026-08-11',title:'Senior Year Begins',desc:'First day of school',status:'future'},
+    {date:'2026-10-01',title:'FAFSA Opens',desc:'File FAFSA ASAP — opens Oct 1',status:'future'},
     {date:'2026-10-15',title:'SAT Date',desc:'SAT test',status:'future'},
     {date:'2026-11-01',title:'College Apps Due',desc:'Early action deadlines',status:'future'},
-    {date:'2026-12-15',title:'FAFSA Opens',desc:'File FAFSA ASAP',status:'future'},
-    {date:'2027-01-15',title:'Senior Pictures',desc:'Portraits & cap/gown',status:'future'},
+    {date:'2026-11-26',title:'Senior Pictures Done',desc:'All portraits must be completed by this date',status:'future'},
     {date:'2027-03-01',title:'Spring Break',desc:'Possible trip or extra shifts',status:'future'},
     {date:'2027-05-20',title:'Graduation',desc:'Walk the stage!',status:'future'},
     {date:'2027-06-01',title:'Summer Grind',desc:'Full-time hours begin',status:'future'},
@@ -288,12 +288,32 @@ function addGoal(){
   save();renderGoals();
 }
 
+function delGoal(id){DATA.goals=DATA.goals.filter(g=>g.id!==id);save();renderGoals();}
+function updateGoalSaved(id,val){const g=DATA.goals.find(x=>x.id===id);if(g){g.saved=+val||0;save();renderGoals();}}
+function editGoal(id){
+  const g=DATA.goals.find(x=>x.id===id);if(!g)return;
+  const newName=prompt('Goal name:',g.name);if(newName===null)return;
+  const newTarget=prompt('Target amount ($):',g.target);if(newTarget===null)return;
+  const newIcon=prompt('Icon emoji:',g.icon);if(newIcon===null)return;
+  g.name=newName||g.name;g.target=+newTarget||g.target;g.icon=newIcon||g.icon;
+  save();renderGoals();
+}
+
 function renderGoals(){
   const list=document.getElementById('goals-list');
   if(list){
     list.innerHTML=DATA.goals.map(g=>{
       const pct=Math.min(100,(g.saved/g.target)*100);
-      return`<div class="pbar-wrap"><div class="pbar-top"><span class="pbar-name">${g.icon} ${g.name}</span><span class="pbar-amt">${fK(g.saved)} / ${fK(g.target)} (${pct.toFixed(0)}%)</span></div><div class="pbar"><div class="pbar-fill" style="width:${pct}%;background:var(--accent);"></div></div></div>`;
+      return`<div class="pbar-wrap" style="margin-bottom:14px;">
+        <div class="pbar-top"><span class="pbar-name">${g.icon} ${g.name}</span><span class="pbar-amt">${fK(g.saved)} / ${fK(g.target)} (${pct.toFixed(0)}%)</span></div>
+        <div class="pbar"><div class="pbar-fill" style="width:${pct}%;background:${pct>=100?'var(--green)':'var(--accent)'};"></div></div>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:6px;">
+          <input type="number" value="${g.saved}" min="0" max="${g.target}" step="10" onchange="updateGoalSaved('${g.id}',this.value)" style="width:90px;padding:4px 8px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:11px;"/>
+          <span class="small">saved</span>
+          <button class="btn btn-sm btn-g" onclick="editGoal('${g.id}')">✏️</button>
+          <button class="btn btn-sm btn-danger" onclick="if(confirm('Delete this goal?'))delGoal('${g.id}')">×</button>
+        </div>
+      </div>`;
     }).join('');
   }
   // Home quick goals
