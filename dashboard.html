@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Senior Year Finance Dashboard V4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <h1 class="logo">FinanceOS</h1>
+      <span class="logo-badge">V4</span>
+    </div>
+    <div class="header-center">
+      <span class="header-greeting" id="greeting"></span>
+      <span class="header-date" id="currentDate"></span>
+    </div>
+    <div class="header-right">
+      <div class="nw-pill" id="netWorthPill">
+        <span class="nw-pill-label">Net Worth</span>
+        <span class="nw-pill-value" id="netWorthBadge">$0</span>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- NAV -->
+  <nav class="nav">
+    <button class="nav-btn active" data-section="overview"><span class="nav-icon">⊞</span> Overview</button>
+    <button class="nav-btn" data-section="shifts"><span class="nav-icon">⏱</span> Shifts</button>
+    <button class="nav-btn" data-section="paycheck"><span class="nav-icon">💰</span> Paycheck</button>
+    <button class="nav-btn" data-section="budget"><span class="nav-icon">📊</span> Budget</button>
+    <button class="nav-btn" data-section="goals"><span class="nav-icon">🎯</span> Goals</button>
+    <button class="nav-btn" data-section="investments"><span class="nav-icon">📈</span> Investments</button>
+    <button class="nav-btn" data-section="retirement"><span class="nav-icon">🏦</span> Retirement</button>
+    <button class="nav-btn" data-section="decisions"><span class="nav-icon">⚖️</span> Buy vs Save</button>
+    <button class="nav-btn" data-section="networth"><span class="nav-icon">💎</span> Net Worth</button>
+  </nav>
+
+
+  <!-- ======== OVERVIEW ======== -->
+  <div class="section active" id="sec-overview">
+    <div class="grid grid-4" style="margin-bottom:16px;">
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:var(--green-dim);color:var(--green);">$</div>
+        <div class="stat-content">
+          <div class="stat-value" id="ov-monthly-income">$1,100</div>
+          <div class="stat-label">Monthly Income</div>
+        </div>
+        <div class="stat-trend up">+$0/mo</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:var(--accent-glow);color:var(--accent);">↗</div>
+        <div class="stat-content">
+          <div class="stat-value" id="ov-invested">$0</div>
+          <div class="stat-label">Invested</div>
+        </div>
+        <div class="stat-trend up">$300/mo goal</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:var(--yellow-dim);color:var(--yellow);">🛡</div>
+        <div class="stat-content">
+          <div class="stat-value" id="ov-emergency">$0</div>
+          <div class="stat-label">Emergency Fund</div>
+        </div>
+        <div class="stat-trend neutral">$500 goal</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:var(--purple-dim);color:var(--purple);">⏱</div>
+        <div class="stat-content">
+          <div class="stat-value" id="ov-hours-week">0 hrs</div>
+          <div class="stat-label">This Week</div>
+        </div>
+        <div class="stat-trend neutral" id="ov-hours-trend">—</div>
+      </div>
+    </div>
+
+    <div class="grid grid-2-1" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Goal Progress</span></div>
+        <div id="ov-goals"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Quick Actions</span></div>
+        <div class="quick-actions">
+          <button class="btn btn-primary btn-block" onclick="switchSection('shifts')">+ Log Shift</button>
+          <button class="btn btn-ghost btn-block" onclick="switchSection('budget')">+ Add Expense</button>
+          <button class="btn btn-ghost btn-block" onclick="switchSection('decisions')">+ Buy vs Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Investment Allocation</span></div>
+        <div class="chart-container"><canvas id="chart-allocation"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Monthly Spending by Category</span></div>
+        <div class="chart-container"><canvas id="chart-spending-cat"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======== SHIFTS ======== -->
+  <div class="section" id="sec-shifts">
+    <div class="grid grid-3" style="margin-bottom:16px;">
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:var(--green-dim);color:var(--green);">⏱</div>
+        <div class="stat-content">
+          <div class="stat-value" id="sh-this-period">0 hrs</div>
+          <div class="stat-label">This Pay Period</div>
+        </div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:var(--yellow-dim);color:var(--yellow);">⚡</div>
+        <div class="stat-content">
+          <div class="stat-value" id="sh-overtime">0 hrs</div>
+          <div class="stat-label">Overtime (1.5x)</div>
+        </div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:var(--accent-glow);color:var(--accent);">$</div>
+        <div class="stat-content">
+          <div class="stat-value" id="sh-est-gross">$0</div>
+          <div class="stat-label">Est. Gross This Period</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Log a Shift</span></div>
+        <div class="grid grid-2">
+          <div class="input-group">
+            <label>Date</label>
+            <input type="date" id="shift-date" />
+          </div>
+          <div class="input-group">
+            <label>Shift Type</label>
+            <select id="shift-type">
+              <option value="regular">Regular</option>
+              <option value="overtime">Overtime (1.5x)</option>
+              <option value="holiday">Holiday (2x)</option>
+              <option value="training">Training</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Start Time</label>
+            <input type="time" id="shift-start" value="06:00" />
+          </div>
+          <div class="input-group">
+            <label>End Time</label>
+            <input type="time" id="shift-end" value="12:00" />
+          </div>
+          <div class="input-group">
+            <label>Break (minutes)</label>
+            <input type="number" id="shift-break" value="30" min="0" max="120" step="5" />
+          </div>
+          <div class="input-group">
+            <label>Tips ($)</label>
+            <input type="number" id="shift-tips" value="0" min="0" step="1" />
+          </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:12px;width:100%;" id="btn-add-shift">Add Shift</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Pay Period Calculator</span></div>
+        <div id="shift-pay-summary"></div>
+        <div class="divider"></div>
+        <div class="card-header"><span class="card-title">Starbucks Pay Schedule</span></div>
+        <div class="small-text" style="margin-bottom:8px;">Bi-weekly pay periods. OT kicks in after 40 hrs/week.</div>
+        <div id="pay-period-info"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <span class="card-title">Shift Log</span>
+        <div>
+          <button class="btn btn-ghost btn-sm" id="btn-clear-shifts">Clear All</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="shift-table">
+          <thead>
+            <tr><th>Date</th><th>Time</th><th>Hours</th><th>Type</th><th>Rate</th><th>Gross</th><th>Tips</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======== PAYCHECK ======== -->
+  <div class="section" id="sec-paycheck">
+    <div class="grid grid-2" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Paycheck Calculator</span></div>
+        <div class="grid grid-2">
+          <div class="input-group">
+            <label>Hourly Wage ($)</label>
+            <input type="number" id="pc-wage" value="16.50" step="0.25" min="0" />
+          </div>
+          <div class="input-group">
+            <label>Hours per Week</label>
+            <input type="number" id="pc-hours" value="17.5" step="0.5" min="0" max="50" />
+          </div>
+          <div class="input-group">
+            <label>Federal Tax (%)</label>
+            <input type="number" id="pc-fed-tax" value="10" step="0.5" min="0" max="37" />
+          </div>
+          <div class="input-group">
+            <label>State Tax (%)</label>
+            <input type="number" id="pc-state-tax" value="0" step="0.5" min="0" max="15" />
+          </div>
+          <div class="input-group">
+            <label>FICA (SS + Medicare) %</label>
+            <input type="number" id="pc-fica" value="7.65" step="0.01" min="0" max="15" />
+          </div>
+          <div class="input-group">
+            <label>Pay Frequency</label>
+            <select id="pc-freq">
+              <option value="biweekly">Bi-Weekly</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="grid grid-3" id="pc-results">
+          <div class="mini-stat"><div class="mini-val green" id="pc-gross">$0</div><div class="mini-label">Gross</div></div>
+          <div class="mini-stat"><div class="mini-val red" id="pc-taxes">-$0</div><div class="mini-label">Total Taxes</div></div>
+          <div class="mini-stat"><div class="mini-val accent" id="pc-net">$0</div><div class="mini-label">Net Pay</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Schedule & Annual Projection</span></div>
+        <div class="grid grid-2">
+          <div class="input-group">
+            <label>School Hours/Week (Aug-May)</label>
+            <input type="number" id="pc-school-hours" value="17.5" step="0.5" min="0" max="30" />
+          </div>
+          <div class="input-group">
+            <label>Summer Hours/Week (Jun-Jul)</label>
+            <input type="number" id="pc-summer-hours" value="30" step="1" min="0" max="40" />
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div id="pc-annual-summary"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header"><span class="card-title">Full Year Earnings Projection (Starbucks)</span></div>
+      <div class="table-wrap">
+        <table id="pc-year-table">
+          <thead><tr><th>Month</th><th>Hrs/Wk</th><th>Wks</th><th>Gross</th><th>Fed Tax</th><th>FICA</th><th>Net</th><th>Cumulative</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======== BUDGET ======== -->
+  <div class="section" id="sec-budget">
+    <div class="grid grid-2" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Add Expense / Income</span></div>
+        <div class="grid grid-2">
+          <div class="input-group">
+            <label>Date</label>
+            <input type="date" id="exp-date" />
+          </div>
+          <div class="input-group">
+            <label>Type</label>
+            <select id="exp-type">
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Category</label>
+            <select id="exp-category">
+              <option value="food">🍔 Food & Drinks</option>
+              <option value="gas">⛽ Gas & Transport</option>
+              <option value="clothes">👕 Clothes</option>
+              <option value="games">🎮 Games & Entertainment</option>
+              <option value="subscriptions">📱 Subscriptions</option>
+              <option value="school">📚 School Supplies</option>
+              <option value="phone">📞 Phone Bill</option>
+              <option value="personal">✨ Personal Care</option>
+              <option value="gifts">🎁 Gifts</option>
+              <option value="savings">💰 Savings Transfer</option>
+              <option value="investing">📈 Investment</option>
+              <option value="other">📦 Other</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Amount ($)</label>
+            <input type="number" id="exp-amount" value="" step="0.01" min="0" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Note (optional)</label>
+          <input type="text" id="exp-note" placeholder="e.g., Chipotle, Spotify, gas fill-up..." />
+        </div>
+        <button class="btn btn-primary btn-block" style="margin-top:8px;" id="btn-add-expense">Add Entry</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Monthly Breakdown</span></div>
+        <div class="chart-container"><canvas id="chart-budget-cat"></canvas></div>
+        <div class="divider"></div>
+        <div class="grid grid-2">
+          <div class="mini-stat"><div class="mini-val green" id="bud-income">$0</div><div class="mini-label">Income (This Mo)</div></div>
+          <div class="mini-stat"><div class="mini-val red" id="bud-expenses">$0</div><div class="mini-label">Expenses (This Mo)</div></div>
+          <div class="mini-stat"><div class="mini-val accent" id="bud-net">$0</div><div class="mini-label">Net (This Mo)</div></div>
+          <div class="mini-stat"><div class="mini-val purple" id="bud-avg">$0</div><div class="mini-label">Avg Daily Spend</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <span class="card-title">Transaction History</span>
+        <select id="bud-filter-month" style="padding:4px 8px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;">
+          <option value="all">All Months</option>
+        </select>
+      </div>
+      <div class="table-wrap" style="max-height:400px;overflow-y:auto;">
+        <table id="expense-table">
+          <thead><tr><th>Date</th><th>Category</th><th>Note</th><th>Amount</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header"><span class="card-title">Spending Trends</span></div>
+      <div class="chart-container" style="height:280px;"><canvas id="chart-spending-trends"></canvas></div>
+    </div>
+  </div>
+
+
+  <!-- ======== GOALS ======== -->
+  <div class="section" id="sec-goals">
+    <div class="grid grid-2" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Short-Term Goals</span></div>
+        <div id="goals-detailed"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">College / Trade School Fund</span></div>
+        <div class="grid grid-2">
+          <div class="input-group">
+            <label>Goal Amount ($)</label>
+            <input type="number" id="goal-college-target" value="2000" step="100" min="0" />
+          </div>
+          <div class="input-group">
+            <label>Monthly Contrib ($)</label>
+            <input type="number" id="goal-college-monthly" value="100" step="25" min="0" />
+          </div>
+        </div>
+        <div id="college-progress"></div>
+        <div class="mini-stat" style="margin-top:12px;">
+          <div class="mini-val blue" id="college-months-left">—</div>
+          <div class="mini-label">Months Until Goal</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header"><span class="card-title">Paycheck Allocation Plan</span></div>
+      <div class="grid grid-2">
+        <div>
+          <h3 class="plan-header">Paycheck #1 — $798.09</h3>
+          <div id="plan1-breakdown"></div>
+        </div>
+        <div>
+          <h3 class="plan-header" style="color:var(--purple);">Paycheck #2 — $750.00</h3>
+          <div id="plan2-breakdown"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== INVESTMENTS ======== -->
+  <div class="section" id="sec-investments">
+    <div class="grid grid-4" style="margin-bottom:16px;">
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:var(--green-dim);color:var(--green);">📈</div>
+        <div class="stat-content"><div class="stat-value" id="inv-total">$0</div><div class="stat-label">Portfolio</div></div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:var(--accent-glow);color:var(--accent);">↗</div>
+        <div class="stat-content"><div class="stat-value" id="inv-monthly">$300/mo</div><div class="stat-label">Contribution</div></div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:var(--yellow-dim);color:var(--yellow);">💵</div>
+        <div class="stat-content"><div class="stat-value" id="inv-dividends">$0/yr</div><div class="stat-label">Dividends</div></div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background:var(--purple-dim);color:var(--purple);">%</div>
+        <div class="stat-content"><div class="stat-value" id="inv-return">0%</div><div class="stat-label">Return</div></div>
+      </div>
+    </div>
+    <div class="grid grid-2" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Portfolio Allocation</span></div>
+        <div class="chart-container"><canvas id="chart-portfolio"></canvas></div>
+        <div class="divider"></div>
+        <table id="holdings-table"><thead><tr><th>Ticker</th><th>%</th><th>Value</th><th>Type</th><th>Yield</th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Dividend Tracker</span></div>
+        <div id="div-summary"></div>
+        <div class="chart-container"><canvas id="chart-dividends"></canvas></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header"><span class="card-title">Growth Projections (1 / 5 / 10 Year)</span></div>
+      <div class="grid grid-3" style="margin-bottom:16px;">
+        <div class="mini-stat"><div class="mini-val green" id="inv-1yr">$0</div><div class="mini-label">1 Year</div></div>
+        <div class="mini-stat"><div class="mini-val accent" id="inv-5yr">$0</div><div class="mini-label">5 Years</div></div>
+        <div class="mini-stat"><div class="mini-val purple" id="inv-10yr">$0</div><div class="mini-label">10 Years</div></div>
+      </div>
+      <div class="chart-container" style="height:300px;"><canvas id="chart-growth"></canvas></div>
+    </div>
+  </div>
+
+
+  <!-- ======== RETIREMENT ======== -->
+  <div class="section" id="sec-retirement">
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header"><span class="card-title">Retirement Calculator — Starting at 17</span></div>
+      <p class="card-desc">See what investing $200-$500/month starting NOW could become by retirement. Time is your biggest advantage.</p>
+      <div class="grid grid-4" style="margin-top:16px;">
+        <div class="input-group">
+          <label>Monthly Investment ($)</label>
+          <input type="number" id="ret-monthly" value="300" step="50" min="0" max="2000" />
+        </div>
+        <div class="input-group">
+          <label>Current Age</label>
+          <input type="number" id="ret-age" value="17" min="14" max="30" />
+        </div>
+        <div class="input-group">
+          <label>Retirement Age</label>
+          <input type="number" id="ret-retire-age" value="60" min="30" max="80" />
+        </div>
+        <div class="input-group">
+          <label>Expected Return (%)</label>
+          <input type="number" id="ret-return" value="10" step="0.5" min="0" max="15" />
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="grid grid-4" style="margin-bottom:16px;">
+        <div class="card mini-stat" style="background:var(--surface-2);">
+          <div class="mini-val green" id="ret-total">$0</div><div class="mini-label">At Retirement</div>
+        </div>
+        <div class="card mini-stat" style="background:var(--surface-2);">
+          <div class="mini-val accent" id="ret-contributed">$0</div><div class="mini-label">Total Contributed</div>
+        </div>
+        <div class="card mini-stat" style="background:var(--surface-2);">
+          <div class="mini-val purple" id="ret-gains">$0</div><div class="mini-label">Compound Gains</div>
+        </div>
+        <div class="card mini-stat" style="background:var(--surface-2);">
+          <div class="mini-val yellow" id="ret-monthly-income">$0/mo</div><div class="mini-label">Retirement Income (4%)</div>
+        </div>
+      </div>
+      <div class="chart-container" style="height:320px;"><canvas id="chart-retirement"></canvas></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header"><span class="card-title">The Power of Starting Early</span></div>
+      <div class="comparison-grid" id="ret-comparison"></div>
+    </div>
+  </div>
+
+  <!-- ======== BUY VS SAVE ======== -->
+  <div class="section" id="sec-decisions">
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header"><span class="card-title">Buy vs Save Decision Tracker</span></div>
+      <p class="card-desc">Before you buy something, run it through this calculator. See what that money could become if invested instead.</p>
+      <div class="grid grid-3" style="margin-top:12px;">
+        <div class="input-group">
+          <label>Item Name</label>
+          <input type="text" id="bvs-item" placeholder="e.g., PS5, Jordan 4s, AirPods..." />
+        </div>
+        <div class="input-group">
+          <label>Price ($)</label>
+          <input type="number" id="bvs-price" value="" step="1" min="0" placeholder="0" />
+        </div>
+        <div class="input-group">
+          <label>Happiness Score (1-10)</label>
+          <input type="number" id="bvs-happiness" value="5" min="1" max="10" step="1" />
+        </div>
+      </div>
+      <div class="grid grid-2" style="margin-top:8px;">
+        <div class="input-group">
+          <label>Need Level</label>
+          <select id="bvs-need">
+            <option value="want">Want (nice to have)</option>
+            <option value="need">Need (necessary)</option>
+            <option value="impulse">Impulse (didn't plan it)</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Can you wait 30 days?</label>
+          <select id="bvs-wait">
+            <option value="yes">Yes</option>
+            <option value="no">No, time-sensitive</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:12px;" id="btn-add-decision">Analyze & Log Decision</button>
+      <div id="bvs-result" style="margin-top:16px;"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <span class="card-title">Decision History</span>
+        <div class="grid grid-2" style="gap:8px;">
+          <span class="tag tag-green" id="bvs-saved-count">0 saved</span>
+          <span class="tag tag-red" id="bvs-bought-count">0 bought</span>
+        </div>
+      </div>
+      <div class="table-wrap" style="max-height:350px;overflow-y:auto;">
+        <table id="decisions-table">
+          <thead><tr><th>Date</th><th>Item</th><th>Price</th><th>Score</th><th>Decision</th><th>Invested Value (10yr)</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="divider"></div>
+      <div class="grid grid-2">
+        <div class="mini-stat"><div class="mini-val green" id="bvs-total-saved">$0</div><div class="mini-label">Total $ Saved by NOT Buying</div></div>
+        <div class="mini-stat"><div class="mini-val accent" id="bvs-invested-value">$0</div><div class="mini-label">If Invested (10yr projection)</div></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======== NET WORTH ======== -->
+  <div class="section" id="sec-networth">
+    <div class="grid grid-2" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Net Worth Breakdown</span></div>
+        <div class="chart-container"><canvas id="chart-nw-pie"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Assets</span></div>
+        <table id="nw-table"><thead><tr><th>Asset</th><th>Value</th><th>%</th></tr></thead><tbody></tbody></table>
+        <div class="divider"></div>
+        <div class="mini-stat">
+          <div class="mini-val green glow" id="nw-total">$0.00</div>
+          <div class="mini-label">Total Net Worth</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header"><span class="card-title">Net Worth Over Time</span></div>
+      <div class="chart-container" style="height:300px;"><canvas id="chart-nw-history"></canvas></div>
+    </div>
+  </div>
+
+</div><!-- /.app -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
